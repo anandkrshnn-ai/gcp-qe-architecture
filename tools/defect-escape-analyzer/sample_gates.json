@@ -1,0 +1,5 @@
+[
+  {"gate": "Unit Tests", "status": "Pass"},
+  {"gate": "Integration Tests", "status": "Pass"},
+  {"gate": "Performance Tests", "status": "N/A"}
+]

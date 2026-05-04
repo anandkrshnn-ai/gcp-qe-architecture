@@ -1,6 +1,18 @@
 # GCP QE Architecture
 
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
+![GKE](https://img.shields.io/badge/GKE-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-8E75F7?style=for-the-badge&logo=google&logoColor=white)
+
 > Practical, production-focused Quality Engineering patterns for GCP.
+
+## Quick Navigation
+
+- [Terraform Baseline](reference-implementations/terraform-baseline/)
+- [End-to-End Example](examples/end-to-end-observable-app/)
+- [Tools](tools/)
+- [Patterns & Checklists](patterns/)
+- [Evidence](evidence/)
 
 Focused reference covering **GKE, Cloud Run, Cloud SQL, Observability, Resilience, and Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
 
