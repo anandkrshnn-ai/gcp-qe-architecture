@@ -2,6 +2,11 @@
 
 This page tracks how the patterns in this repository are applied in practice to solve real engineering challenges on GCP.
 
+## Case Studies
+Detailed deep-dives into specific transformations:
+- [Improving GKE Resilience](../case-studies/gke-resilience-improvement.md)
+- [Cloud Run Performance Stabilization](../case-studies/cloud-run-performance-stabilization.md)
+
 ## Entry 1: Terraform Baseline Rollout (May 2026)
 **Context**: New GKE service for an internal developer platform team.  
 **Actions**: Applied the modular Terraform baseline with multi-environment support (dev/staging/prod).  
