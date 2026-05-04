@@ -1,8 +1,8 @@
 # GCP QE Architecture
 
-**Practical Quality Engineering patterns and implementations for production GCP environments.**
+**Practical Quality Engineering reference for GCP production workloads.**
 
-Focused on **GKE, Cloud Run, Cloud SQL, Observability, Resilience**, and **Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
+**Focus Areas**: GKE • Cloud Run • Cloud SQL • Observability • Resilience • Gemini Agents • Agentic AI / RAG
 
 ### Why This Repo Exists
 I built this as a living reference while working as **QA Architect Manager** on GCP. It contains patterns I actually use and refine.
@@ -18,14 +18,32 @@ I built this as a living reference while working as **QA Architect Manager** on 
 - [Patterns & Checklists](patterns/)
 - [Evidence & Outputs](evidence/)
 
-### Documentation Site
-This repository is also available as a clean documentation site via MkDocs.
+### Current Maturity (Day 21)
+- **Modular Terraform Baseline**: Production-ready and automated.
+- **CI/CD Quality Pipeline**: Cloud Build integrated with k6 and Gemini.
+- **Gemini + Agentic AI tools**: RCA and RAG evaluation working.
+- **Patterns & Checklists Library**: 5+ high-level architect patterns.
+- **End-to-End Example**: Fully connected flow from IaC to Observability.
 
-## Real World Usage
+### Future Roadmap
+- [ ] Integration with GKE Autopilot & Gateway API patterns.
+- [ ] Automated Chaos experiments in Cloud Build.
+- [ ] Expansion of MCP Server QA framework with more tool-calling tests.
+- [ ] Advanced RAG evaluation using Vertex AI Gen AI Evaluation service.
 
-See [Real World Usage](docs/real-world-usage.md) for how these patterns are being applied in practice.
+### How to Use This Repo
+1. **Explore the Guides**: Start with [guides/](guides/) to understand the service-specific quality strategy.
+2. **Review the Baseline**: Check the [Modular Terraform Baseline](reference-implementations/terraform-baseline/) for the infra foundation.
+3. **Run the Tools**: Use the [Tools](tools/) for defect analysis or AI RCA.
+4. **Follow the Checklist**: Use the [Production Readiness Checklist](patterns/production-readiness-checklist.md) for your own projects.
+
+**📖 Documentation Site**: [https://anandkrshnn-ai.github.io/gcp-qe-architecture/](https://anandkrshnn-ai.github.io/gcp-qe-architecture/)
 
 ### Disclaimer
 Personal reference repository. All code and patterns should be reviewed and tested thoroughly in your own environment. No warranties.
 
 **Last Updated:** May 2026
+
+---
+
+Made by Anandakrishnan – QA Architect Manager
