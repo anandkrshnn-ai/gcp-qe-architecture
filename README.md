@@ -2,7 +2,15 @@
 
 **Practical Quality Engineering reference for GCP production workloads.**
 
-**Focus Areas**: GKE • Cloud Run • Cloud SQL • Observability • Resilience • Gemini Agents • Agentic AI / RAG
+**Focused on **GKE, Cloud Run, Cloud SQL, Observability, Resilience**, and **Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
+
+```mermaid
+graph TD
+    A[Terraform Baseline] --> B[GKE + Cloud Run + Cloud SQL]
+    B --> C[Observability Stack]
+    C --> D[Gemini RCA Agent]
+    D --> E[Quality Gates & SLOs]
+```
 
 ### Why This Repo Exists
 I built this as a living reference while working as **QA Architect Manager** on GCP. It contains patterns I actually use and refine.
