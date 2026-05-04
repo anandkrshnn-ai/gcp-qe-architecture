@@ -26,7 +26,7 @@ module "cloud_sql" {
 }
 
 module "slo_monitoring" {
-  source               = "../../slo-monitoring"
+  source               = "../../../slo-monitoring"
   notification_channel = "projects/${var.project_id}/notificationChannels/${var.environment}-alerts"
 }
 

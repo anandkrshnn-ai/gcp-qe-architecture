@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 # Mocking GCP Cloud Monitoring Data Extraction for demonstration
 def fetch_dora_metrics():
