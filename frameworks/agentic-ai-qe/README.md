@@ -7,3 +7,6 @@ Quality practices for building reliable Agentic systems using Gemini on GCP.
 - MCP Server (Model Context Protocol) testing
 - Agent behavior validation
 - Prompt engineering guardrails
+
+## Integration Examples
+See [examples/gemini-rca-in-incident/](../../examples/gemini-rca-in-incident/) for examples of how AI-powered quality gates are used in practice.
