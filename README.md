@@ -1,8 +1,10 @@
 # GCP QE Architecture
 
-**Practical Quality Engineering reference for GCP production workloads.**
+Practical, production-focused Quality Engineering patterns for Google Cloud Platform.
 
-**Focused on **GKE, Cloud Run, Cloud SQL, Observability, Resilience**, and **Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
+**Best for**: QA Architects, SREs, Platform Teams working on GKE, Cloud Run, and modern AI workloads.
+
+Focused on **GKE, Cloud Run, Cloud SQL, Observability, Resilience**, and **Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
 
 ```mermaid
 graph TD
