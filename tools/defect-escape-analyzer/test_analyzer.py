@@ -1,5 +1,4 @@
 import json
-import pytest
 from analyzer import analyze_defect_escape
 import os
 

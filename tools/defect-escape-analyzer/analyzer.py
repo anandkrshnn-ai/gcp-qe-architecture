@@ -5,7 +5,6 @@ from datetime import datetime
 def analyze_defect_escape(incidents_file: str, gates_file: str):
     # Load sample data
     incidents = pd.read_json(incidents_file)
-    gates = pd.read_json(gates_file)
     
     report = {
         "analysis_date": datetime.now().strftime("%Y-%m-%d"),

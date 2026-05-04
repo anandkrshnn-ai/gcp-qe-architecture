@@ -3,7 +3,7 @@ const http = require('http');
 const server = http.createServer((req, res) => {
   if (req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(json.dumps({ status: 'healthy', version: '1.0.0-mock' }));
+    res.end(JSON.stringify({ status: 'healthy', version: '1.0.0-mock' }));
   } else {
     res.writeHead(200);
     res.end('Mock Server Running');

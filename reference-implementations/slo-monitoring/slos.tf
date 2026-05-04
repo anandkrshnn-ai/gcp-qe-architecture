@@ -33,6 +33,12 @@ resource "google_monitoring_slo" "cloud_sql_failover" {
   service      = "cloud-sql"
   display_name = "Cloud SQL Failover Success"
   goal         = 0.98
+
+  basic_sli {
+    availability {
+      good_service_filter = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
+    }
+  }
 }
 
 variable "notification_channel" {

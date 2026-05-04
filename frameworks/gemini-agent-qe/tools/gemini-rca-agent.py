@@ -4,7 +4,7 @@ import google.cloud.logging
 import json
 import argparse
 import sys
-from typing import Dict, List
+from typing import Dict
 
 def load_mock_logs(file_path: str) -> str:
     with open(file_path, "r") as f:
