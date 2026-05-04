@@ -1,0 +1,17 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-latency
+  namespace: default
+spec:
+  action: delay
+  mode: one
+  selector:
+    labelSelectors:
+      "app": "your-app"
+  delay:
+    latency: "200ms"
+    jitter: "50ms"
+  duration: "2m"
+  scheduler:
+    cron: "@every 6h"
