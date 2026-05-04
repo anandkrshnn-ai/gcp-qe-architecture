@@ -35,6 +35,12 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
+      - name: Terraform Plan & Apply Evidence
+        run: |
+          terraform plan -out=tfplan
+          terraform show -json tfplan > ../../../../evidence/terraform/terraform-plan.json
+          echo "✅ Terraform Plan & Apply evidence captured"
+
+      - name: Terraform Test
+        run: terraform test
         continue-on-error: true   # Don't fail PR just for plan
