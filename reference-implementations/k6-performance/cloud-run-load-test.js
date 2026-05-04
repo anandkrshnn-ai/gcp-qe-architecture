@@ -14,7 +14,8 @@ export const options = {
 };
 
 export default function () {
-  const res = http.get('https://YOUR-CLOUD-RUN-URL.run.app/health'); // Change this
+  const baseUrl = __ENV.BASE_URL || 'http://localhost:8080';
+  const res = http.get(`${baseUrl}/health`); 
 
   check(res, {
     'status is 200': (r) => r.status === 200,

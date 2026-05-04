@@ -1,26 +1,54 @@
 import vertexai
-from vertexai.generative_models import GenerativeModel, GenerationConfig, Tool
+from vertexai.generative_models import GenerativeModel, GenerationConfig
 import google.cloud.logging
 import json
-from typing import Dict
+import argparse
+import sys
+from typing import Dict, List
 
-vertexai.init(project="YOUR_PROJECT_ID", location="asia-south1")
+def load_mock_logs(file_path: str) -> str:
+    with open(file_path, "r") as f:
+        logs = json.load(f)
+    return "\n".join([str(log.get("textPayload") or log.get("jsonPayload") or log.get("protoPayload")) for log in logs])
 
-model = GenerativeModel(
-    "gemini-3.1-pro",
-    generation_config=GenerationConfig(
-        temperature=0.1,
-        max_output_tokens=2048,
-        response_mime_type="application/json"
+def analyze_incident(log_filter: str, project_id: str = None, mock_file: str = None) -> Dict:
+    # 1. Gather Context
+    if mock_file:
+        print(f"--- Running in MOCK mode using {mock_file} ---")
+        log_context = load_mock_logs(mock_file)
+    else:
+        if not project_id or project_id == "YOUR_PROJECT_ID":
+            print("Error: project_id required for live mode.")
+            sys.exit(1)
+        
+        vertexai.init(project=project_id, location="asia-south1")
+        client = google.cloud.logging.Client(project=project_id)
+        entries = list(client.list_entries(filter_=log_filter, page_size=40))
+        log_context = "\n".join([str(entry.payload) for entry in entries])
+
+    # 2. Configure Model
+    # Note: In mock mode without credentials, we simulate the LLM response for CI/CD demonstration
+    if mock_file:
+        return {
+            "root_cause": "GKE Pod OOMKill due to missing resource limits",
+            "confidence": 92,
+            "impacted_services": ["GKE", "Frontend-Service"],
+            "severity": "High",
+            "recommended_gates": ["k6 Performance", "Chaos Mesh Pod-Kill"],
+            "suggested_fix": "Add resources.limits.memory to the deployment manifest",
+            "chaos_suggestion": "pod-kill",
+            "reasoning": "Logs show multiple 'terminated with exit code 137' (OOM) events across 3 replicas."
+        }
+
+    model = GenerativeModel(
+        "gemini-3.1-pro",
+        generation_config=GenerationConfig(
+            temperature=0.1,
+            max_output_tokens=2048,
+            response_mime_type="application/json"
+        )
     )
-)
 
-def analyze_incident(log_filter: str, limit: int = 50) -> Dict:
-    client = google.cloud.logging.Client()
-    entries = list(client.list_entries(filter_=log_filter, page_size=limit))
-    
-    log_context = "\n".join([str(entry.payload) for entry in entries[-40:]])
-    
     prompt = f"""You are an expert GCP Quality Engineering Architect.
 Analyze the logs and return **only** valid JSON:
 
@@ -39,11 +67,19 @@ Logs:
 {log_context}"""
 
     response = model.generate_content(prompt)
-    result = json.loads(response.text)
-    return result
+    return json.loads(response.text)
 
 if __name__ == "__main__":
-    # Example usage (uncomment and replace with real project ID to test)
-    # result = analyze_incident("resource.type=\"cloud_run_revision\" severity>=ERROR")
-    # print(json.dumps(result, indent=2))
-    pass
+    parser = argparse.ArgumentParser(description="Gemini RCA Agent")
+    parser.add_argument("--project", help="GCP Project ID", default="YOUR_PROJECT_ID")
+    parser.add_argument("--filter", help="Cloud Logging filter", default="resource.type=\"k8s_container\" severity>=ERROR")
+    parser.add_argument("--mock", help="Path to mock logs JSON file")
+    
+    args = parser.parse_args()
+    
+    try:
+        result = analyze_incident(args.filter, args.project, args.mock)
+        print(json.dumps(result, indent=2))
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
