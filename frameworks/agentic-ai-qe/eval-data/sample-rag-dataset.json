@@ -1,0 +1,14 @@
+[
+  {
+    "query": "What is the status of my order #ORD-12345?",
+    "context": "Order #ORD-12345 was received on May 1st. It is currently in the 'Processing' stage at the warehouse.",
+    "response": "Your order #ORD-12345 is currently being processed at our warehouse.",
+    "ground_truth": "The order is in 'Processing' stage."
+  },
+  {
+    "query": "How do I return a defective item?",
+    "context": "To return a defective item, please log in to your account, go to 'My Orders', select the item, and click 'Return'. You must do this within 30 days of delivery.",
+    "response": "You can return a defective item by contacting customer support via phone within 15 days.",
+    "ground_truth": "Return via account portal under 'My Orders' within 30 days."
+  }
+]
