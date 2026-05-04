@@ -1,0 +1,35 @@
+site_name: GCP QE Architecture
+site_description: Practical Quality Engineering patterns for GCP (GKE, Cloud Run, Cloud SQL, Observability & AI)
+site_author: Anandakrishnan
+repo_name: gcp-qe-architecture
+repo_url: https://github.com/anandkrshnn-ai/gcp-qe-architecture
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Terraform Baseline: reference-implementations/terraform-baseline/README.md
+  - End-to-End Example: examples/end-to-end-observable-app/README.md
+  - Guides:
+    - GKE Testing: guides/gke-testing-guide.md
+    - Cloud Run: guides/cloud-run-quality-guide.md
+    - Cloud SQL: guides/cloud-sql-resilience-guide.md
+  - Frameworks:
+    - Gemini Agent QE: frameworks/gemini-agent-qe/README.md
+    - Agentic AI + RAG: frameworks/agentic-ai-qe/README.md
+  - Tools: tools/README.md
+  - Patterns: patterns/README.md
+  - Evidence: evidence/README.md
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences

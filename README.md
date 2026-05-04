@@ -6,6 +6,8 @@
 
 > Practical, production-focused Quality Engineering patterns for GCP.
 
+**📖 View as Documentation Site**: [https://anandkrshnn-ai.github.io/gcp-qe-architecture/](https://anandkrshnn-ai.github.io/gcp-qe-architecture/) (after enabling GitHub Pages)
+
 ## Quick Navigation
 
 - [Terraform Baseline](reference-implementations/terraform-baseline/)
