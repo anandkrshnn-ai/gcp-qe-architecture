@@ -1,0 +1,9 @@
+{
+  "faithfulness": 0.0,
+  "relevance": 1.0,
+  "hallucination_risk": "High",
+  "improvements": [
+    "The response 'Your order has been delivered.' contradicts the context 'Order #12345 was shipped on 2026-05-03...', which only states it was shipped, not delivered.",
+    "Ensure the model strictly adheres to the status provided in the context."
+  ]
+}
