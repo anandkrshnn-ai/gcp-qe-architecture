@@ -12,9 +12,13 @@ Production-grade modular Terraform baseline for GKE + Cloud Run + Cloud SQL work
 ## Usage
 
 ```bash
-cd environments/sandbox
+cd environments/dev
 terraform init
 terraform apply
 ```
 
-**Recommended**: Start with `sandbox` environment.
+**Recommended**: Start with `dev` environment.
+
+## Policy as Code (OPA)
+
+This foundation includes [Rego policies](policies/) to enforce security best practices (e.g., Workload Identity on GKE) as code. Use these in your CI pipeline to prevent insecure configurations from being deployed.
