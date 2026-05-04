@@ -2,6 +2,8 @@
 
 **Build quality-first cloud modernization on Google Cloud Platform.**
 
+![Architecture Diagram](architecture.png)
+
 This repository contains **battle-tested frameworks, reference implementations, and tools** for designing and executing QE architecture across GCP modernization programs—from strategy to automation to metrics.
 
 Used by teams across healthcare, finance, and retail to reduce defect escape rates by 80%+ and improve release predictability.
