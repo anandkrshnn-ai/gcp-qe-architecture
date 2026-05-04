@@ -1,86 +1,26 @@
 # GCP QE Architecture
 
-![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
-![GKE](https://img.shields.io/badge/GKE-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini-8E75F7?style=for-the-badge&logo=google&logoColor=white)
+**Practical Quality Engineering patterns and implementations for production GCP environments.**
 
-> Practical, production-focused Quality Engineering patterns for GCP.
+Focused on **GKE, Cloud Run, Cloud SQL, Observability, Resilience**, and **Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
 
-**📖 View as Documentation Site**: [https://anandkrshnn-ai.github.io/gcp-qe-architecture/](https://anandkrshnn-ai.github.io/gcp-qe-architecture/) (after enabling GitHub Pages)
+### Why This Repo Exists
+I built this as a living reference while working as **QA Architect Manager** on GCP. It contains patterns I actually use and refine.
 
-## Quick Navigation
+### Quick Navigation
 
-- [Terraform Baseline](reference-implementations/terraform-baseline/)
-- [End-to-End Example](examples/end-to-end-observable-app/)
+- [Modular Terraform Baseline](reference-implementations/terraform-baseline/)
+- [End-to-End Observable Example](examples/end-to-end-observable-app/)
+- [Service Guides](guides/)
+- [AI Frameworks](frameworks/)
 - [Tools](tools/)
 - [Patterns & Checklists](patterns/)
-- [Evidence](evidence/)
+- [Evidence & Outputs](evidence/)
 
-Focused reference covering **GKE, Cloud Run, Cloud SQL, Observability, Resilience, and Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
-
-### Purpose
-This repository contains patterns, implementations, and practices I use and refine as a **QA Architect Manager** on GCP. 
-
-**Scope is deliberately narrow** — only high-impact areas that matter in real production environments.
-
-### What's Inside
-
-- **reference-implementations/** — Executable Terraform, k6, chaos experiments
-- **guides/** — Practical service-level quality guides
-- **frameworks/** — Gemini Agent QE + Agentic AI Quality
-- **tools/** — Small, useful automation scripts
-- **evidence/** — Screenshots, outputs, and real execution results
-
-### Quick Start
-
-```bash
-git clone https://github.com/anandkrshnn-ai/gcp-qe-architecture.git
-cd gcp-qe-architecture
-```
-
-Then explore:
-- [Terraform Baseline](reference-implementations/terraform-baseline/)
-- [GKE Testing Guide](guides/gke-testing-guide.md)
-- [Gemini Agent QE](frameworks/gemini-agent-qe/)
-- [End-to-End Observable App Example](examples/end-to-end-observable-app/)
-
-## Key Patterns
-
-- [Production Readiness Checklist](patterns/production-readiness-checklist.md)
-- Modular Terraform Baseline
-- Gemini-powered RCA
-- Agentic AI Quality Framework
-
-## CI/CD Validation
-
-This repository uses GitHub Actions to automatically validate Terraform code on every push/PR.
-
-## Evidence
-
-See [`evidence/`](evidence/) folder for:
-- Terraform plan/apply outputs
-- k6 test reports
-- Chaos experiment results
-- Gemini Agent outputs
-
-## Repository Maturity (Day 11)
-
-**Completed**:
-- Modular Terraform Baseline
-- Service Quality Guides (GKE, Cloud Run, Cloud SQL)
-- Working k6 Performance Suite
-- Gemini RCA Agent + Agentic AI / RAG QA
-- Production Readiness Checklist
-- End-to-End Example
-- Defect Escape Analyzer
-
-**Still Evolving**: Real job usage documentation (will be added as I apply these patterns at work).
+### Documentation Site
+This repository is also available as a clean documentation site via MkDocs.
 
 ### Disclaimer
-This is a **personal reference repository**. All patterns should be reviewed, tested, and adapted to your environment. No guarantees — use at your own risk.
+Personal reference repository. All code and patterns should be reviewed and tested thoroughly in your own environment. No warranties.
 
 **Last Updated:** May 2026
-
----
-
-Made by Anandakrishnan – QA Architect Manager

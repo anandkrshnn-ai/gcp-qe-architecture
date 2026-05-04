@@ -1,6 +1,11 @@
-# QA Automation & Quality Tools
+# Tools
 
-This folder contains small, useful automation scripts and tools for GCP Quality Engineering.
+This directory contains small, practical tools for Quality Engineering on GCP.
 
-- [Defect Escape Analyzer](defect-escape-analyzer/)
-- More coming soon...
+| Tool | Purpose | Status |
+|------|--------|--------|
+| [Defect Escape Analyzer](defect-escape-analyzer/) | Correlate incidents with quality gate gaps | Working |
+| [Gemini RCA Agent](../frameworks/gemini-agent-qe/tools/gemini-rca-agent.py) | Intelligent log analysis | Working |
+| [RAG Evaluator](../frameworks/agentic-ai-qe/tools/rag-evaluator.py) | Evaluate RAG faithfulness & relevance | Working |
+
+**All tools use native GCP services** (Vertex AI, Cloud Logging, etc.).
