@@ -25,7 +25,13 @@ Use this before every major release or Go-Live.
 - [ ] Load test results within SLOs
 - [ ] Canary deployment strategy ready
 
-### 5. Agentic AI / RAG (if applicable)
+### 5. Security & Compliance
+- [ ] Workload Identity enabled (no default service accounts)
+- [ ] Secrets managed via Secret Manager
+- [ ] Vulnerability scanning enabled (Container Analysis)
+- [ ] Binary Authorization enforced (if applicable)
+
+### 6. Agentic AI / RAG (if applicable)
 - [ ] RAG evaluation scores above threshold
 - [ ] Hallucination guardrails implemented
 - [ ] MCP Server security checklist completed
