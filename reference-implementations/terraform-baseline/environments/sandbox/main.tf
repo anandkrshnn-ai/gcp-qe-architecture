@@ -30,6 +30,10 @@ module "slo_monitoring" {
   notification_channel = "projects/${var.project_id}/notificationChannels/sandbox-alerts"
 }
 
+output "cloud_run_url" {
+  value = module.cloud_run.service_url
+}
+
 variable "project_id" { type = string }
 variable "environment" { default = "sandbox" }
 variable "region" { default = "asia-south1" }

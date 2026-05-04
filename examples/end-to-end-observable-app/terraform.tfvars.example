@@ -1,0 +1,4 @@
+project_id   = "your-project-id"
+region       = "asia-south1"
+environment  = "sandbox"
+container_image = "us-docker.pkg.dev/cloudrun/container/hello"
