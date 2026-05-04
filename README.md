@@ -2,15 +2,26 @@
 
 **A practical, executable reference for Quality Engineering on Google Cloud Platform.**
 
-This repository provides a battle-tested baseline for engineers and architects managing **GKE, Cloud Run, Cloud SQL, and AI-powered observability**. 
+![System Verification](https://github.com/anandkrshnn-ai/gcp-qe-architecture/actions/workflows/system-verification.yml/badge.svg)
+![Terraform Validate](https://github.com/anandkrshnn-ai/gcp-qe-architecture/actions/workflows/terraform-validate.yml/badge.svg)
+![Python Tools](https://github.com/anandkrshnn-ai/gcp-qe-architecture/actions/workflows/python-tools.yml/badge.svg)
+
+This repository provides a battle-tested baseline for engineers and architects managing **GKE, Cloud Run, Cloud SQL, and AI-powered observability**.
 
 ---
 
-## 🚀 Hero Flow: From Incident to Automated RCA
-The core value of this repo is the integration of modern AI into the QE workflow.
+## ✅ Verified by CI: "Always Runnable" Policy
+We enforce a strict "Always Runnable" policy. Our CI pipeline validates every commit:
+- **AI RCA Agent**: Verified in mock mode using sample log datasets.
+- **Performance Suite**: k6 suite verified against a local mock server.
+- **Terraform Baseline**: `validate` and `fmt` checks passed across all environments (dev/staging/prod).
+
+---
+
+## 🚀 Hero Flow: Run Locally in 5 Minutes
 
 ### 1. Execute AI RCA Locally (No GCP Required)
-You can test the Gemini RCA Agent immediately using mock logs:
+Test the Gemini RCA Agent immediately using mock logs:
 ```bash
 pip install -r requirements.txt
 python frameworks/gemini-agent-qe/tools/gemini-rca-agent.py --mock frameworks/gemini-agent-qe/tools/sample_logs.json
@@ -26,9 +37,6 @@ node tools/mock-server/server.js
 k6 run reference-implementations/k6-performance/cloud-run-load-test.js
 ```
 
-### 3. Terraform Baseline
-Review the [Modular Terraform Baseline](reference-implementations/terraform-baseline/). It is structured for multi-environment rollout and includes `terraform.tfvars.example` files for immediate use in your own projects.
-
 ---
 
 ## 📖 Key Sections
@@ -39,7 +47,7 @@ Review the [Modular Terraform Baseline](reference-implementations/terraform-base
 - **[Reproducible Proofs](evidence/)**: Actual execution logs and plan outputs validating the architecture.
 
 ## 📖 Documentation Site
-Full, searchable documentation is available at:  
+Full documentation and guides are available at:  
 [https://anandkrshnn-ai.github.io/gcp-qe-architecture/](https://anandkrshnn-ai.github.io/gcp-qe-architecture/)
 
 ---
