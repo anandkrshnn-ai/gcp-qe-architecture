@@ -1,6 +1,6 @@
 # GCP QE Architecture
 
-**Practical Quality Engineering patterns for production GCP workloads.**
+> Practical, production-focused Quality Engineering patterns for GCP.
 
 Focused reference covering **GKE, Cloud Run, Cloud SQL, Observability, Resilience, and Modern AI Quality** (Gemini Agents + Agentic AI / RAG / MCP).
 
@@ -28,6 +28,13 @@ Then explore:
 - [Terraform Baseline](reference-implementations/terraform-baseline/)
 - [GKE Testing Guide](guides/gke-testing-guide.md)
 - [Gemini Agent QE](frameworks/gemini-agent-qe/)
+
+## Key Patterns
+
+- [Production Readiness Checklist](patterns/production-readiness-checklist.md)
+- Modular Terraform Baseline
+- Gemini-powered RCA
+- Agentic AI Quality Framework
 
 ## CI/CD Validation
 
