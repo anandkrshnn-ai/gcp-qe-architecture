@@ -25,6 +25,11 @@ module "cloud_sql" {
   region      = var.region
 }
 
+module "slo_monitoring" {
+  source               = "../../slo-monitoring"
+  notification_channel = "projects/${var.project_id}/notificationChannels/sandbox-alerts"
+}
+
 variable "project_id" { type = string }
 variable "environment" { default = "sandbox" }
 variable "region" { default = "asia-south1" }
