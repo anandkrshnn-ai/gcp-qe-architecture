@@ -1,18 +1,24 @@
-# Roadmap
+# Project Roadmap
 
-## Q2 2026 (Near Term)
-- **Real Usage Expansion**: Add more case studies from my current role as QA Architect Manager.
-- **Terraform Hardening**: Improve test coverage for modular components.
-- **Security Gates**: Add Binary Authorization + Container Analysis automated triggers.
+This roadmap outlines the evolution of the `gcp-qe-architecture` repository from a personal baseline to a community-standard reference for GCP Quality Engineering.
 
-## Q3 2026 (Medium Term)
-- **AI Quality Expansion**: Add advanced RAG evaluation using Vertex AI Gen AI Evaluation service.
-- **Chaos Automation**: Integrate Chaos Mesh experiments directly into Cloud Build pipelines.
-- **Multi-Cloud Reference**: Lightweight comparison/mapping of GCP QE patterns to Azure/AWS.
+## ✅ Phase 1: Foundation (Completed - May 2026)
+- [x] Modular Terraform baseline for GKE, Cloud Run, and Cloud SQL.
+- [x] Initial Gemini RCA Agent and RAG Evaluator prototypes.
+- [x] Basic CI/CD integration with Cloud Build.
+- [x] Multi-environment support (dev/staging/prod).
+- [x] MkDocs documentation site deployment.
 
-## Long Term
-- **Community Reference**: Evolve this into a go-to community reference for GCP practitioners.
-- **Open Source Tools**: Release standalone versions of the Gemini RCA and Defect Escape Analyzer.
-- **Certification Guides**: Alignment with Google Cloud Professional Cloud DevOps/Architect certifications.
+## 🚧 Phase 2: Depth & Reliability (In Progress - Q3 2026)
+- [ ] **Automated Chaos Gates**: Integrate Chaos Mesh with Cloud Build to fail pipelines if resilience targets aren't met.
+- [ ] **Terraform Hardening**: Add `tfsec` and OPA policy enforcement as mandatory gates.
+- [ ] **Agentic AI Maturity**: Expand the Gemini Agent with tool-calling capabilities and conversation memory.
+- [ ] **Advanced RAG Eval**: Integration with Vertex AI Gen AI Evaluation service for systematic hallucination scoring.
 
-*This roadmap is subject to change as I continue to experiment and learn in production environments.*
+## 🔭 Phase 3: Industry Alignment (Q4 2026 - Q1 2027)
+- [ ] **MCP Server QA**: Standardized testing patterns for Model Context Protocol servers.
+- [ ] **Cross-Cloud Patterns**: Quality strategies for multi-cloud deployments (GCP + AWS/Azure).
+- [ ] **Community Adoption**: Open for PRs from the wider GCP community; refined issue templates and contribution guidelines.
+
+---
+*Roadmap updated regularly based on real-world engineering requirements.*
