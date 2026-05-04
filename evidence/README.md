@@ -1,5 +1,10 @@
-# Evidence & Execution Outputs
+# Evidence Repository
 
-This folder contains real execution results from the patterns in this repository.
+Contains execution outputs, screenshots, and results from running the patterns.
 
-**Note**: All screenshots and outputs are from sandbox environments (as of May 2026).
+**Current Evidence Available**:
+- Terraform Baseline (plan + apply)
+- k6 Performance Reports
+- Gemini RCA Agent outputs
+- RAG Evaluator results
+- SLO Terraform examples

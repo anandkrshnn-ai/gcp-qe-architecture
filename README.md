@@ -20,6 +20,10 @@ I built this as a living reference while working as **QA Architect Manager** on 
 ### Documentation Site
 This repository is also available as a clean documentation site via MkDocs.
 
+## Real World Usage
+
+See [Real World Usage](docs/real-world-usage.md) for how these patterns are being applied in practice.
+
 ### Disclaimer
 Personal reference repository. All code and patterns should be reviewed and tested thoroughly in your own environment. No warranties.
 
