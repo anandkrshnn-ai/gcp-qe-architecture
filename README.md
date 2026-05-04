@@ -29,6 +29,18 @@ Then explore:
 - [GKE Testing Guide](guides/gke-testing-guide.md)
 - [Gemini Agent QE](frameworks/gemini-agent-qe/)
 
+## CI/CD Validation
+
+This repository uses GitHub Actions to automatically validate Terraform code on every push/PR.
+
+## Evidence
+
+See [`evidence/`](evidence/) folder for:
+- Terraform plan/apply outputs
+- k6 test reports
+- Chaos experiment results
+- Gemini Agent outputs
+
 ### Disclaimer
 This is a **personal reference repository**. All patterns should be reviewed, tested, and adapted to your environment. No guarantees — use at your own risk.
 
