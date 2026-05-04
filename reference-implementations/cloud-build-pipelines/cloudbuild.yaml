@@ -3,7 +3,7 @@ steps:
   - name: 'hashicorp/terraform:1.10'
     id: 'terraform-validate'
     args: ['validate']
-    dir: 'reference-implementations/terraform-baseline/environments/sandbox'
+    dir: 'reference-implementations/terraform-baseline/environments/dev'
 
   # 2. k6 Performance Test
   - name: 'loadimpact/k6'

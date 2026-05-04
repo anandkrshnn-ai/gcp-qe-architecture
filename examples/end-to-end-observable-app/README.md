@@ -11,8 +11,8 @@ This is a complete example combining:
 
 ## Deployment Steps
 
-1. Update `environments/sandbox/terraform.tfvars` with your project_id
-2. `terraform apply` (from `environments/sandbox/`)
+1. Update `environments/dev/terraform.tfvars` with your project_id
+2. `terraform apply` (from `environments/dev/`)
 3. Deploy sample application to Cloud Run
 4. Run k6 performance test
 5. Trigger Gemini RCA Agent on sample logs
