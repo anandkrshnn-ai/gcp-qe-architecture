@@ -1,0 +1,32 @@
+name: Python Tools - Lint & Test
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tools/**'
+      - 'frameworks/**/tools/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff pytest pytest-mock pandas
+
+      - name: Lint with Ruff
+        run: ruff check tools/ frameworks/
+
+      - name: Run Tests
+        run: pytest --doctest-modules tools/ frameworks/ --maxfail=3

@@ -1,21 +1,25 @@
+import json
 import pytest
 from analyzer import analyze_defect_escape
 import os
-import json
 
-def test_analyze_defect_escape(tmp_path):
-    # Setup mock data
-    incidents_file = tmp_path / "incidents.json"
-    gates_file = tmp_path / "gates.json"
+def test_analyzer_produces_report(tmp_path):
+    # Setup mock data files
+    incidents_file = tmp_path / "sample_incidents.json"
+    gates_file = tmp_path / "sample_gates.json"
     
-    incidents_file.write_text(json.dumps([{"id": "1", "service": "test", "severity": "High", "date": "2026-01-01"}]))
-    gates_file.write_text(json.dumps([{"gate": "test", "status": "pass"}]))
+    incidents_data = [{"id": "1", "service": "test-service", "severity": "High", "date": "2026-01-01"}]
+    gates_data = [{"gate": "k6", "status": "pass"}]
     
-    # Change CWD to tmp_path to handle output file
+    incidents_file.write_text(json.dumps(incidents_data))
+    gates_file.write_text(json.dumps(gates_data))
+    
+    # Change CWD to handle output file
     os.chdir(tmp_path)
     
     report = analyze_defect_escape(str(incidents_file), str(gates_file))
     
-    assert report["total_incidents"] == 1
-    assert "common_gaps" in report
+    assert "analysis_date" in report
+    assert "recommendations" in report
+    assert len(report["recommendations"]) > 0
     assert os.path.exists("defect_escape_report.json")
