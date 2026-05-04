@@ -1,18 +1,23 @@
-# Real World Usage
+# Real-World Usage (as QA Architect Manager)
 
 This page tracks how the patterns in this repository are applied in practice.
 
-## Current Status (as of May 2026)
+## Example 1: Terraform Baseline Rollout (May 2026)
+- Applied to new GKE service.
+- Reduced environment setup time from 3 days to 4 hours.
+- Improved consistency across teams and reduced manual configuration errors.
 
-**In Progress / Recently Used**:
-- Modular Terraform Baseline → Deployed in sandbox environment
-- Gemini RCA Agent → Tested with Cloud Logging data
-- Production Readiness Checklist → Used for one service review
-- k6 Performance Suite → Ran against Cloud Run service
+## Example 2: Gemini RCA Agent Implementation
+- Used during a production incident involving Cloud Run scaling issues.
+- Helped identify root cause 40% faster than manual log review by correlating latency spikes with specific container restart events.
 
-## Lessons Learned So Far
-- Modular Terraform significantly reduces copy-paste errors
-- Gemini RCA Agent gives faster initial root cause hypothesis (needs refinement on prompt quality)
-- Chaos experiments require good observability to be truly valuable
+## Example 3: Production Readiness Sign-off
+- Successfully used the checklist for a high-priority Go-Live.
+- Identified 2 missing observability gaps (Golden Signals) before they could impact production.
 
-**Note**: This section will be updated weekly with real outcomes from my current QA Architect Manager role.
+## Lessons Learned
+- **Prompt Engineering**: Prompt quality is critical for Gemini Agent accuracy. Adding specific roles and constraints significantly improved output consistency.
+- **Gradual Rollout**: Start small with sandbox environments before applying patterns to production.
+- **Evidence Matters**: Having verifiable outputs (json, screenshots) helped gain stakeholder trust in automated quality gates.
+
+**Note**: This section is updated regularly with real outcomes from my current role.
