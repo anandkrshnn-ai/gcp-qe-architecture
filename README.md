@@ -28,7 +28,23 @@ Built and maintained while working as **QA Architect Manager** on GCP.
 ### Documentation
 Full documentation available via [MkDocs Site](https://anandkrshnn-ai.github.io/gcp-qe-architecture/).
 
+## 4-Week Deepening Plan
+
+Completed a focused 4-week improvement plan (May 2026) to increase depth, credibility, and production-readiness.
+
+See [4-Week Reflection](docs/4-week-reflection.md)
+
+## Maintenance & Contribution
+
+This repository is actively maintained. Contributions are welcome if they follow the existing quality standards (working code + evidence).
+
+**Long-term Goal**: Become a practical, trusted reference for GCP Quality Engineering practitioners.
+
 ### Disclaimer
 This is a **personal reference repository**. All patterns should be reviewed, tested, and adapted to your environment.
 
 **Last Updated:** May 2026
+
+---
+
+Made by Anandakrishnan – QA Architect Manager
