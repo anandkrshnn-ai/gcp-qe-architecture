@@ -10,6 +10,7 @@ I built this as a living reference while working as **QA Architect Manager** on 
 ### Quick Navigation
 
 - [Modular Terraform Baseline](reference-implementations/terraform-baseline/)
+- [Cloud Build Quality Pipeline](reference-implementations/cloud-build-pipelines/)
 - [End-to-End Observable Example](examples/end-to-end-observable-app/)
 - [Service Guides](guides/)
 - [AI Frameworks](frameworks/)

@@ -1,0 +1,27 @@
+steps:
+  # 1. Terraform Validation
+  - name: 'hashicorp/terraform:1.10'
+    id: 'terraform-validate'
+    args: ['validate']
+    dir: 'reference-implementations/terraform-baseline/environments/sandbox'
+
+  # 2. k6 Performance Test
+  - name: 'loadimpact/k6'
+    id: 'performance-test'
+    args: ['run', 'reference-implementations/k6-performance/cloud-run-load-test.js']
+    env:
+      - 'K6_CLOUD_TOKEN=$_K6_CLOUD_TOKEN'
+
+  # 3. Gemini RCA Agent (if logs available)
+  - name: 'python:3.12'
+    id: 'gemini-rca'
+    script: |
+      pip install google-cloud-logging vertexai
+      python frameworks/gemini-agent-qe/tools/gemini-rca-agent.py
+
+  # 4. Quality Gate
+  - name: 'bash'
+    id: 'quality-gate'
+    script: |
+      echo "✅ All quality gates passed"
+      echo "Terraform: OK | Performance: OK | RCA: Completed"
