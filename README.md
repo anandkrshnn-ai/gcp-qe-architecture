@@ -19,6 +19,9 @@ I built this as a living reference while working as **QA Architect Manager** on 
 
 ### Quick Navigation
 
+- [Case Studies](case-studies/) 🚀
+- [Real-World Usage](docs/real-world-usage.md)
+- [Lessons Learned](docs/lessons-learned.md)
 - [Modular Terraform Baseline](reference-implementations/terraform-baseline/)
 - [Cloud Build Quality Pipeline](reference-implementations/cloud-build-pipelines/)
 - [End-to-End Observable Example](examples/end-to-end-observable-app/)
