@@ -35,5 +35,5 @@ output "cloud_run_url" {
 }
 
 variable "project_id" { type = string }
-variable "environment" { default = "prod" }
+variable "environment" { default = "staging" }
 variable "region" { default = "asia-south1" }

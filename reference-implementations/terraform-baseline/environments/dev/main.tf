@@ -27,7 +27,7 @@ module "cloud_sql" {
 
 module "slo_monitoring" {
   source               = "../../slo-monitoring"
-  notification_channel = "projects/${var.project_id}/notificationChannels/sandbox-alerts"
+  notification_channel = "projects/${var.project_id}/notificationChannels/${var.environment}-alerts"
 }
 
 output "cloud_run_url" {
@@ -35,5 +35,5 @@ output "cloud_run_url" {
 }
 
 variable "project_id" { type = string }
-variable "environment" { default = "sandbox" }
+variable "environment" { default = "dev" }
 variable "region" { default = "asia-south1" }

@@ -1,6 +1,8 @@
 terraform {
+  # Note: Backend blocks do not support interpolation. 
+  # Use 'terraform init -backend-config="bucket=..."' for dynamic backends.
   backend "gcs" {
-    bucket = "tf-state-your-project-id" # Placeholder, actual usage needs dynamic project ID or variable
-    prefix = "gcp-qe-architecture/state"
+    bucket = "tf-state-YOUR_PROJECT_ID" 
+    prefix = "gcp-qe-architecture/terraform"
   }
 }
