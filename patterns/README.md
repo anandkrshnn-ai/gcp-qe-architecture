@@ -1,7 +1,8 @@
-# Reusable Patterns
+# Patterns Library
 
-This folder contains battle-tested, opinionated patterns for GCP Quality Engineering.
+This directory contains battle-tested, opinionated patterns for GCP Quality Engineering.
 
 - [Production Readiness Checklist](production-readiness-checklist.md)
-- [SLO Definition Template](slo-definition-template.md) ← Coming soon
-- [Canary Deployment Strategy](canary-deployment.md) ← Coming soon
+- [SLO Definition Template](slo-definition-template.md)
+- [Canary Deployment Pattern](canary-deployment.md)
+- [Quality Gate Strategy](quality-gate-strategy.md)
