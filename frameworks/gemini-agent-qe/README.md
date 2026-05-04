@@ -11,4 +11,4 @@ python tools/gemini-rca-agent.py
 ```
 
 ### Integration Examples
-See [examples/gemini-rca-in-incident/](../../examples/gemini-rca-in-incident/) for a full incident-to-remediation workflow using this agent.py
+See [examples/gemini-rca-in-incident/](../../examples/gemini-rca-in-incident/) for a full incident-to-remediation workflow using this agent.

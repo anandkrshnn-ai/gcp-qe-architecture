@@ -38,6 +38,8 @@ nav:
   - Tools: tools/README.md
   - Patterns: patterns/README.md
   - Lessons Learned: docs/lessons-learned.md
+  - 4-Week Reflection: docs/4-week-reflection.md
+  - Maintenance Plan: docs/maintenance-plan.md
   - Evidence: evidence/README.md
 
 markdown_extensions:
