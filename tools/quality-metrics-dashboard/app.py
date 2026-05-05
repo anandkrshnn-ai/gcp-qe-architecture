@@ -13,7 +13,7 @@ def fetch_dora_metrics():
 
 def fetch_defect_escape_rate():
     # Mock data showing trend
-    dates = pd.date_range(start="2026-01-01", periods=5, freq='M')
+    dates = pd.date_range(start="2026-01-01", periods=5, freq='ME')
     rates = [40, 25, 15, 8, 3] # Drastic reduction over time
     return pd.DataFrame({"Date": dates, "Defect Escape Rate (%)": rates})
 
