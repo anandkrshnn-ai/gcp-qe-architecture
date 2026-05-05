@@ -31,6 +31,19 @@ Industry-standard, cloud-agnostic principles. No proprietary content.
 | [03 · Production Readiness](guides/03-production-readiness.md) | DORA-based quality gates, release governance, and the readiness checklist |
 | [04 · AI-Powered Quality Engineering](guides/04-ai-powered-quality-engineering.md) | LLM-based RCA agents, RAG for observability, evaluation frameworks |
 
+### 📚 Platform-Specific Guides
+
+GCP and workload-specific implementation patterns.
+
+| Guide | What You'll Learn |
+|-------|------------------|
+| [Cloud Run Quality Framework](guides/cloud-run-quality-framework.md) | Cold start, concurrency, and canary rollout patterns for Cloud Run |
+| [Cloud Run Quality Guide](guides/cloud-run-quality-guide.md) | Hardened Cloud Run configuration with min-instances and startup probes |
+| [GKE Testing Guide](guides/gke-testing-guide.md) | Pod Disruption Budgets, resource quotas, and Chaos Mesh on Kubernetes |
+| [Cloud SQL Resilience Guide](guides/cloud-sql-resilience-guide.md) | HA configuration, failover testing, and replication monitoring |
+| [Cloud SQL Resilience (Patterns)](guides/cloud-sql-resilience.md) | SQL resilience patterns and SLO recommendations |
+| [Security & Compliance QA](guides/security-qa-guide.md) | Workload Identity, Binary Authorization, and IAM least privilege |
+
 ---
 
 ### 📋 Enterprise Templates (Copy and Adapt)

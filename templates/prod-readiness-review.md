@@ -1,33 +1,12 @@
-# Production Readiness Review (PRR) Checklist
+# ⚠️ Superseded Template
 
-Before any service goes live on GCP, it must pass this PRR.
+> This file is a legacy stub replaced by the comprehensive enterprise-grade template:
+> **[`release-readiness-checklist.md`](release-readiness-checklist.md)**
 
-## 1. Observability
--   [ ] **SLIs/SLOs:** Defined and dashboarded in Cloud Monitoring.
--   [ ] **Alerting:** PagerDuty/Slack integration verified.
--   [ ] **Logging:** Structured logging implemented; no PII in logs.
--   [ ] **Tracing:** Cloud Trace integrated for distributed services.
+The new template covers:
+- 9 structured sections with hard `[BLOCK]` gates and `[RISK]` acceptance items
+- Error budget check before every release
+- Explicit Go/No-Go decision framework with required approvers
+- Post-release monitoring plan with defined time windows
 
-## 2. Scalability & Performance
--   [ ] **Autoscaling:** HPA/VPA (GKE) or Max Instances (Cloud Run) configured.
--   [ ] **Load Test:** Successfully passed 2x predicted peak load.
--   [ ] **Quotas:** GCP project quotas verified for peak load.
-
-## 3. Reliability & Resilience
--   [ ] **HA:** Multi-zone deployment verified.
--   [ ] **Failover:** Database failover test successful.
--   [ ] **Backups:** Daily backups enabled and restoration verified.
-
-## 4. Security & Compliance
--   [ ] **IAM:** Least privilege principle applied.
--   [ ] **Vulnerability:** Zero "High" vulnerabilities in container scans.
--   [ ] **Encryption:** Data encrypted at rest and in transit.
-
-## 5. Operations
--   [ ] **Deployment:** Automated CI/CD pipeline verified.
--   [ ] **Rollback:** Automated rollback strategy tested.
--   [ ] **On-call:** Rotation schedule established.
-
----
-**Status:** [APPROVED | REJECTED]
-**Reviewer:** ____________________
+**Please use `release-readiness-checklist.md` for all production release reviews.**

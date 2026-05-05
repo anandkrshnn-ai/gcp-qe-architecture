@@ -5,11 +5,11 @@ Thank you for your interest in contributing! This project aims to be a high-qual
 ## How to Contribute
 
 ### 1. Reporting Bugs
-- Use the [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md).
+- Use the [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.yml).
 - Provide logs, screenshots, and steps to reproduce.
 
 ### 2. Suggesting Enhancements
-- Open an issue using the [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.md).
+- Open an issue using the [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.yml).
 - Explain the "Why" and "How" of the proposed change.
 
 ### 3. Pull Requests
