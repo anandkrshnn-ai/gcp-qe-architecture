@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install ruff pytest pytest-mock pandas
+          pip install -r requirements.txt
 
       - name: Lint with Ruff
         run: ruff check tools/ frameworks/

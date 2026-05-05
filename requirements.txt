@@ -1,7 +1,6 @@
 # Core Dependencies
 google-cloud-logging
-google-cloud-monitoring
-vertexai
+google-cloud-vertexai
 pandas
 pytest
 pytest-mock
@@ -9,5 +8,3 @@ ruff
 mkdocs-material
 mkdocs-mermaid2-plugin
 k6
-# Optional for local OPA testing
-# opa

@@ -35,9 +35,10 @@ resource "google_monitoring_slo" "cloud_sql_failover" {
   goal         = 0.98
   rolling_period_days = 28
 
-  basic_sli {
-    availability {
-      good_service_filter = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
+  request_based_sli {
+    good_total_ratio {
+      total_service_filter = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
+      good_service_filter  = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
     }
   }
 }
