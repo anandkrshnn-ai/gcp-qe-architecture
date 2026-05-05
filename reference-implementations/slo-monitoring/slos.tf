@@ -3,12 +3,12 @@ resource "google_monitoring_slo" "gke_availability" {
   service      = "gke"
   display_name = "GKE Availability SLO"
   goal         = 0.995   # 99.5%
-
   rolling_period_days = 28
 
-  basic_sli {
-    availability {
-      good_service_filter = "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\""
+  request_based_sli {
+    good_total_ratio {
+      total_service_filter = "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\""
+      good_service_filter  = "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\""
     }
   }
 }
@@ -18,12 +18,14 @@ resource "google_monitoring_slo" "cloud_run_latency" {
   service      = "cloud-run"
   display_name = "Cloud Run P95 Latency SLO"
   goal         = 0.95
-
   rolling_period_days = 28
 
-  basic_sli {
-    latency {
-      threshold = "800ms"
+  request_based_sli {
+    distribution_cut {
+      distribution_filter = "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\""
+      range {
+        max = 800
+      }
     }
   }
 }

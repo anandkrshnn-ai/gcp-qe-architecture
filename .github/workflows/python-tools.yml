@@ -3,9 +3,6 @@ name: Python Tools - Lint & Test
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'tools/**'
-      - 'frameworks/**/tools/**'
   pull_request:
     branches: [ main ]
 
