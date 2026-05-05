@@ -22,9 +22,9 @@ theme:
 nav:
   - Home: index.md
   - Real-World Usage: docs/real-world-usage.md
-  - Case Studies:
     - GKE Resilience: case-studies/gke-resilience-improvement.md
     - Cloud Run Performance: case-studies/cloud-run-performance-stabilization.md
+    - Sovereign AI RCA: case-studies/sovereign-ai-rca.md
   - Terraform Baseline: reference-implementations/terraform-baseline/README.md
   - End-to-End Example: examples/end-to-end-observable-app/README.md
   - Guides:
