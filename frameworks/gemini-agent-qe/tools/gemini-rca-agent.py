@@ -27,21 +27,21 @@ def analyze_incident(log_filter: str, project_id: str = None, mock_file: str = N
         log_context = "\n".join([str(entry.payload) for entry in entries])
 
     # 2. Configure Model
-    # Note: In mock mode without credentials, we simulate the LLM response for CI/CD demonstration
+    # Note: In mock mode, we simulate the logic to ensure the downstream pipeline works.
     if mock_file:
         return {
-            "root_cause": "GKE Pod OOMKill due to missing resource limits",
-            "confidence": 92,
-            "impacted_services": ["GKE", "Frontend-Service"],
+            "root_cause": "GKE Pod OOMKill detected in mock logs",
+            "confidence": 95,
+            "impacted_services": ["GKE", "Mock-Service"],
             "severity": "High",
             "recommended_gates": ["k6 Performance", "Chaos Mesh Pod-Kill"],
             "suggested_fix": "Add resources.limits.memory to the deployment manifest",
             "chaos_suggestion": "pod-kill",
-            "reasoning": "Logs show multiple 'terminated with exit code 137' (OOM) events across 3 replicas."
+            "reasoning": f"Simulated analysis based on {len(log_context.splitlines())} log lines."
         }
 
     model = GenerativeModel(
-        "gemini-3.1-pro",
+        "gemini-1.5-pro",
         generation_config=GenerationConfig(
             temperature=0.1,
             max_output_tokens=2048,
