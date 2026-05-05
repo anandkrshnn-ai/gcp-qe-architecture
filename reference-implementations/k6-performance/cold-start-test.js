@@ -11,14 +11,14 @@ export const options = {
     },
   },
   thresholds: {
-    # We expect first-request latency to be higher, but still within acceptable cold-start limits
+    // We expect first-request latency to be higher, but still within acceptable cold-start limits
     'http_req_duration': ['p(95) < 5000'], 
   },
 };
 
 export default function () {
   const baseUrl = __ENV.BASE_URL || 'http://localhost:8080';
-  # Specifically hitting the health endpoint to trigger container startup if scaled to 0
+  // Specifically hitting the health endpoint to trigger container startup if scaled to 0
   const res = http.get(`${baseUrl}/health`); 
 
   check(res, {
