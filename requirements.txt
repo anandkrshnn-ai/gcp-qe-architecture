@@ -1,7 +1,9 @@
 # Core Dependencies
 google-cloud-logging
 google-cloud-aiplatform
+google-cloud-vertexai
 pandas
+streamlit
 pytest
 pytest-mock
 ruff

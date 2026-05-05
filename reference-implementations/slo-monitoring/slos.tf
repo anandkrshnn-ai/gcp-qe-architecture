@@ -5,11 +5,8 @@ resource "google_monitoring_slo" "gke_availability" {
   goal         = 0.995   # 99.5%
   rolling_period_days = 28
 
-  request_based_sli {
-    good_total_ratio {
-      total_service_filter = "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\""
-      good_service_filter  = "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\""
-    }
+  basic_sli {
+    availability {}
   }
 }
 
@@ -20,12 +17,9 @@ resource "google_monitoring_slo" "cloud_run_latency" {
   goal         = 0.95
   rolling_period_days = 28
 
-  request_based_sli {
-    distribution_cut {
-      distribution_filter = "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\""
-      range {
-        max = 800
-      }
+  basic_sli {
+    latency {
+      threshold = "800ms"
     }
   }
 }
@@ -37,11 +31,8 @@ resource "google_monitoring_slo" "cloud_sql_failover" {
   goal         = 0.98
   rolling_period_days = 28
 
-  request_based_sli {
-    good_total_ratio {
-      total_service_filter = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
-      good_service_filter  = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\""
-    }
+  basic_sli {
+    availability {}
   }
 }
 
