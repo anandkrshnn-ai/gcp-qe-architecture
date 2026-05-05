@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'reference-implementations/terraform-baseline/**'
+      - 'reference-implementations/slo-monitoring/**'
 
 jobs:
   validate:
