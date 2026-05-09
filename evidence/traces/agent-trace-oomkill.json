@@ -1,0 +1,38 @@
+{
+  "trace_id": "agent-sre-7782-99a",
+  "timestamp": "2026-05-09T18:50:00.123Z",
+  "incident": "Transaction Engine SLO Breach (Latency > 500ms)",
+  "agent_steps": [
+    {
+      "step": 1,
+      "agent": "Orchestrator",
+      "thought": "SLO breach detected in production-us-central1. Decomposing into diagnostic tasks.",
+      "action": "DELEGATE_TO_DIAGNOSTICIAN"
+    },
+    {
+      "step": 2,
+      "agent": "Diagnostician",
+      "thought": "Initial CPU/RAM looks stable. Checking local DuckDB cache for recent memory allocations.",
+      "observation": "Found 900MB spike in Native Direct Buffers. Heap is steady at 2GB.",
+      "hypothesis": "Java Native Memory Leak (Direct Buffer exhaustion)."
+    },
+    {
+      "step": 3,
+      "agent": "Reviewer",
+      "thought": "Hypothesis check: Does this match historical patterns in AlloyDB?",
+      "action": "QUERY_ALLOYDB_INCIDENTS",
+      "result": "92% match to 'Native Leak Pattern A' from Q4 2025.",
+      "status": "APPROVED"
+    },
+    {
+      "step": 4,
+      "agent": "Healer",
+      "thought": "Generating Terraform plan to update jemalloc environment variables to optimize fragmentation.",
+      "plan_type": "Terraform_HCL",
+      "safety_scan": "Model Armor: PASS"
+    }
+  ],
+  "outcome": "Awaiting Human Approval (Slack Channel #sre-alerts)",
+  "total_reasoning_time_ms": 1450,
+  "data_egress_kb": 12
+}

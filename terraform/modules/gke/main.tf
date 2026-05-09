@@ -45,6 +45,19 @@ resource "google_container_cluster" "primary" {
   }
 }
 
+resource "google_project_iam_member" "agent_vertex" {
+  project = var.project_id
+  role    = "roles/aiplatform.user"
+  member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}
+
+# 2026 Enhancement: Managed MCP Server Access
+resource "google_project_iam_member" "agent_alloydb_viewer" {
+  project = var.project_id
+  role    = "roles/alloydb.viewer"
+  member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}
+
 resource "google_container_node_pool" "agent_nodes" {
   name       = "agent-pool"
   location   = var.region
@@ -52,8 +65,16 @@ resource "google_container_node_pool" "agent_nodes" {
   node_count = var.node_count
 
   node_config {
-    preemptible  = true # Cost optimization using Spot instances
-    machine_type = "e2-standard-4"
+    # 2026 Sovereign SRE Enhancement: G4 Confidential VM Support
+    confidential_nodes {
+      enabled = true
+    }
+    
+    # Using Axion or N4/G4 instances for high-efficiency Agentic compute
+    machine_type = "g4-standard-4" 
+    
+    preemptible  = true
+    spot         = true
 
     labels = {
       workload = "nemoclaw-agent"

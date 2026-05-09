@@ -107,10 +107,11 @@ Drop-in templates for production engineering teams.
 
 ---
 
-### 🛡️ Security Audit Artifacts
+### 🛡️ Security & Observability Artifacts
 - [Security Audit: Sovereign SRE v2](evidence/security-audit-sovereign-sre.md)
-- [Security Audit: ASCO Orchestrator](evidence/security-audit-asco.md)
-- [Security Audit: Compliance Guardian](evidence/security-audit-compliance.md)
+- [Agent Reasoning Trace (JSON)](evidence/traces/agent-trace-oomkill.json) — Full multi-agent thought-action provenance.
+- [Latency Benchmark (Local-First vs Cloud)](benchmarks/duckdb_vs_cloud_latency.py) — Validating the 100x speedup of Edge-AI.
+- [Brutal Audit & Remediation Plan](evidence/brutal-analysis-may-2026.md)
 
 ---
 
