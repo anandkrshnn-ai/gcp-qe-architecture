@@ -28,4 +28,7 @@ Building for 2026 means building for **Sovereignty, Speed, and Scale**.
 
 Check out the full repository here: [Link to Repo]
 
+Best,
+**Anandakrishnan Damodaran, Principal Architect**
+
 #GCP #GoogleCloud #AI #SRE #MachineLearning #GenerativeAI #StaffEngineering #CloudArchitecture

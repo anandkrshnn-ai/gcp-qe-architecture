@@ -1,10 +1,5 @@
-# Portfolio Hero Deck: Sovereign AI Architectures (GCP 2026)
-
-This is a slide-based summary of the flagship projects in this repository. Use this for presentations, LinkedIn carousels, or portfolio site highlights.
-
----
-
 ## Slide 1: Mission & Identity
+**Author**: Anandakrishnan Damodaran, Principal Architect  
 **Headline**: The Sovereign AI Architect  
 **Subtext**: Building Resilient, Self-Healing, and Regulated AI Platforms on Google Cloud (2026).  
 **Key Vision**: Moving from "AI as a feature" to "Agentic Autonomy as Infrastructure."
@@ -72,5 +67,6 @@ This is a slide-based summary of the flagship projects in this repository. Use t
 
 ## Slide 10: Conclusion & Impact
 **The Result**: A portfolio of empirically verifiable, production-hardened AI platforms.  
-**Contact**: [Your Name/Link]  
-**Repository**: [Link to this Repo]
+**Contact**: [Anandakrishnan Damodaran](https://linkedin.com/in/yourprofile)  
+**Role**: Principal Architect  
+**Repository**: [Sovereign-GCP Suite](https://github.com/anandkrshnn-ai/gcp-qe-architecture)

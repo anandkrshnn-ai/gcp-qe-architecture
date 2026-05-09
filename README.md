@@ -2,7 +2,7 @@
 
 **The Principal-Level Reference for Sovereign AI & Cloud Modernization.**
 
-Developed as a flagship modernization baseline for GKE, Cloud Run, and AI-Powered Quality Systems in highly regulated industries.
+Developed as a flagship modernization baseline for GKE, Cloud Run, and AI-Powered Quality Systems by **Anandakrishnan Damodaran, Principal Architect**.
 
 ![System Verification](https://github.com/anandkrshnn-ai/gcp-qe-architecture/actions/workflows/system-verification.yml/badge.svg)
 ![Terraform Validate](https://github.com/anandkrshnn-ai/gcp-qe-architecture/actions/workflows/terraform-validate.yml/badge.svg)
