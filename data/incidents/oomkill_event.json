@@ -1,0 +1,34 @@
+[
+  {
+    "insertId": "12345",
+    "jsonPayload": {
+      "message": "Memory cgroup out of memory: Killed process 42 (java) total-vm:4194304kB, anon-rss:2097152kB, file-rss:0kB, shmem-rss:0kB",
+      "pod_name": "transaction-engine-88f",
+      "reason": "OOMKilling"
+    },
+    "resource": {
+      "type": "gke_container",
+      "labels": {
+        "pod_name": "transaction-engine-88f",
+        "container_name": "transaction-v1"
+      }
+    },
+    "severity": "ERROR",
+    "timestamp": "2026-05-09T18:40:01Z"
+  },
+  {
+    "insertId": "12346",
+    "jsonPayload": {
+      "message": "Liveness probe failed: HTTP 503 Service Unavailable",
+      "pod_name": "transaction-engine-88f"
+    },
+    "resource": {
+      "type": "gke_container",
+      "labels": {
+        "pod_name": "transaction-engine-88f"
+      }
+    },
+    "severity": "CRITICAL",
+    "timestamp": "2026-05-09T18:40:02Z"
+  }
+]
