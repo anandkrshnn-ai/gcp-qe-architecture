@@ -1,4 +1,0 @@
-[
-  {"id": "INC-001", "service": "Cloud Run", "severity": "High", "date": "2026-05-01"},
-  {"id": "INC-002", "service": "GKE", "severity": "Critical", "date": "2026-05-02"}
-]

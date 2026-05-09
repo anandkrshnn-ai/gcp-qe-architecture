@@ -1,8 +1,0 @@
-{
-  "root_cause": "Database connection pool exhaustion on postgres-primary due to unexpected spike in API requests without proper rate limiting.",
-  "confidence": 92,
-  "impacted_services": ["Cloud Run API service", "Cloud SQL primary"],
-  "recommended_quality_gate": "Implement max-connections metric threshold in CI/CD load test stage.",
-  "suggested_fix": "Increase connection pool size in configuration and add request throttling at the API Gateway level.",
-  "chaos_experiment_recommended": true
-}
