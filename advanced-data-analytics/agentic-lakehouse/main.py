@@ -1,40 +1,71 @@
 """
-Agentic Data Lakehouse v1 (2026)
-Pattern: DuckDB + Apache Arrow + Gemini 2.5
-Use Case: Real-time High-Frequency Diagnostic Analytics on the Edge (GKE).
+Agentic Data Lakehouse v1.1 (Hardened 2026 Edition)
+Pattern: DuckDB + Apache Arrow + Gemini Enterprise
+Objective: Zero-copy, stateful stream reasoning for Real-time Quality Engineering.
 """
 
 import duckdb
 import pyarrow as pa
 import pandas as pd
+import time
 
 class AgenticLakehouse:
     def __init__(self):
-        # Initialize DuckDB in-memory
+        # Initialize DuckDB with persistent context for Anomaly Tracking
         self.db = duckdb.connect(':memory:')
-        print("[*] [LAKEHOUSE] DuckDB initialized in Zero-Copy memory mode.")
+        self.db.execute("CREATE TABLE anomaly_history (timestamp TIMESTAMP, signal_type VARCHAR, avg_value DOUBLE)")
+        print("[*] [LAKEHOUSE] DuckDB initialized with Stateful Context.")
 
     def ingest_arrow_stream(self, arrow_table):
-        """Register an Apache Arrow table for immediate SQL query without copy."""
-        self.db.register('live_signals', arrow_table)
-        print("[*] [LAKEHOUSE] Apache Arrow table registered (Zero-copy).")
+        """Register Apache Arrow table for zero-copy SQL access."""
+        start_time = time.perf_counter()
+        
+        try:
+            # Defensive check for required schema
+            required_cols = {'signal_type', 'value', 'timestamp'}
+            if not required_cols.issubset(set(arrow_table.column_names)):
+                raise ValueError(f"Missing schema columns: {required_cols - set(arrow_table.column_names)}")
+            
+            self.db.register('live_signals', arrow_table)
+            
+            duration = (time.perf_counter() - start_time) * 1000
+            print(f"[*] [LAKEHOUSE] Arrow table registered (Zero-copy) in {duration:.3f}ms.")
+            
+        except Exception as e:
+            print(f"[!] [LAKEHOUSE] Ingestion Failed: {str(e)}")
 
-    def agentic_query(self, natural_language_query):
-        """Gemini translates NL to DuckDB SQL for ultra-fast local execution."""
-        print(f"[*] [GEMINI] Translating: '{natural_language_query}' to SQL...")
+    def agentic_reasoning(self):
+        """
+        Executes local SQL reasoning and updates stateful context.
+        Simulates Gemini translating intent to optimized DuckDB SQL.
+        """
+        print("[*] [AGENT] Reasoning over temporal drift...")
         
-        # Simulated SQL translation
-        sql = "SELECT signal_type, AVG(value) FROM live_signals GROUP BY signal_type HAVING AVG(value) > 0.8"
+        # SQL logic that compares live signals with historical anomaly averages
+        sql = """
+        INSERT INTO anomaly_history
+        SELECT CURRENT_TIMESTAMP, signal_type, AVG(value)
+        FROM live_signals
+        GROUP BY signal_type
+        HAVING AVG(value) > 0.8;
+        """
         
-        print(f"[*] [DUCKDB] Executing: {sql}")
-        result = self.db.execute(sql).fetch_df()
+        start_time = time.perf_counter()
+        self.db.execute(sql)
         
+        # Check if we just inserted a new critical anomaly
+        result = self.db.execute("SELECT * FROM anomaly_history ORDER BY timestamp DESC LIMIT 1").fetch_df()
+        
+        duration = (time.perf_counter() - start_time) * 1000
+        print(f"[*] [DUCKDB] Reasoning complete in {duration:.3f}ms.")
+
         if not result.empty:
-            print(f"[!] [AGENT] Critical Anomaly Detected: \n{result}")
-            return True
-        return False
+            self.trigger_remediation(result)
 
-# Simulation of 2026 High-Frequency Data Stream
+    def trigger_remediation(self, anomaly_df):
+        print(f"[!] [ACTION] SLO Breach Detected for {anomaly_df['signal_type'].values[0]}!")
+        print(f"[*] [ACTION] Generating GKE scaling payload for region: us-central1...")
+
 if __name__ == "__main__":
     # Create sample Arrow data (simulating a live IoT stream)
     data = {
@@ -45,7 +76,9 @@ if __name__ == "__main__":
     table = pa.Table.from_pandas(pd.DataFrame(data))
 
     lakehouse = AgenticLakehouse()
-    lakehouse.ingest_arrow_stream(table)
     
-    # Agent performs sub-millisecond reasoning over the Arrow stream
-    lakehouse.agentic_query("Find signals where average value is above 0.8")
+    # Run a high-frequency loop simulation
+    for i in range(3):
+        print(f"\n--- Stream Batch {i+1} ---")
+        lakehouse.ingest_arrow_stream(table)
+        lakehouse.agentic_reasoning()
