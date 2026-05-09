@@ -1,36 +1,54 @@
 """
-Autonomous Supply Chain Orchestrator (ASCO) - 2026 Implementation
-Uses Vertex AI ADK Pattern + AlloyDB Grounding.
+ASCO v1.1: Graph-based Supply Chain Orchestrator (2026)
+Pattern: ADK v2 Graph + Vertex AI Memory Bank + AlloyDB
 """
 
-class SupplyChainLead:
+class ASCOGraph:
     def __init__(self):
-        self.inventory_agent = InventoryAgent()
-        self.logistics_agent = LogisticsAgent()
+        self.memory_bank = MemoryBank()
+        self.inventory = InventoryAgent()
+        self.risk = RiskAgent()
 
-    def process_shipment_delay(self, shipment_id):
-        print(f"[*] [ASCO_LEAD] Shipment {shipment_id} delayed. Investigating...")
+    def handle_disruption(self, event):
+        print(f"[*] [ASCO_GRAPH] Event Detected: {event['type']}")
         
-        # 1. Grounding in AlloyDB
-        stock_status = self.inventory_agent.check_safety_stock("ITEM_A")
+        # 1. Retrieve Historical Context from Memory Bank
+        context = self.memory_bank.get_supplier_reliability(event['supplier'])
+        print(f"[*] [MEMORY_BANK] Historical Reliability Score for {event['supplier']}: {context['score']}")
+
+        # 2. Parallel Graph Execution: Inventory + Risk Analysis
+        print("[*] [ASCO_GRAPH] Branching: [InventoryCheck] & [RiskAssessment]")
         
-        if stock_status < 10:
-            print("[!] [ASCO_LEAD] Critical stock levels! Triggering expedited shipping.")
-            self.logistics_agent.request_expedite(shipment_id)
+        stock_impact = self.inventory.check_stock(event['item_id'])
+        risk_level = self.risk.assess_geo_impact(event['region'])
+
+        # 3. Decision Node: Pivot or Wait?
+        if stock_impact == "CRITICAL" or risk_level == "HIGH":
+            self.execute_pivot_plan(event)
         else:
-            print("[*] [ASCO_LEAD] Stock levels sufficient. No expedited shipping needed.")
+            print("[*] [ASCO_GRAPH] No critical impact. Monitoring for drift.")
+
+    def execute_pivot_plan(self, event):
+        print(f"[!] [ASCO_GRAPH] TRIGGERING PIVOT: Finding alternative supplier for {event['item_id']}...")
+        print("[*] [ALLOYDB] Executing ai.forecast to predict lead times for Supplier_B...")
+
+class MemoryBank:
+    """Simulates Vertex AI Memory Bank for long-term agent memory."""
+    def get_supplier_reliability(self, supplier_id):
+        # Simulating long-term memory of past shipping delays
+        return {"supplier": supplier_id, "score": 0.65, "incidents": 12}
 
 class InventoryAgent:
-    def check_safety_stock(self, item_id):
-        # Simulated AlloyDB ScaNN similarity search
-        print(f"[*] [INVENTORY] Querying AlloyDB AI for {item_id} safety levels...")
-        return 5 # Low stock
+    def check_stock(self, item_id):
+        print(f"[*] [INVENTORY] Grounding in AlloyDB live data for {item_id}...")
+        return "CRITICAL"
 
-class LogisticsAgent:
-    def request_expedite(self, shipment_id):
-        print(f"[*] [LOGISTICS] Requesting expedited air-freight for {shipment_id}...")
-        print("[!] [MODEL_ARMOR] Scanning outgoing Logistics API call... [CLEAN]")
+class RiskAgent:
+    def assess_geo_impact(self, region):
+        print(f"[*] [RISK] Analyzing weather/geopolitical events in {region}...")
+        return "HIGH"
 
 if __name__ == "__main__":
-    asco = SupplyChainLead()
-    asco.process_shipment_delay("SHP-9982")
+    disruption = {"type": "Port_Closure", "supplier": "Global_Logistics_A", "item_id": "CHIP_77X", "region": "Suez_Canal"}
+    asco = ASCOGraph()
+    asco.handle_disruption(disruption)
