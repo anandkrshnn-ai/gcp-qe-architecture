@@ -1,4 +1,4 @@
-# Sovereign-GCP: The Agentic QE Suite (2026)
+# Sovereign-GCP: Incident Analyzer (Working PoC)
 
 **The Principal-Level Reference for Sovereign AI & Cloud Modernization.**
 
@@ -14,15 +14,16 @@ Developed as a flagship modernization baseline for GKE, Cloud Run, and AI-Powere
 
 **This is a high-fidelity reference platform for exploring autonomous QE patterns on Google Cloud.**
 
-### 🚀 The 30-Second Win (Zero Credentials Needed)
-Prove the logic works immediately without setting up a GCP project:
+### 🚀 The 30-Second Win (Functional PoC)
+Prove the logic works immediately without any GCP credentials:
 ```bash
-python run_demo.py
+python run_demo.py oomkill   # Scenario 1: GKE Pod OOM
+python run_demo.py latency   # Scenario 2: Cloud Run Timeout
 ```
 **What this proves**:
-- ✓ **Functional Logic**: The analyzer correctly parses real GCP log payloads.
-- ✓ **SDK Ready**: The code is structured to switch to `production` mode in 1 click.
-- ✓ **Architectural Grit**: Handles state, filtering, and remediation logic locally.
+- ✓ **Generalizable Logic**: The analyzer handles multiple incident types via a registry.
+- ✓ **Real Data Patterns**: Logic is tested against **actual GCP log JSON payloads**.
+- ✓ **SDK-Ready**: The `SovereignClient` contains real `google-cloud-logging` code for production.
 
 ---
 

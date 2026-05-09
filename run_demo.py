@@ -1,43 +1,37 @@
 """
-Sovereign-GCP: The 30-Second Executable Demo.
-PROVES functional engineering without requiring GCP credentials.
+Sovereign-GCP: The Generalizable PoC Demo.
+Proves multi-incident logic across real GCP structures.
 """
 
 from frameworks.sovereign_core.client import SovereignClient, SovereignAnalyzer
-import time
+import sys
 
-def run_simulation():
+def run_demo(incident_type="oomkill"):
     print("=" * 60)
-    print("SOVEREIGN-GCP ARCHITECTURAL SIMULATOR (v2026)")
+    print(f"SOVEREIGN-GCP SIMULATOR: {incident_type.upper()} ANALYSIS")
     print("=" * 60)
     
-    # 1. Initialize Client (Zero-Dependency Simulation Mode)
     client = SovereignClient(mode="simulation")
     analyzer = SovereignAnalyzer()
     
-    # 2. Fetch 'Real-World' Logs from Local Data
-    print("[*] STEP 1: Fetching Incident Logs (Source: data/incidents/oomkill_event.json)")
-    logs = client.fetch_logs("oomkill")
-    print(f"[SUCCESS] Loaded {len(logs)} log entries from GKE-Production-Cluster.")
+    logs = client.fetch_logs(incident_type)
+    if not logs:
+        print(f"[ERROR] No data found for {incident_type}")
+        return
+
+    analysis = analyzer.analyze(incident_type, logs)
     
-    time.sleep(1)
-    
-    # 3. Execute Autonomous Reasoning
-    print("[*] STEP 2: Executing Sovereign Analyzer Logic...")
-    analysis = analyzer.analyze_oomkill(logs)
-    
-    time.sleep(1)
-    
-    # 4. Present Verifiable Results
+    print(f"[*] Analyzing {len(logs)} log entries...")
     print("-" * 60)
-    print(f"DIAGNOSIS:  {analysis['root_cause']}")
-    print(f"CONFIDENCE: {analysis['confidence'] * 100}%")
-    print(f"REMEDY:     {analysis['remediation']}")
+    print(f"ROOT CAUSE:  {analysis['root_cause']}")
+    print(f"CONFIDENCE:  {analysis['confidence'] * 100}%")
+    print(f"REMEDY:      {analysis['remediation']}")
     print("-" * 60)
-    
-    print("\n[VERDICT] Logic Verified. The system correctly parsed real GCP log payloads.")
-    print("[NEXT STEPS] Switch mode='production' and provide credentials to run live.")
-    print("=" * 60)
 
 if __name__ == "__main__":
-    run_simulation()
+    # Allow user to pick scenario
+    scenario = sys.argv[1] if len(sys.argv) > 1 else "oomkill"
+    run_demo(scenario)
+    
+    if scenario == "oomkill":
+        print("\n[*] TIP: Try 'python run_demo.py latency' for the second scenario.")

@@ -1,0 +1,19 @@
+[
+  {
+    "insertId": "98765",
+    "jsonPayload": {
+      "message": "The request failed because the instance task was terminated (DeadlineExceeded)",
+      "latency": "60.001s",
+      "service_name": "transaction-v1"
+    },
+    "resource": {
+      "type": "cloud_run_revision",
+      "labels": {
+        "service_name": "transaction-v1",
+        "location": "us-central1"
+      }
+    },
+    "severity": "ERROR",
+    "timestamp": "2026-05-09T18:45:01Z"
+  }
+]
