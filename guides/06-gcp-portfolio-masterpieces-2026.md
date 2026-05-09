@@ -1,4 +1,4 @@
-# GCP Portfolio Masterpieces 2026: The "Principal Architect" Edition
+# Sovereign-GCP: The 2026 Portfolio Masterpieces
 
 This guide documents the definitive, production-grade reference architectures for the 2026 Agentic Era on Google Cloud.
 
