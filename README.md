@@ -79,8 +79,10 @@ Drop-in templates for production engineering teams.
 | Framework | Description |
 |-----------|-------------|
 | [NemoClaw Runtime](guides/05-nemoclaw-secure-runtime-gcp.md) | Secure, policy-gated runtime for autonomous QE agents on GKE |
+| [Sovereign SRE v2 (Flagship)](frameworks/sovereign-sre-v2/) | **New (2026)**: Multi-agent autonomous healing with ADK + GKE Sandbox + AlloyDB |
+| [ASCO Orchestrator](frameworks/asco-agent/) | **New (2026)**: Agentic Supply Chain with ADK + AlloyDB Grounding |
+| [Compliance Guardian](frameworks/compliance-guardian/) | **New (2026)**: Multimodal AI Compliance with Gemini 2.5 + Model Armor |
 | [Gemini RCA Agent](frameworks/gemini-agent-qe/) | AI-powered Root Cause Analysis using Vertex AI (Gemini 1.5 Pro) |
-| [Sovereign AI RCA](frameworks/sovereign-ai-qe/) | Privacy-preserving RCA using local LLMs + PTV attestation |
 | [RAG Evaluator](frameworks/agentic-ai-qe/) | Quantitative evaluation framework for RAG-based QE systems |
 
 ---
@@ -93,6 +95,13 @@ Real-world QE problems and solutions.
 - [Cloud Run Performance Stabilization](case-studies/cloud-run-performance-stabilization.md) — Cold start mitigation, concurrency tuning, k6 gates
 - [Sovereign AI RCA Integration](case-studies/sovereign-ai-rca.md) — Privacy-preserving quality engineering for regulated industries
 - [NemoClaw Autonomous SRE](case-studies/nemoclaw-autonomous-sre.md) — Secure, high-privilege production diagnostics in regulated VPCs
+
+---
+
+### 🛡️ Security Audit Artifacts
+- [Security Audit: Sovereign SRE v2](evidence/security-audit-sovereign-sre.md)
+- [Security Audit: ASCO Orchestrator](evidence/security-audit-asco.md)
+- [Security Audit: Compliance Guardian](evidence/security-audit-compliance.md)
 
 ---
 
