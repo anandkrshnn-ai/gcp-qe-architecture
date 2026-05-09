@@ -249,4 +249,4 @@ Full documentation: [https://anandkrshnn-ai.github.io/gcp-qe-architecture/](http
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for standards and guidelines.
 
-**Author**: Anandakrishnan · QA Architecture Manager · GCP Modernization
+**Author**: Anandakrishnan · GCP Modernization
