@@ -5,34 +5,32 @@ Thank you for your interest in contributing! This project aims to be a high-qual
 ## How to Contribute
 
 ### 1. Reporting Bugs
-- Use the [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.yml).
-- Provide logs, screenshots, and steps to reproduce.
+- Open a GitHub Issue.
+- Provide logs, steps to reproduce, and any relevant simulator output.
 
 ### 2. Suggesting Enhancements
-- Open an issue using the [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.yml).
-- Explain the "Why" and "How" of the proposed change.
+- Open a Feature Request issue.
+- Focus on practical, functional patterns that solve real GCP QE pain points.
 
 ### 3. Pull Requests
 All PRs must:
 - Follow the existing folder structure.
-- Include/update relevant documentation in `docs/` or `guides/`.
-- Ensure all tests pass (`pytest`).
-- Include a **reproducible artifact** (e.g., a terraform plan, a tool output log) in the `evidence/` directory.
+- Include/update relevant documentation in `guides/`.
+- Ensure the demo (`run_demo.py`) still works or is updated to reflect new patterns.
 
 ## Local Setup
 1. Clone the repo: `git clone https://github.com/anandkrshnn-ai/gcp-qe-architecture.git`
-2. Install Python dependencies: `pip install -r requirements.txt` (Note: ensure you use a virtual environment).
+2. Install Python dependencies: `pip install -r requirements.txt`.
 3. Install Terraform (v1.10+).
 
 ## Code Style
-- **Python**: We use `ruff` for linting and `pytest` for testing. Run `ruff check .` before committing.
+- **Python**: Standard PEP8.
 - **Terraform**: Follow the [Google Terraform Style Guide](https://googlecloudplatform.github.io/terraform-validator/docs/style_guide).
 
 ## Quality Gates
-Every contribution is validated through GitHub Actions:
-- Terraform Validation
-- Python Linting & Testing
-- MkDocs Build validation
+Contributions should be validated locally:
+- `python run_demo.py oomkill` (Ensure PoC remains functional)
+- `terraform validate` (For IaC changes)
 
 ---
 By contributing, you agree that your contributions will be licensed under the project's LICENSE.

@@ -26,7 +26,7 @@ python run_demo.py latency   # Scenario 2: Cloud Run Timeout analysis
 - **[`run_demo.py`](run_demo.py)**: The executable entry point for the architectural simulator.
 
 ### 📂 Infrastructure as Code (IaC)
-- **[`terraform-baseline/`](terraform-baseline/)**: Production-grade Terraform modules for GKE, Cloud Run, and Networking. 
+- **[`terraform/`](terraform/)**: Production-grade Terraform modules for GKE, Cloud Run, and Networking. 
   - *Status: Reference material. Modular, secure, and structured for multi-environment deployment.*
 
 ### 📂 Engineering Guides

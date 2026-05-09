@@ -1,5 +1,0 @@
-project_id   = "your-project-id"
-environment  = "dev"
-region       = "asia-south1"
-# Optional: override default subnet CIDR
-# subnet_cidr = "10.10.0.0/24"

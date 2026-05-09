@@ -1,6 +1,6 @@
 site_name: GCP QE Architecture
-site_description: Practical Quality Engineering patterns for GCP (GKE, Cloud Run, Cloud SQL, Observability & AI)
-site_author: Anandakrishnan
+site_description: Practical Quality Engineering patterns for GCP (GKE, Cloud Run, Cloud SQL, Observability)
+site_author: Anandakrishnan Damodaran
 repo_name: gcp-qe-architecture
 repo_url: https://github.com/anandkrshnn-ai/gcp-qe-architecture
 
@@ -20,27 +20,19 @@ theme:
     - content.code.copy
 
 nav:
-  - Home: index.md
-  - Real-World Usage: docs/real-world-usage.md
-    - GKE Resilience: case-studies/gke-resilience-improvement.md
-    - Cloud Run Performance: case-studies/cloud-run-performance-stabilization.md
-    - Sovereign AI RCA: case-studies/sovereign-ai-rca.md
-  - Terraform Baseline: reference-implementations/terraform-baseline/README.md
-  - End-to-End Example: examples/end-to-end-observable-app/README.md
-  - Guides:
+  - Home: README.md
+  - Incident Analyzer (PoC):
+    - Demo Script: run_demo.py
+    - Core Logic: frameworks/sovereign_core/client.py
+  - Terraform Baseline: terraform/README.md
+  - Engineering Guides:
     - GKE Testing: guides/gke-testing-guide.md
     - Cloud Run: guides/cloud-run-quality-guide.md
     - Cloud SQL: guides/cloud-sql-resilience-guide.md
-    - Security & Compliance: guides/security-qa-guide.md
-  - Frameworks:
-    - Gemini Agent QE: frameworks/gemini-agent-qe/README.md
-    - Agentic AI + RAG: frameworks/agentic-ai-qe/README.md
-  - Tools: tools/README.md
-  - Patterns: patterns/README.md
-  - Lessons Learned: docs/lessons-learned.md
-  - 4-Week Reflection: docs/4-week-reflection.md
-  - Maintenance Plan: docs/maintenance-plan.md
-  - Evidence: evidence/README.md
+    - Security QA: guides/security-qa-guide.md
+    - SLO/SLI Engineering: guides/02-slo-sli-engineering.md
+    - Production Readiness: guides/03-production-readiness.md
+    - Deployment Path: guides/08-deployment-path.md
 
 markdown_extensions:
   - pymdownx.highlight
