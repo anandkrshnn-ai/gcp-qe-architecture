@@ -16,11 +16,12 @@ graph TD
         end
         
         AlloyDB[("AlloyDB: Grounding & MCP\n(Managed MCP Servers + 10B Vector Search)")]
-        Model_Armor{{"Model Armor & Agentic Defense"}}
+        Model_Armor{{"Model Armor & Agentic Defense\n(Inline Safety Firewall)"}}
         Gemini_Enterprise["Gemini Enterprise Agent Platform\n(Reasoning Engine)"]
     end
 
     EventArc["Cloud EventArc (SLO Breach)"] --> Orchestrator
+    Orchestrator <--> Model_Armor
     Orchestrator -- "1. Local Diagnostics" --> Diagnostic_Agent
     Diagnostic_Agent -- "2. SQL Analysis" --> AlloyDB
     Orchestrator -- "3. Healing Plan" --> IaC["Terraform Gateway"]
@@ -69,14 +70,14 @@ graph LR
 graph TD
     Data_Ingest["Multimodal Data (Video/PDF/DICOM)"] --> Gemini_Enterprise["Gemini Enterprise (2.5+ Multimodal)"]
     
-    subgraph "Sovereign Vector Mesh"
-        Weaviate[("Weaviate on Confidential GKE\n(Confidential GPU Support)")]
-        Arrow_Flight["Apache Arrow Flight SQL + mTLS"]
+    subgraph "Sovereign Vector Mesh (Confidential GKE)"
+        Weaviate[("Weaviate Mesh\n(Confidential GPU Support)")]
+        Arrow_Flight["Apache Arrow Flight SQL + mTLS\n(Zero-Copy Sovereign Stream)"]
     end
 
     Gemini_Enterprise --> Weaviate
     Weaviate --> BigQuery["BigQuery Continuous Queries\n(Decision Provenance)"]
-    Model_Armor{{"Model Armor + Agentic Defense"}}
+    Model_Armor{{"Model Armor + Agentic Defense\n(Inline Protection)"}}
     Gemini_Enterprise <--> Model_Armor
 ```
 
