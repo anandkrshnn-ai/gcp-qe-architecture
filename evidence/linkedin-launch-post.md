@@ -4,13 +4,13 @@
 
 ---
 
-**Headline**: Moving from AI Demos to Sovereign Autonomy: Announcing my 2026 GCP Architecture Portfolio 🚀
+**Headline**: Moving from AI Demos to Sovereign Autonomy: Announcing the Sovereign-GCP Agentic Suite 🚀
 
 I’ve spent the last few weeks obsessing over one question: 
 
 *“How do we build AI agents that are powerful enough to heal production infrastructure, but secure enough for a global bank?”*
 
-Today, I’m releasing my **Sovereign AI Architecture Portfolio**—a deep dive into the next generation of Google Cloud (GKE Agent Sandboxes, Gemini Enterprise, and Axion).
+Today, I’m releasing **Sovereign-GCP: The Agentic QE Suite**—a deep dive into the next generation of Google Cloud (GKE Agent Sandboxes, Gemini Enterprise, and Axion).
 
 This isn't a collection of "hello world" prompts. These are production-grade frameworks designed for **Principal/Staff Engineer** standards:
 
