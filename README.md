@@ -87,6 +87,15 @@ Drop-in templates for production engineering teams.
 
 ---
 
+### 📊 Advanced Data & Analytics (2026 Masterpieces)
+
+| Project | Tech Stack | Use Case |
+| :--- | :--- | :--- |
+| **[Agentic Data Lakehouse](advanced-data-analytics/agentic-lakehouse/)** | DuckDB + Apache Arrow + Gemini | Ultra-fast local SQL analytics for edge-AI agents on GKE. |
+| **[Sovereign Vector Mesh](advanced-data-analytics/vector-mesh/)** | Qdrant + Arrow Flight + Confidential Computing | Cross-region multimodal search for regulated (Healthcare/Legal) data. |
+
+---
+
 ### 📂 Case Studies
 
 Real-world QE problems and solutions.
