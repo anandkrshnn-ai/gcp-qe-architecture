@@ -79,10 +79,10 @@ Drop-in templates for production engineering teams.
 | Framework | Description |
 |-----------|-------------|
 | [NemoClaw Runtime](guides/05-nemoclaw-secure-runtime-gcp.md) | Secure, policy-gated runtime for autonomous QE agents on GKE |
-| [Sovereign SRE v2 (Flagship)](frameworks/sovereign-sre-v2/) | **New (2026)**: Multi-agent autonomous healing with ADK + GKE Sandbox + AlloyDB |
-| [ASCO Orchestrator](frameworks/asco-agent/) | **New (2026)**: Agentic Supply Chain with ADK + AlloyDB Grounding |
-| [Compliance Guardian](frameworks/compliance-guardian/) | **New (2026)**: Multimodal AI Compliance with Gemini 2.5 + Model Armor |
-| [Gemini RCA Agent](frameworks/gemini-agent-qe/) | AI-powered Root Cause Analysis using Vertex AI (Gemini 1.5 Pro) |
+| [Sovereign SRE v2 (Flagship)](frameworks/sovereign-sre-v2/) | **2026**: Multi-agent healing with **ADK v2** + **GKE Sandbox** + **Managed MCP** |
+| [ASCO Orchestrator](frameworks/asco-agent/) | **2026**: Supply Chain with **ADK v2 Graph** + **AlloyDB AI Functions** |
+| [Compliance Guardian](frameworks/compliance-guardian/) | **2026**: Multimodal Compliance with **Gemini 2.5** + **Weaviate Mesh** |
+| [Gemini RCA Agent](frameworks/gemini-agent-qe/) | **2026**: Gemini Enterprise Agent for production-grade RCA |
 | [RAG Evaluator](frameworks/agentic-ai-qe/) | Quantitative evaluation framework for RAG-based QE systems |
 
 ---
@@ -96,14 +96,14 @@ Drop-in templates for production engineering teams.
 
 ---
 
-### 📂 Case Studies
+### 📂 Principal Architect Case Studies (2026 Flagships)
 
-Real-world QE problems and solutions.
-
-- [GKE Resilience Improvement](case-studies/gke-resilience-improvement.md) — Pod disruptions, node pool hardening, AI-assisted RCA
-- [Cloud Run Performance Stabilization](case-studies/cloud-run-performance-stabilization.md) — Cold start mitigation, concurrency tuning, k6 gates
-- [Sovereign AI RCA Integration](case-studies/sovereign-ai-rca.md) — Privacy-preserving quality engineering for regulated industries
-- [NemoClaw Autonomous SRE](case-studies/nemoclaw-autonomous-sre.md) — Secure, high-privilege production diagnostics in regulated VPCs
+| Case Study | High-Impact Outcome | Key 2026 Tech |
+| :--- | :--- | :--- |
+| **[Sovereign SRE v2](case-studies/nemoclaw-autonomous-sre-v2.md)** | **78% MTTR Reduction** in Regulated Banking | Gemini Enterprise + GKE Sandbox + ADK v2 |
+| **[ASCO Orchestration](case-studies/asco-orchestration.md)** | **48% Lower Stockouts** & <3mo ROI | ADK Graph + AlloyDB 10B Vectors + Iceberg |
+| **[Multimodal Guardian](case-studies/multimodal-compliance-guardian.md)** | **96% Manual Review Reduction** in Healthcare | Gemini 2.5 + Weaviate Mesh + Confidential GKE |
+| **[Agentic Data Lakehouse](case-studies/agentic-data-lakehouse.md)** | **<6ms Edge Latency** for Fintech | DuckDB + Arrow + AlloyDB Managed MCP |
 
 ---
 
