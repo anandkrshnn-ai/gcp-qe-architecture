@@ -43,6 +43,7 @@ GCP and workload-specific implementation patterns.
 | [Cloud SQL Resilience Guide](guides/cloud-sql-resilience-guide.md) | HA configuration, failover testing, and replication monitoring |
 | [Cloud SQL Resilience (Patterns)](guides/cloud-sql-resilience.md) | SQL resilience patterns and SLO recommendations |
 | [Security & Compliance QA](guides/security-qa-guide.md) | Workload Identity, Binary Authorization, and IAM least privilege |
+| [NemoClaw Secure Runtime](guides/05-nemoclaw-secure-runtime-gcp.md) | Hardened agent execution with GKE, Vertex AI, and Workload Identity |
 
 ---
 
@@ -67,6 +68,7 @@ Drop-in templates for production engineering teams.
 | [Terraform Baseline](reference-implementations/terraform-baseline/) | Modular, multi-environment IaC for GKE, Cloud Run, Cloud SQL |
 | [Hardened Cloud Run Module](reference-implementations/terraform-baseline/modules/cloud-run/main.tf) | Production-grade Cloud Run with scaling, probes, and resource limits |
 | [SLO Monitoring](reference-implementations/slo-monitoring/) | Terraform-defined SLOs for GKE, Cloud Run, and Cloud SQL |
+| [NemoClaw GKE IaC](terraform/) | Hardened GKE infrastructure with Workload Identity for Agents |
 | [k6 Performance Suite](reference-implementations/k6-performance/) | Load test + cold-start test scripts with defined SLO thresholds |
 | [Observability Stack](reference-implementations/observability-stack/) | Cloud Monitoring dashboards and alert policies |
 
@@ -76,6 +78,7 @@ Drop-in templates for production engineering teams.
 
 | Framework | Description |
 |-----------|-------------|
+| [NemoClaw Runtime](guides/05-nemoclaw-secure-runtime-gcp.md) | Secure, policy-gated runtime for autonomous QE agents on GKE |
 | [Gemini RCA Agent](frameworks/gemini-agent-qe/) | AI-powered Root Cause Analysis using Vertex AI (Gemini 1.5 Pro) |
 | [Sovereign AI RCA](frameworks/sovereign-ai-qe/) | Privacy-preserving RCA using local LLMs + PTV attestation |
 | [RAG Evaluator](frameworks/agentic-ai-qe/) | Quantitative evaluation framework for RAG-based QE systems |
@@ -89,6 +92,7 @@ Real-world QE problems and solutions.
 - [GKE Resilience Improvement](case-studies/gke-resilience-improvement.md) — Pod disruptions, node pool hardening, AI-assisted RCA
 - [Cloud Run Performance Stabilization](case-studies/cloud-run-performance-stabilization.md) — Cold start mitigation, concurrency tuning, k6 gates
 - [Sovereign AI RCA Integration](case-studies/sovereign-ai-rca.md) — Privacy-preserving quality engineering for regulated industries
+- [NemoClaw Autonomous SRE](case-studies/nemoclaw-autonomous-sre.md) — Secure, high-privilege production diagnostics in regulated VPCs
 
 ---
 
