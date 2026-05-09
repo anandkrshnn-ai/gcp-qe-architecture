@@ -1,12 +1,8 @@
-# Core Dependencies
-google-cloud-logging
-google-cloud-aiplatform
-google-cloud-vertexai
-pandas
-streamlit
-pytest
-pytest-mock
-ruff
-mkdocs-material
-mkdocs-mermaid2-plugin
-k6
+google-cloud-logging==3.10.0
+google-cloud-monitoring==2.19.0
+google-cloud-storage==2.14.0
+vertexai==1.45.0
+pyarrow==16.0.0
+duckdb==0.10.2
+pytest==8.2.0
+tenacity==8.2.3
