@@ -105,6 +105,31 @@ Real-world QE problems and solutions.
 
 ---
 
+### 🚀 Unified Deployment (One-Click Setup)
+
+To deploy the entire **Sovereign Agentic Platform** (GKE + AlloyDB + Agents):
+
+1.  **Provision Infrastructure**:
+    ```bash
+    cd terraform/
+    terraform init && terraform apply -var="project_id=YOUR_PROJECT"
+    ```
+2.  **Deploy Agents**:
+    ```bash
+    # Sovereign SRE v2
+    kubectl apply -f frameworks/sovereign-sre-v2/k8s-manifests/
+    
+    # ASCO & Compliance Guardian
+    kubectl apply -f frameworks/asco-agent/k8s-manifests/
+    ```
+
+---
+
+### 🎥 Demo & Walkthrough Scripts
+- [Sovereign SRE v2 Demo Script](docs/demo-scripts/sovereign-sre-v2.md) — 3-minute walkthrough for LinkedIn/Portfolio.
+
+---
+
 ## Getting Started
 
 ### Run the AI RCA Agent Locally (No GCP Required)
