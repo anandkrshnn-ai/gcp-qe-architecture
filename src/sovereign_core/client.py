@@ -3,18 +3,20 @@ Sovereign Core: The SDK Interface and Actuator for GCP.
 Handles both Simulation (local) and Production (real SDK) data fetching and remediation.
 """
 
-import os
 import json
 import logging
-from typing import List, Dict
+import os
+from typing import Dict, List
 
 logger = logging.getLogger("SovereignCore")
+
 
 class SovereignClient:
     """
     The Single Entry Point for fetching GCP telemetry.
     Supports Simulation Mode (Zero-Credentials) and Production Mode (GCP SDK).
     """
+
     def __init__(self, mode: str = "simulation", project_id: str = "demo-project"):
         self.mode = mode.lower()
         self.project_id = project_id
@@ -38,23 +40,26 @@ class SovereignClient:
         """REAL SDK Implementation (Requires google-cloud-logging)."""
         try:
             from google.cloud import logging_v2
+
             client = logging_v2.Client(project=self.project_id)
             filters = {
                 "oomkill": 'resource.type="gke_container" AND jsonPayload.reason="OOMKilling"',
-                "latency": 'resource.type="cloud_run_revision" AND severity="ERROR" AND jsonPayload.message:"DeadlineExceeded"'
+                "latency": 'resource.type="cloud_run_revision" AND severity="ERROR" AND jsonPayload.message:"DeadlineExceeded"',
             }
             entries = client.list_entries(filter_=filters.get(incident_type, ""))
             return [entry.to_dict() for entry in entries]
-        except ImportError:
-            raise RuntimeError("Missing 'google-cloud-logging'. Run: pip install sovereign-core[gcp]")
+        except ImportError as e:
+            raise RuntimeError("Missing 'google-cloud-logging'. Run: pip install sovereign-core[gcp]") from e
         except Exception as e:
-            raise RuntimeError(f"GCP SDK Error: {e}")
+            raise RuntimeError(f"GCP SDK Error: {e}") from e
+
 
 class SovereignActuator:
     """
-    The 'Hands' of the Agent. 
+    The 'Hands' of the Agent.
     Executes remediation actions after analysis.
     """
+
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
 
@@ -68,18 +73,18 @@ class SovereignActuator:
             "iam_denied": self._remediate_iam,
             "storage_full": self._remediate_storage,
             "db_fail": self._remediate_db,
-            "cert_expired": self._remediate_cert
+            "cert_expired": self._remediate_cert,
         }
-        
+
         handler = actions.get(remediation_type)
         if not handler:
             logger.error(f"No actuator handler for {remediation_type}")
             return False
-            
+
         return handler(target)
 
     def _remediate_oomkill(self, target: str) -> bool:
-        command = f"kubectl patch deployment {target} --patch '{{\"spec\": {{\"template\": {{\"spec\": {{\"containers\": [{{\"name\": \"app\", \"resources\": {{\"limits\": {{\"memory\": \"512Mi\"}}}}}}]}}}}}}}}}}'"
+        command = f'kubectl patch deployment {target} --patch \'{{"spec": {{"template": {{"spec": {{"containers": [{{"name": "app", "resources": {{"limits": {{"memory": "512Mi"}}}}}}]}}}}}}}}}}\''
         return self._run_command(command)
 
     def _remediate_latency(self, target: str) -> bool:
@@ -87,7 +92,7 @@ class SovereignActuator:
         return self._run_command(command)
 
     def _remediate_dns(self, target: str) -> bool:
-        command = f"kubectl rollout restart deployment coredns -n kube-system"
+        command = "kubectl rollout restart deployment coredns -n kube-system"
         return self._run_command(command)
 
     def _remediate_quota(self, target: str) -> bool:
@@ -116,7 +121,7 @@ class SovereignActuator:
         if self.dry_run:
             print(f"[DRY-RUN] Command generated: {command}")
             return True
-        
+
         print(f"[LIVE] Executing command: {command}")
         # In production: os.system(command)
         return True
