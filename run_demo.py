@@ -17,9 +17,10 @@ from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich import print as rprint
 
-from sovereign_core import SovereignClient, SovereignAnalyzer, VertexAIAnalyzer, SovereignActuator
+from sovereign_core import SovereignClient, SovereignAnalyzer, VertexAIAnalyzer, SovereignActuator, RuntimeSecurity
 
 console = Console()
+security = RuntimeSecurity()
 
 def run_single_scenario(incident_type, mode="deterministic", report_file=None):
     project_id = "demo-project"
@@ -50,10 +51,13 @@ def run_single_scenario(incident_type, mode="deterministic", report_file=None):
         time.sleep(0.3)
 
     # --- UI DISPLAY ---
+    sec_status = "[bold green]VERIFIED[/bold green]" if security.verify_trust_boundary() else "[bold yellow]INSECURE (Reference Only)[/bold yellow]"
+    
     table = Table(title=f"Incident Analysis: {incident_type.upper()}", show_header=True, header_style="bold magenta")
-    table.add_column("Field", style="dim", width=12)
+    table.add_column("Field", style="dim", width=15)
     table.add_column("Value")
     
+    table.add_row("Runtime Trust", sec_status)
     table.add_row("Root Cause", analysis.get('root_cause', 'Unknown'))
     table.add_row("Confidence", f"{analysis.get('confidence', 0) * 100}%")
     table.add_row("Remediation", f"[green]{analysis.get('remediation', 'N/A')}[/green]")
