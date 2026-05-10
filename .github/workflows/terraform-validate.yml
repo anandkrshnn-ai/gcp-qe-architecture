@@ -9,13 +9,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        environment: [dev, staging, prod]
 
     defaults:
       run:
-        working-directory: ./reference-implementations/terraform-baseline/environments/${{ matrix.environment }}
+        working-directory: ./terraform
 
     steps:
       - uses: actions/checkout@v4
