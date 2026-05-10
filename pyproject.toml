@@ -8,7 +8,7 @@ version = "0.2.0"
 authors = [
   { name="Anandakrishnan Damodaran", email="anand@example.com" },
 ]
-description = "A functional framework for autonomous GCP Quality Engineering and Incident Analysis."
+description = "A functional framework for GCP incident analysis and assisted remediation patterns."
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [

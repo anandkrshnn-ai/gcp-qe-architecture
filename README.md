@@ -1,9 +1,8 @@
-# Sovereign-GCP: Incident Analyzer (PoC)
-
-A working proof-of-concept for autonomous incident analysis on Google Cloud Platform.
+# GCP Incident Analyzer (PoC)
+A working proof-of-concept for log analysis patterns on Google Cloud Platform.
 
 ## What This Is
-This repository is a **Functional Proof-of-Concept** and **Architectural Reference** for building autonomous Quality Engineering (QE) systems on GCP. It focuses on parsing real-world telemetry patterns to identify root causes and remediations without requiring an LLM for basic control flow.
+This repository is a **Functional Proof-of-Concept** and **Baseline Reference** for building incident analysis tools on GCP.
 
 ### 🚀 The 30-Second Win (Zero Credentials Needed)
 Prove the logic works immediately on real GCP log structures:
@@ -53,4 +52,4 @@ python run_demo.py oomkill
 2. **SDK Reference**: Learning how to interact with real `google-cloud-sdk` patterns.
 3. **Prototype Foundation**: A starting point for building real-world QE agents.
 
-**Author**: Anandakrishnan Damodaran, Principal Architect
+**Author**: Anandakrishnan Damodaran, Architect
