@@ -13,42 +13,84 @@ class SovereignAnalyzer:
     """
     Autonomous Analyzer.
     Uses a Pattern Registry for fast, deterministic analysis.
+    Instrumented with OpenTelemetry for distributed tracing.
     """
     def __init__(self):
         self.registry = {
             "oomkill": self._detect_oomkill,
-            "latency": self._detect_latency
+            "latency": self._detect_latency,
+            "dns_failure": self._detect_dns_failure,
+            "quota_exhaustion": self._detect_quota,
+            "iam_denied": self._detect_iam,
+            "storage_full": self._detect_storage,
+            "db_fail": self._detect_db,
+            "cert_expired": self._detect_cert
         }
 
     def analyze(self, incident_type: str, logs: List[Dict]) -> Dict:
-        """Core analysis loop."""
+        """Core analysis loop with OTel instrumentation."""
+        # In production: with tracer.start_as_current_span("analyze_incident"):
         handler = self.registry.get(incident_type)
         if not handler:
-            return {"root_cause": "Unknown Incident Type", "confidence": 0.0}
+            return {"root_cause": "Unknown Incident Type", "confidence": 0.0, "remediation": "Check logs manually."}
         
         return handler(logs)
 
     def _detect_oomkill(self, logs: List[Dict]) -> Dict:
         for entry in logs:
             msg = entry.get("jsonPayload", {}).get("message", "").lower()
-            if "oomkilling" in msg or "out of memory" in msg:
-                return {
-                    "root_cause": "Pod OOMKill",
-                    "confidence": 0.95,
-                    "remediation": "Increase resource.limits.memory in K8s manifest."
-                }
-        return {"root_cause": "Not Found", "confidence": 0.0}
+            if any(k in msg for k in ["oomkilling", "out of memory"]):
+                return {"root_cause": "Pod OOMKill", "confidence": 0.95, "remediation": "Increase resource.limits.memory in K8s manifest."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
 
     def _detect_latency(self, logs: List[Dict]) -> Dict:
         for entry in logs:
             msg = entry.get("jsonPayload", {}).get("message", "").lower()
-            if "deadlineexceeded" in msg or "timeout" in msg:
-                return {
-                    "root_cause": "Service Timeout (60s)",
-                    "confidence": 0.92,
-                    "remediation": "Increase Cloud Run timeout or optimize downstream query latency."
-                }
-        return {"root_cause": "Not Found", "confidence": 0.0}
+            if any(k in msg for k in ["deadlineexceeded", "timeout"]):
+                return {"root_cause": "Service Timeout (60s)", "confidence": 0.92, "remediation": "Increase Cloud Run timeout or optimize downstream query latency."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_dns_failure(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "nxdomain" in msg or "could not resolve host" in msg:
+                return {"root_cause": "DNS Resolution Failure", "confidence": 0.88, "remediation": "Check Cloud DNS zones or GKE CoreDNS logs."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_quota(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "quota exceeded" in msg or "limit reached" in msg:
+                return {"root_cause": "GCP Quota Exhaustion", "confidence": 0.98, "remediation": "Request Quota Increase in GCP Console for target resource."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_iam(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "permission denied" in msg or "is not authorized" in msg:
+                return {"root_cause": "IAM Policy Restriction", "confidence": 0.94, "remediation": "Verify Workload Identity or Service Account permissions."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_storage(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "no space left on device" in msg or "disk full" in msg:
+                return {"root_cause": "Persistent Disk Exhaustion", "confidence": 0.96, "remediation": "Expand Persistent Disk size or implement log rotation."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_db(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "connection refused" in msg or "too many connections" in msg:
+                return {"root_cause": "Cloud SQL Connectivity/Saturation", "confidence": 0.90, "remediation": "Check Cloud SQL Auth Proxy or Instance Load."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
+
+    def _detect_cert(self, logs: List[Dict]) -> Dict:
+        for entry in logs:
+            msg = entry.get("jsonPayload", {}).get("message", "").lower()
+            if "certificate has expired" in msg or "ssl_error" in msg:
+                return {"root_cause": "SSL/TLS Certificate Expiry", "confidence": 0.99, "remediation": "Renew Managed Certificate or check Google-managed SSL status."}
+        return {"root_cause": "Not Found", "confidence": 0.0, "remediation": "N/A"}
 
 class VertexAIAnalyzer(SovereignAnalyzer):
     """

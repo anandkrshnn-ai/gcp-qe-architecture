@@ -1,15 +1,15 @@
-# --- MINIMAL (For local run_demo.py) ---
-# No external dependencies required! (Standard Library only)
+# Sovereign-Core: Base Dependencies
+tenacity>=8.2.0
 
-# --- PRODUCTION (For live GCP integration) ---
-# Install these when switching to mode="production"
-# google-cloud-logging==3.10.0
-# google-cloud-monitoring==2.19.0
-# vertexai==1.45.0
+# Optional: GCP SDKs (Install with sovereign-core[gcp])
+google-cloud-logging>=3.5.0
+google-cloud-monitoring>=2.14.0
+vertexai>=0.1.0
 
-# --- ANALYTICS (For Agentic Lakehouse) ---
-# pyarrow==16.0.0
-# duckdb==0.10.2
+# Observability
+opentelemetry-api>=1.18.0
+opentelemetry-sdk>=1.18.0
 
-# --- DEVELOPMENT ---
-# pytest==8.2.0
+# Development & Testing
+pytest>=7.4.0
+ruff>=0.1.0
