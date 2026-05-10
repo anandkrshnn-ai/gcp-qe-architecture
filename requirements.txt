@@ -12,4 +12,4 @@ opentelemetry-sdk>=1.18.0
 
 # Development & Testing
 pytest>=7.4.0
-ruff>=0.1.0
+ruff>=0.15.12
