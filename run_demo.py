@@ -1,23 +1,14 @@
-"""
-Sovereign-GCP: The 100/100 Master Demo.
-Full OODA Loop for 10+ Enterprise GCP Scenarios with Premium UI.
-"""
-
 import sys
-import os
 import time
+import argparse
 from datetime import datetime
-
-# Ensure the 'src' directory is in the path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
+from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich import print as rprint
 
-from sovereign_core import SovereignClient, SovereignAnalyzer, VertexAIAnalyzer, SovereignActuator, RuntimeSecurity
+from sovereign_core import SovereignClient, SovereignAnalyzer, VertexAIAnalyzer, GemmaAnalyzer, HybridSovereignAnalyzer, SovereignActuator, RuntimeSecurity
 
 console = Console()
 security = RuntimeSecurity()
@@ -26,28 +17,32 @@ def run_single_scenario(incident_type, mode="deterministic", report_file=None):
     project_id = "demo-project"
     client = SovereignClient(mode="simulation", project_id=project_id)
     actuator = SovereignActuator(dry_run=True, project_id=project_id)
-    analyzer = VertexAIAnalyzer() if mode == "reasoning" else SovereignAnalyzer()
+    
+    # Selection based on mode
+    if mode == "reasoning":
+        analyzer = VertexAIAnalyzer()
+    elif mode == "hybrid":
+        analyzer = HybridSovereignAnalyzer()
+    elif mode == "gemma":
+        analyzer = GemmaAnalyzer()
+    else:
+        analyzer = SovereignAnalyzer()
     
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         transient=True,
     ) as progress:
-        
-        # --- OBSERVE ---
-        progress.add_task(description=f"Observing {incident_type} telemetry...", total=None)
+        progress.add_task(description=f"Fetching logs for {incident_type}...", total=None)
         logs = client.fetch_logs(incident_type)
-        if not logs:
-            logs = [{"jsonPayload": {"message": f"Simulation event for {incident_type}"}}]
         time.sleep(0.5)
 
-        # --- ORIENT & DECIDE ---
-        progress.add_task(description="Analyzing Root Cause...", total=None)
-        analysis = analyzer.analyze_with_llm(incident_type, logs) if mode == "reasoning" else analyzer.analyze(incident_type, logs)
-        time.sleep(0.5)
-        
-        # --- ACT ---
-        progress.add_task(description="Generating Remediation Plan...", total=None)
+        progress.add_task(description=f"Analyzing with {mode} engine...", total=None)
+        analysis = analyzer.analyze(incident_type, logs)
+        time.sleep(0.8)
+
+        progress.add_task(description="Generating remediation plan...", total=None)
+        success = actuator.execute(analysis.get('remediation', 'N/A'), f"prod-{incident_type}-resource")
         time.sleep(0.3)
 
     # --- UI DISPLAY ---
@@ -61,54 +56,46 @@ def run_single_scenario(incident_type, mode="deterministic", report_file=None):
     table.add_row("Root Cause", analysis.get('root_cause', 'Unknown'))
     table.add_row("Confidence", f"{analysis.get('confidence', 0) * 100}%")
     table.add_row("Remediation", f"[green]{analysis.get('remediation', 'N/A')}[/green]")
+    table.add_row("Engine", f"[cyan]{analysis.get('engine', 'Sovereign-Internal')}[/cyan]")
     
     console.print(table)
     
-    # Simulate Actuator
-    console.print(f"\n[bold yellow][*][/bold yellow] Actuator: Executing [cyan]dry-run[/cyan] on target-resource...")
-    actuator.execute(incident_type, target=f"prod-{incident_type}-resource")
-    console.print(f"[bold green][SUCCESS][/bold green] OODA Cycle Complete for {incident_type}.\n")
-
-    # Write to report if requested
     if report_file:
         with open(report_file, "a") as f:
-            f.write(f"| {incident_type} | {analysis.get('root_cause')} | {analysis.get('confidence')*100}% | {analysis.get('remediation')} |\n")
+            f.write(f"## Scenario: {incident_type}\n")
+            f.write(f"- **Trust**: {'Verified' if security.verify_trust_boundary() else 'Insecure'}\n")
+            f.write(f"- **Analysis**: {analysis.get('root_cause')}\n")
+            f.write(f"- **Action**: {analysis.get('remediation')}\n")
+            f.write(f"- **Engine**: {analysis.get('engine')}\n\n")
 
-def main():
-    console.clear()
-    console.print(Panel.fit(
-        "[bold cyan]SOVEREIGN-GCP: PRINCIPAL-GRADE INCIDENT ENGINE[/bold cyan]\n"
-        "[dim]Hardened OODA Loop for Autonomous Remediation[/dim]",
-        border_style="bright_blue"
-    ))
+    rprint(f"[SUCCESS] OODA Cycle Complete for {incident_type}.\n")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Sovereign GCP Master Demo")
+    parser.add_argument("--scenario", help="Specific incident type to run")
+    parser.add_argument("--all", action="store_true", help="Run all scenarios")
+    parser.add_argument("--mode", choices=["deterministic", "reasoning", "hybrid", "gemma"], default="deterministic", help="Analysis engine mode")
+    args = parser.parse_args()
 
     scenarios = [
-        "oomkill", "latency", "dns_failure", "quota_exhaustion", 
+        "oomkill", "latency", "dns_fail", "quota_exceeded", 
         "iam_denied", "storage_full", "db_fail", "cert_expired"
     ]
     
-    mode = "reasoning" if "--reasoning" in sys.argv else "deterministic"
-    run_all = "--all" in sys.argv
+    console.print(Panel.fit("SOVEREIGN-GCP: PRINCIPAL-GRADE INCIDENT ENGINE\nHardened OODA Loop for Autonomous Remediation", style="bold blue"))
     
     report_name = f"DEMO_REPORT_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
-    
-    if run_all:
-        with open(report_name, "w") as f:
-            f.write(f"# Sovereign-GCP Master Demo Report\n")
-            f.write(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
-            f.write("| Incident | Root Cause | Confidence | Proposed Action |\n")
-            f.write("| :--- | :--- | :--- | :--- |\n")
-            
-        for s in scenarios:
-            run_single_scenario(s, mode, report_name)
-        
-        console.print(Panel(f"[bold green]FULL SUITE COMPLETE[/bold green]\nReport saved to: [bold white]{report_name}[/bold white]"))
-    else:
-        target = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else "oomkill"
-        if target not in scenarios:
-            console.print(f"[bold red]Error:[/bold red] Scenario '{target}' not found.")
-            return
-        run_single_scenario(target, mode)
+    with open(report_name, "w") as f:
+        f.write("# Sovereign GCP Master Demo Report\n")
+        f.write(f"Generated on: {datetime.now().isoformat()}\n\n")
 
-if __name__ == "__main__":
-    main()
+    if args.scenario:
+        run_single_scenario(args.scenario, mode=args.mode, report_file=report_name)
+    elif args.all:
+        for s in scenarios:
+            run_single_scenario(s, mode=args.mode, report_file=report_name)
+    else:
+        # Default to first scenario
+        run_single_scenario("oomkill", mode=args.mode, report_file=report_name)
+
+    console.print(Panel(f"FULL SUITE COMPLETE\nReport saved to: {report_name}", style="bold green"))
