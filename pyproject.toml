@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sovereign-core"
+version = "0.2.0"
+authors = [
+  { name="Anandakrishnan Damodaran", email="anand@example.com" },
+]
+description = "A functional framework for autonomous GCP Quality Engineering and Incident Analysis."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "tenacity>=8.2.0",
+]
+
+[project.optional-dependencies]
+gcp = ["google-cloud-logging", "google-cloud-monitoring", "vertexai"]
+dev = ["pytest", "ruff"]
+
+[project.urls]
+"Homepage" = "https://github.com/anandkrshnn-ai/gcp-qe-architecture"
+
+[tool.setuptools.packages.find]
+where = ["src"]

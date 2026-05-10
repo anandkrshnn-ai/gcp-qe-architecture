@@ -21,12 +21,23 @@ python run_demo.py latency   # Scenario 2: Cloud Run Timeout analysis
 
 ## 🛠️ Repository Substance
 
-### 📂 Core Framework
-- **[`frameworks/sovereign_core/`](frameworks/sovereign_core/)**: The extensible logic engine for incident parsing.
-- **[`run_demo.py`](run_demo.py)**: The executable entry point for the architectural simulator.
+### 📂 Core Components
+- **[`src/sovereign_core/`](src/sovereign_core/)**: The primary Python engine (Client, Analyzer, LLM Skeleton).
+- **[`terraform/`](terraform/)**: Production-grade IaC for GKE, IAM, and Networking.
+- **[`PROJECTS_CATALOG.md`](PROJECTS_CATALOG.md)**: The strategic roadmap for Sovereign AI (ASCO, Compliance, etc.).
 
-### 📂 Infrastructure as Code (IaC)
-- **[`terraform/`](terraform/)**: Production-grade Terraform modules for GKE, Cloud Run, and Networking. 
+### 🚀 Get Started in 30 Seconds
+```bash
+# Clone and enter
+git clone https://github.com/anandkrshnn-ai/gcp-qe-architecture
+cd gcp-qe-architecture
+
+# Install as a package
+pip install -e .
+
+# Run the Simulator
+python run_demo.py oomkill
+```
   - *Status: Reference material. Modular, secure, and structured for multi-environment deployment.*
 
 ### 📂 Engineering Guides
