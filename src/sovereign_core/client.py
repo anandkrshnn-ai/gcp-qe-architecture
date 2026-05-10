@@ -60,8 +60,9 @@ class SovereignActuator:
     Executes remediation actions after analysis.
     """
 
-    def __init__(self, dry_run: bool = True):
+    def __init__(self, dry_run: bool = True, project_id: str = "demo-project"):
         self.dry_run = dry_run
+        self.project_id = project_id
 
     def execute(self, remediation_type: str, target: str = "default-resource") -> bool:
         """Executes the mapped remediation logic."""
