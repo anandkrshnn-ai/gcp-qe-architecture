@@ -4,6 +4,7 @@ Includes Pattern Matching (Deterministic) and Vertex AI (LLM) reasoning paths.
 """
 
 import logging
+import json
 from typing import List, Dict, Optional
 
 logger = logging.getLogger("SovereignCore.Analyzer")
