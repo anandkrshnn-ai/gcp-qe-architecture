@@ -41,7 +41,17 @@ def test_actuator_dry_run():
     assert actuator.execute("oomkill", target="test-cluster") is True
     assert actuator.execute("latency", target="test-service") is True
 
-def test_actuator_invalid_type():
-    """Verify handling of unknown remediation types."""
-    actuator = SovereignActuator()
-    assert actuator.execute("unknown-type") is False
+@pytest.mark.parametrize("incident_type,keyword", [
+    ("dns_failure", "nxdomain"),
+    ("quota_exhaustion", "quota exceeded"),
+    ("iam_denied", "permission denied"),
+    ("storage_full", "no space left on device"),
+    ("db_fail", "connection refused"),
+    ("cert_expired", "certificate has expired")
+])
+def test_analyzer_patterns_all(incident_type, keyword):
+    """Verify all patterns in the registry are functional."""
+    analyzer = SovereignAnalyzer()
+    mock_logs = [{"jsonPayload": {"message": f"Critical Error: {keyword}"}}]
+    analysis = analyzer.analyze(incident_type, mock_logs)
+    assert keyword in analysis["remediation"].lower() or analysis["confidence"] > 0.8

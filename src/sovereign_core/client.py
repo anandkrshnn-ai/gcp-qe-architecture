@@ -58,11 +58,17 @@ class SovereignActuator:
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
 
-    def execute(self, remediation_type: str, target: str = "default-service") -> bool:
+    def execute(self, remediation_type: str, target: str = "default-resource") -> bool:
         """Executes the mapped remediation logic."""
         actions = {
             "oomkill": self._remediate_oomkill,
-            "latency": self._remediate_latency
+            "latency": self._remediate_latency,
+            "dns_failure": self._remediate_dns,
+            "quota_exhaustion": self._remediate_quota,
+            "iam_denied": self._remediate_iam,
+            "storage_full": self._remediate_storage,
+            "db_fail": self._remediate_db,
+            "cert_expired": self._remediate_cert
         }
         
         handler = actions.get(remediation_type)
@@ -78,6 +84,32 @@ class SovereignActuator:
 
     def _remediate_latency(self, target: str) -> bool:
         command = f"gcloud run services update {target} --timeout=90s"
+        return self._run_command(command)
+
+    def _remediate_dns(self, target: str) -> bool:
+        command = f"kubectl rollout restart deployment coredns -n kube-system"
+        return self._run_command(command)
+
+    def _remediate_quota(self, target: str) -> bool:
+        command = f"gcloud quotas list --service={target} --project={self.project_id}"
+        print("[ADVICE] Automated increase not possible. Please use GCP Console to request increase.")
+        return self._run_command(command)
+
+    def _remediate_iam(self, target: str) -> bool:
+        command = f"gcloud projects get-iam-policy {self.project_id} --flatten='bindings[].members' --filter='bindings.members:{target}'"
+        return self._run_command(command)
+
+    def _remediate_storage(self, target: str) -> bool:
+        command = f"gcloud compute disks resize {target} --size=100GB --zone=us-central1-a"
+        return self._run_command(command)
+
+    def _remediate_db(self, target: str) -> bool:
+        command = f"gcloud sql instances patch {target} --max-connections=500"
+        return self._run_command(command)
+
+    def _remediate_cert(self, target: str) -> bool:
+        command = f"gcloud compute ssl-certificates list --filter='name:{target}'"
+        print("[ADVICE] Manual certificate renewal required via Certificate Manager.")
         return self._run_command(command)
 
     def _run_command(self, command: str) -> bool:
