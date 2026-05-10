@@ -51,20 +51,57 @@ class SovereignAnalyzer:
 
 class VertexAIAnalyzer(SovereignAnalyzer):
     """
-    [FUTURE] Advanced Analyzer using Google Gemini via Vertex AI.
-    Inherits from the base analyzer to provide 'LLM-enhanced' reasoning.
+    Advanced Analyzer using Google Gemini via Vertex AI.
+    Implements structured reasoning for complex incident analysis.
     """
-    def __init__(self, model_name: str = "gemini-1.5-flash"):
+    def __init__(self, model_name: str = "gemini-1.5-flash", project_id: str = "demo-project"):
         super().__init__()
         self.model_name = model_name
+        self.project_id = project_id
+        self._initialized = False
+
+    def _initialize_sdk(self):
+        """Initializes Vertex AI if credentials are present."""
+        if self._initialized:
+            return True
+        try:
+            import vertexai
+            vertexai.init(project=self.project_id, location="us-central1")
+            self._initialized = True
+            return True
+        except ImportError:
+            logger.warning("vertexai SDK not installed. Run: pip install sovereign-core[gcp]")
+            return False
+        except Exception as e:
+            logger.warning(f"Vertex AI initialization failed: {e}")
+            return False
 
     def analyze_with_llm(self, incident_type: str, logs: List[Dict]) -> Dict:
         """
-        Uses Gemini to analyze logs when pattern matching is insufficient.
+        Uses Gemini to analyze logs using structured reasoning.
+        Falls back to deterministic analyzer if SDK is missing.
         """
-        # Placeholder for real Vertex AI integration
-        logger.info(f"Reasoning with {self.model_name}...")
-        
-        # In production, this would call vertexai.generative_models.GenerativeModel
-        # For the PoC, we fall back to the deterministic analyzer
-        return self.analyze(incident_type, logs)
+        if not self._initialize_sdk():
+            logger.info("Falling back to Deterministic Analysis (No Vertex AI detected).")
+            return self.analyze(incident_type, logs)
+
+        try:
+            from vertexai.generative_models import GenerativeModel, Part
+            model = GenerativeModel(
+                model_name=self.model_name,
+                system_instruction=[
+                    "You are a Principal SRE Agent specializing in GCP infrastructure.",
+                    "Your task is to analyze JSON logs and identify root causes with high precision.",
+                    "Return only valid JSON in the format: {'root_cause': str, 'confidence': float, 'remediation': str}"
+                ]
+            )
+            
+            prompt = f"Analyze these {incident_type} logs and provide a root cause analysis:\n{json.dumps(logs, indent=2)}"
+            response = model.generate_content(prompt)
+            
+            # Note: In production, we use response_schema for guaranteed JSON.
+            # Here we provide a robust fallback for the PoC.
+            return json.loads(response.text.strip("```json").strip("```"))
+        except Exception as e:
+            logger.error(f"LLM Reasoning Error: {e}")
+            return self.analyze(incident_type, logs)

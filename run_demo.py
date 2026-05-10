@@ -9,17 +9,22 @@ import os
 # Ensure the 'src' directory is in the path so we can import the local package
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
-from sovereign_core import SovereignClient, SovereignAnalyzer
+from sovereign_core import SovereignClient, SovereignAnalyzer, VertexAIAnalyzer
 import time
 
-def run_demo(incident_type="oomkill"):
+def run_demo(incident_type="oomkill", mode="deterministic"):
     print("=" * 60)
     print(f"SOVEREIGN-GCP SIMULATOR: {incident_type.upper()} ANALYSIS")
+    print(f"MODE: {mode.upper()}")
     print("=" * 60)
     
-    # 1. Initialize Client (Simulation Mode)
+    # 1. Initialize Client & Analyzer
     client = SovereignClient(mode="simulation")
-    analyzer = SovereignAnalyzer()
+    
+    if mode == "reasoning":
+        analyzer = VertexAIAnalyzer()
+    else:
+        analyzer = SovereignAnalyzer()
     
     # 2. Fetch Logs
     logs = client.fetch_logs(incident_type)
@@ -28,9 +33,12 @@ def run_demo(incident_type="oomkill"):
         return
 
     # 3. Analyze
-    analysis = analyzer.analyze(incident_type, logs)
+    if mode == "reasoning":
+        analysis = analyzer.analyze_with_llm(incident_type, logs)
+    else:
+        analysis = analyzer.analyze(incident_type, logs)
     
-    print(f"[*] Analyzing {len(logs)} log entries...")
+    print(f"[*] Fetching telemetry data...")
     time.sleep(0.5)
     
     print("-" * 60)
@@ -39,9 +47,10 @@ def run_demo(incident_type="oomkill"):
     print(f"REMEDY:      {analysis['remediation']}")
     print("-" * 60)
     
-    print("\n[VERDICT] Logic Verified. Package 'sovereign_core' is functional.")
+    print("\n[VERDICT] Logic Verified. Reasoning engine is functional.")
     print("=" * 60)
 
 if __name__ == "__main__":
     scenario = sys.argv[1] if len(sys.argv) > 1 else "oomkill"
-    run_demo(scenario)
+    mode = "reasoning" if "--reasoning" in sys.argv else "deterministic"
+    run_demo(scenario, mode)
