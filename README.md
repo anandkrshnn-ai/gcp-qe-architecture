@@ -40,7 +40,7 @@ python run_demo.py oomkill
   - *Status: Reference material. Modular, secure, and structured for multi-environment deployment.*
 
 ### 📂 Engineering Guides
-- [NemoClaw: Secure Agentic Runtime](guides/10-nemoclaw-secure-runtime.md)
+- [Secure Agentic Runtime (SAR)](guides/10-secure-agentic-runtime.md)
 - [Hybrid AI Orchestration (Gemma + Gemini)](guides/09-hybrid-ai-orchestration.md)
 - [SLO/SLI Engineering](guides/02-slo-sli-engineering.md)
 - [Production Readiness Checklist](guides/03-production-readiness.md)

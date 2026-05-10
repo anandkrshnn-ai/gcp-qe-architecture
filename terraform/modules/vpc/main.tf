@@ -1,4 +1,4 @@
-# Networking Module for NemoClaw Secure Runtime
+# Networking Module for Secure Agentic Runtime Secure Runtime
 
 resource "google_compute_network" "vpc" {
   name                    = var.network_name

@@ -1,6 +1,6 @@
-# Terraform: NemoClaw Secure Infrastructure
+# Terraform: Secure Agentic Runtime Secure Infrastructure
 
-This directory contains the Infrastructure-as-Code (IaC) to deploy a production-grade, hardened GKE environment for the NemoClaw secure runtime.
+This directory contains the Infrastructure-as-Code (IaC) to deploy a production-grade, hardened GKE environment for the Secure Agentic Runtime secure runtime.
 
 ## Architecture Highlights
 

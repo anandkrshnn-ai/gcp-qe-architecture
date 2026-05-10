@@ -1,9 +1,9 @@
-# NemoClaw: Secure Agentic Runtime Specification (Advanced)
+# Secure Agentic Runtime: Secure Agentic Runtime Specification (Advanced)
 
-NemoClaw is the "Sovereign Perimeter" for autonomous AI agents. This document defines the advanced implementation of a zero-trust runtime for the `Sovereign-Core` engine.
+Secure Agentic Runtime is the "Sovereign Perimeter" for autonomous AI agents. This document defines the advanced implementation of a zero-trust runtime for the `Sovereign-Core` engine.
 
 ## 1. Architectural Principles
-NemoClaw assumes that any agent—whether deterministic or LLM-driven—is a potential attack vector. Security is enforced through **Defense-in-Depth**.
+Secure Agentic Runtime assumes that any agent—whether deterministic or LLM-driven—is a potential attack vector. Security is enforced through **Defense-in-Depth**.
 
 ```mermaid
 graph LR
@@ -38,7 +38,7 @@ Every prompt sent to Vertex AI and every response returned is passed through a *
 - **Sensitive Data Exfiltration**: Accidental leakage of PII or API keys in the agent's output.
 
 ## 3. Provisioning (Terraform Baseline)
-The NemoClaw runtime is provisioned with a "Secure-by-Default" GKE configuration:
+The Secure Agentic Runtime runtime is provisioned with a "Secure-by-Default" GKE configuration:
 - Private Nodes & Control Plane.
 - Shielded GKE Nodes enabled.
 - Workload Identity required.

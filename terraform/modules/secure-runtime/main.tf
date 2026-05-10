@@ -1,8 +1,8 @@
-# NemoClaw: Advanced Secure GKE Sandbox Baseline
+# Secure Agentic Runtime: Advanced Secure GKE Sandbox Baseline
 
 # --- GKE Sandbox (gVisor) Config ---
-resource "google_container_node_pool" "nemoclaw_sandbox" {
-  name       = "nemoclaw-secure-runtime"
+resource "google_container_node_pool" "Secure Agentic Runtime_sandbox" {
+  name       = "Secure Agentic Runtime-secure-runtime"
   location   = var.region
   cluster    = google_container_cluster.primary.name
   node_count = 1
@@ -35,7 +35,7 @@ resource "google_container_node_pool" "nemoclaw_sandbox" {
 
 # --- KMS Key for Agent Workspace ---
 resource "google_kms_crypto_key" "agent_vault" {
-  name     = "nemoclaw-agent-vault"
+  name     = "Secure Agentic Runtime-agent-vault"
   key_ring = google_kms_key_ring.ring.id
   purpose  = "ENCRYPT_DECRYPT"
 }

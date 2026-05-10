@@ -1,4 +1,4 @@
-# Root Terraform Configuration for NemoClaw on GCP
+# Root Terraform Configuration for Secure Agentic Runtime on GCP
 
 provider "google" {
   project = var.project_id
@@ -8,8 +8,8 @@ provider "google" {
 # 1. Network
 module "vpc" {
   source       = "./modules/vpc"
-  network_name = "nemoclaw-net"
-  subnet_name  = "nemoclaw-subnet"
+  network_name = "Secure Agentic Runtime-net"
+  subnet_name  = "Secure Agentic Runtime-subnet"
   subnet_cidr  = "10.10.0.0/24"
   pod_cidr     = "10.100.0.0/16"
   service_cidr = "10.101.0.0/24"
@@ -21,7 +21,7 @@ module "iam" {
   source        = "./modules/iam"
   project_id    = var.project_id
   sa_name       = "sovereign-sre-agent"
-  k8s_namespace = "nemoclaw"
+  k8s_namespace = "Secure Agentic Runtime"
   k8s_sa_name   = "sovereign-sre"
 }
 
@@ -29,7 +29,7 @@ module "iam" {
 module "gke" {
   source                = "./modules/gke"
   project_id            = var.project_id
-  cluster_name          = "nemoclaw-cluster"
+  cluster_name          = "Secure Agentic Runtime-cluster"
   region                = var.region
   network_link          = module.vpc.network_link
   subnet_link           = module.vpc.subnet_link

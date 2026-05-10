@@ -3,7 +3,7 @@
 # 1. Create the GCP Service Account
 resource "google_service_account" "agent_sa" {
   account_id   = var.sa_name
-  display_name = "NemoClaw Sovereign SRE Agent"
+  display_name = "Secure Agentic Runtime Sovereign SRE Agent"
 }
 
 # 2. Grant Vertex AI User permissions

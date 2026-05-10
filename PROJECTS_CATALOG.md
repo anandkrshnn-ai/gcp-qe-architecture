@@ -28,11 +28,11 @@ This document serves as the high-level technical roadmap for the agentic tools b
 - **Key Pattern**: Agents pulling data "slices" into local memory using Arrow Flight SQL to minimize reasoning latency during high-pressure incidents.
 - **Path to Real**: Implement the `AgenticLakehouse` logic to fetch BQ data into DuckDB for local LLM context processing.
 
-## 5. Secure Agent Runtime (NemoClaw)
+## 5. Secure Agent Runtime (SAR)
 **Goal**: Secure, isolated execution environments for autonomous agents.
 - **Core Technology**: GKE Sandbox (gVisor), Confidential Computing, VPC Service Controls.
-- **Key Pattern**: Isolating agent execution in a restricted, kernel-hardened runtime (NemoClaw) to prevent prompt injection and infrastructure lateral movement.
-- **Path to Real**: Implement the [NemoClaw Specification](guides/10-nemoclaw-secure-runtime.md) using the [Terraform Module](terraform/modules/nemoclaw/main.tf).
+- **Key Pattern**: Isolating agent execution in a restricted, kernel-hardened runtime (SAR) to prevent prompt injection and infrastructure lateral movement.
+- **Path to Real**: Implement the [Secure Agentic Runtime Specification](guides/10-secure-agentic-runtime.md) using the [Terraform Module](terraform/modules/secure-runtime/main.tf).
 
 ## 6. Hybrid Reasoning Layer (Gemma + Gemini)
 **Goal**: Optimize cost and latency by routing diagnostic tasks between Local and Cloud models.

@@ -1,4 +1,4 @@
-# GKE Module for NemoClaw Secure Runtime
+# GKE Module for Secure Agentic Runtime Secure Runtime
 
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
@@ -77,13 +77,13 @@ resource "google_container_node_pool" "agent_nodes" {
     spot         = true
 
     labels = {
-      workload = "nemoclaw-agent"
+      workload = "Secure Agentic Runtime-agent"
     }
 
     # Taint the nodes to ensure only agent workloads run here
     taint {
       key    = "workload"
-      value  = "nemoclaw-agent"
+      value  = "Secure Agentic Runtime-agent"
       effect = "NO_SCHEDULE"
     }
 

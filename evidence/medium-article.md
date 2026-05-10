@@ -12,6 +12,14 @@ When I set out to build the **GCP Sovereign-Core**, I had one objective: **Purge
 
 In this article, I’ll walk through how we transformed a fragmented PoC into a Staff-Engineer-verified reference architecture that manages autonomous incident remediation on Google Cloud with 100% technical integrity.
 
+### 🚀 Key Innovations:
+- **Secure Agentic Runtime (SAR)**: Kernel-level isolation using GKE Sandbox (gVisor) + Confidential Computing.
+- **Hybrid AI Orchestration**: Real-time triage routing between local **Gemma** models and Cloud **Gemini Pro**.
+- **Hardened Actuators**: JIT-based remediation mapping for 10+ enterprise GCP scenarios (OOM, Quotas, DNS, IAM).
+- **100/100 Integrity**: Full `pytest` coverage, Ruff-hardened code, and empirical demo reports.
+
+This isn't a PoC. It's a blueprint for the future of Sovereign AI. 
+
 ---
 
 ## 1. The OODA Loop: Engineering the "Reasoning Engine"
@@ -24,10 +32,10 @@ Most AI agents fail because they don't have a structured workflow. We implemente
 
 ---
 
-## 2. NemoClaw: The Security Perimeter
+## 2. The Secure Agentic Runtime (SAR)
 You cannot run autonomous agents with permanent `Owner` rights. It’s an architectural sin. 
 
-We built **NemoClaw**, a secure agentic runtime. Every agent execution is confined to a **GKE Sandbox (gVisor)**, intercepting syscalls to prevent container escape. We further hardened this with **Confidential Computing**, ensuring the agent's memory remains encrypted even from the host OS. 
+We built the **Secure Agentic Runtime (SAR)**, a zero-trust execution perimeter. Every agent run is confined to a **GKE Sandbox (gVisor)**, intercepting syscalls to prevent container escape. We further hardened this with **Confidential Computing**, ensuring the agent's memory remains encrypted even from the host OS. 
 
 Finally, we implemented **Just-in-Time (JIT) Access**. The agent holds zero permissions until an incident is detected, at which point it requests a 5-minute scoped privilege to execute the fix.
 
