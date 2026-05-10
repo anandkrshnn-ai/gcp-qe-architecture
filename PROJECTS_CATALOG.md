@@ -34,6 +34,12 @@ This document serves as the high-level technical roadmap for the agentic tools b
 - **Key Pattern**: Isolating agent execution in a restricted runtime to prevent potential prompt injection from impacting the wider infrastructure.
 - **Path to Real**: Deploy the `SovereignClient` inside a GKE Sandbox with strictly scoped IAM Workload Identity.
 
+## 6. Hybrid Reasoning Layer (Gemma + Gemini)
+**Goal**: Optimize cost and latency by routing diagnostic tasks between Local and Cloud models.
+- **Core Technology**: Gemma 4 (Local Inference on GKE), Vertex AI (Cloud Reasoning), GKE Model Serving.
+- **Key Pattern**: "Triage Routing" – Local Gemma models handle 80% of routine telemetry filtering and PII masking, escalating only complex "Black Swan" events to Gemini 1.5 Pro.
+- **Path to Real**: Deploy a Gemma serving endpoint on GKE (via vLLM or TGI) and update the `SovereignAnalyzer` with a multi-model routing logic.
+
 ---
 
 ## 🛠️ Implementation Priorities

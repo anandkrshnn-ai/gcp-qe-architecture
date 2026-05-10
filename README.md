@@ -40,6 +40,7 @@ python run_demo.py oomkill
   - *Status: Reference material. Modular, secure, and structured for multi-environment deployment.*
 
 ### 📂 Engineering Guides
+- [Hybrid AI Orchestration (Gemma + Gemini)](guides/09-hybrid-ai-orchestration.md)
 - [SLO/SLI Engineering](guides/02-slo-sli-engineering.md)
 - [Production Readiness Checklist](guides/03-production-readiness.md)
 - [Path to Production Deployment](guides/08-deployment-path.md)
