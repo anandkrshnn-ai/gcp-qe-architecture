@@ -68,16 +68,21 @@ resource "google_container_node_pool" "agent_nodes" {
   node_count = var.node_count
 
   node_config {
-    # 2026 Sovereign SRE Enhancement: G4 Confidential VM Support
+    # 2026 Sovereign SRE Enhancement: GKE Sandbox (gVisor) for Agent Isolation
+    sandbox_config {
+      sandbox_type = "gvisor"
+    }
+
+    # Confidential GKE Nodes (SEV-SNP) for Hardware-Rooted Memory Encryption
     confidential_nodes {
       enabled = true
     }
     
-    # Using Axion or N4/G4 instances for high-efficiency Agentic compute
+    # Using G4 instances for high-efficiency Agentic compute
     machine_type = "g4-standard-4" 
     
-    preemptible  = true
-    spot         = true
+    # Root disk hardening
+    boot_disk_kms_key = "projects/${var.project_id}/locations/${var.region}/keyRings/sre-keys/cryptoKeys/boot-key"
 
     labels = {
       workload = "Secure Agentic Runtime-agent"

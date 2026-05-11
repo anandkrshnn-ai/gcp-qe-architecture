@@ -8,7 +8,17 @@ import logging
 import re
 import time
 from typing import Dict, List, Optional, Any
+from pydantic import BaseModel, Field
 from .security import RuntimeSecurity
+
+class IncidentResolution(BaseModel):
+    """Structured response from the Epistemic Engine."""
+    root_cause: str = Field(description="The identified root cause of the incident")
+    confidence: float = Field(ge=0, le=1.0, description="Confidence score in the diagnosis")
+    remediation: str = Field(description="The recommended remediation action")
+    kubectl_patch: Optional[Dict] = Field(None, description="JSON Patch for Kubernetes remediation")
+    reasoning: str = Field(description="Internal reasoning for the decision")
+    engine: str = Field(description="The model or logic that produced this result")
 
 logger = logging.getLogger("SovereignCore.Analyzer")
 
@@ -164,51 +174,31 @@ class SovereignAnalyzer:
         self.tracer.end_span("orient_analysis")
         return {"root_cause": "Not Found", "confidence": 0.0, "conflict": 1.0, "remediation": "N/A"}
 
+    def _generate_kubectl_patch(self, remediation: str) -> Optional[Dict]:
+        """Generates a JSON Patch for Kubernetes resources."""
+        if remediation == "scale_up_memory":
+            return {"spec": {"template": {"spec": {"containers": [{"name": "app", "resources": {"limits": {"memory": "2Gi"}}}]}}}}
+        if remediation == "scale_out_replicas":
+            return {"spec": {"replicas": 5}}
+        return None
+
     def _map_incident(self, incident_type: str, match: str) -> Dict:
-        """Maps a pattern match to a remediation strategy."""
-        mapping = {
-            "oomkill": {
-                "root_cause": f"Memory Exhaustion (Pattern: {match})",
-                "confidence": 0.95,
-                "remediation": "scale_up_memory",
-            },
-            "latency": {
-                "root_cause": f"Resource Contention (Pattern: {match})",
-                "confidence": 0.85,
-                "remediation": "scale_out_replicas",
-            },
-            "dns_fail": {
-                "root_cause": f"Network Resolution Failure (Pattern: {match})",
-                "confidence": 0.90,
-                "remediation": "restart_dns_proxy",
-            },
-            "quota_exceeded": {
-                "root_cause": f"API Rate Limiting (Pattern: {match})",
-                "confidence": 0.98,
-                "remediation": "request_quota_increase",
-            },
-            "iam_denied": {
-                "root_cause": f"Identity/Access Misconfiguration (Pattern: {match})",
-                "confidence": 0.92,
-                "remediation": "audit_iam_policy",
-            },
-            "storage_full": {
-                "root_cause": f"Disk Space Exhaustion (Pattern: {match})",
-                "confidence": 0.96,
-                "remediation": "expand_disk_size",
-            },
-            "db_fail": {
-                "root_cause": f"Database Connection Loss (Pattern: {match})",
-                "confidence": 0.88,
-                "remediation": "failover_db_instance",
-            },
-            "cert_expired": {
-                "root_cause": f"SSL/TLS Certificate Expiry (Pattern: {match})",
-                "confidence": 1.0,
-                "remediation": "renew_ssl_cert",
-            },
+        """Maps a pattern match to a remediation strategy and patch."""
+        base = {
+            "oomkill": ("Memory Exhaustion", "scale_up_memory"),
+            "latency": ("Resource Contention", "scale_out_replicas"),
+            "dns_fail": ("Network Resolution Failure", "restart_dns_proxy"),
         }
-        return mapping.get(incident_type, {"root_cause": "Generic Failure", "confidence": 0.5, "remediation": "N/A"})
+        
+        cause, remediation = base.get(incident_type, ("Generic Failure", "MONITOR_AND_WAIT"))
+        patch = self._generate_kubectl_patch(remediation)
+        
+        return {
+            "root_cause": f"{cause} (Pattern: {match})",
+            "confidence": 0.9,
+            "remediation": remediation,
+            "kubectl_patch": patch
+        }
 
 
 class GemmaAnalyzer(SovereignAnalyzer):
@@ -273,8 +263,10 @@ class VertexAIAnalyzer(SovereignAnalyzer):
         if not self._initialize_sdk():
             return super().analyze(incident_type, logs)
 
-        # 2026 Sovereign SRE Logic: Multimodal Analysis of Dissonance
+        # 2026 Sovereign SRE Logic: Structured Reasoning
         log_payloads = [str(l.get("jsonPayload", l.get("textPayload", ""))) for l in logs]
+        
+        schema = IncidentResolution.schema_json(indent=2)
         prompt = f"""
         Role: Principal GCP SRE Agent.
         Task: Analyze the following {incident_type} logs and identify the Root Cause.
@@ -282,32 +274,36 @@ class VertexAIAnalyzer(SovereignAnalyzer):
         LOG CONTEXT:
         {json.dumps(log_payloads, indent=2)}
         
-        STRICT OUTPUT FORMAT (JSON):
-        {{
-            "root_cause": "string",
-            "confidence": 0.0-1.0,
-            "remediation": "scale_up_memory | scale_out_replicas | restart_dns_proxy | MONITOR_AND_WAIT",
-            "reasoning": "brief explanation"
-        }}
+        YOU MUST RESPOND IN VALID JSON MATCHING THIS SCHEMA:
+        {schema}
         """
         
         try:
             response = self.model.generate_content(prompt)
-            # Basic JSON extraction (In production, use Pydantic/Instructor)
             res_text = response.text.strip()
+            # Handle Markdown blocks in Gemini output
             if "```json" in res_text:
                 res_text = res_text.split("```json")[1].split("```")[0].strip()
             
-            result = json.loads(res_text)
-            result["engine"] = f"{self.model_name} (Sovereign-Cloud)"
+            # Validate with Pydantic
+            result_obj = IncidentResolution.parse_raw(res_text)
+            result_obj.engine = f"{self.model_name} (Sovereign-Cloud)"
+            
             self.tracer.end_span("cloud_rca_gemini")
-            return result
+            return result_obj.dict()
         except Exception as e:
             logger.error(f"[AI] Gemini reasoning failed: {e}. Falling back to heuristics.")
-            result = super().analyze(incident_type, logs)
-            result["engine"] = "Heuristic-Fallback"
+            fallback = super().analyze(incident_type, logs)
+            # Wrap heuristic in Pydantic for consistency
+            result_obj = IncidentResolution(
+                root_cause=fallback["root_cause"],
+                confidence=fallback.get("confidence", 0.5),
+                remediation=fallback["remediation"],
+                reasoning="Heuristic fallback due to AI failure",
+                engine="Heuristic-Fallback"
+            )
             self.tracer.end_span("cloud_rca_gemini")
-            return result
+            return result_obj.dict()
 
 
 class HybridSovereignAnalyzer:
