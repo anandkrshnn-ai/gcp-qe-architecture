@@ -12,6 +12,9 @@ resource "google_container_cluster" "primary" {
   subnetwork = var.subnet_link
 
   networking_mode = "VPC_NATIVE"
+  datapath_provider = "ADVANCED_DATAPATH" # Enable Cilium (Dataplane V2)
+
+  enable_binary_authorization = true # Sovereign-Cloud: Only run signed images
 
   ip_allocation_policy {
     cluster_secondary_range_name  = "pod-range"

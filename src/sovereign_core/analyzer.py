@@ -245,20 +245,11 @@ class VertexAIAnalyzer(SovereignAnalyzer):
     Used for complex Root Cause Analysis (RCA).
     """
 
-    def __init__(self, model_name: str = "gemini-1.5-flash", project_id: str = "demo-project", security: Optional[RuntimeSecurity] = None):
+    def __init__(self, model_name: str = "gemini-1.5-pro", project_id: str = "demo-project", security: Optional[RuntimeSecurity] = None):
         super().__init__(security=security)
         self.model_name = model_name
         self.project_id = project_id
         self._initialized = False
-
-    def analyze(self, incident_type: str, logs: List[Dict]) -> Dict:
-        self.tracer.start_span("cloud_rca_gemini")
-        logger.info("[CLOUD] Escalating to Gemini Pro for RCA...")
-        # Note: logs are already scrubbed by the base analyze method
-        result = super().analyze(incident_type, logs)
-        result["engine"] = "Gemini-1.5-Pro (Cloud-Reasoning)"
-        self.tracer.end_span("cloud_rca_gemini")
-        return result
 
     def _initialize_sdk(self):
         """Initializes Vertex AI if credentials are present."""
@@ -266,12 +257,57 @@ class VertexAIAnalyzer(SovereignAnalyzer):
             return True
         try:
             import vertexai
+            from vertexai.generative_models import GenerativeModel
             vertexai.init(project=self.project_id, location="us-central1")
+            self.model = GenerativeModel(self.model_name)
             self._initialized = True
             return True
-        except ImportError:
-            logger.warning("vertexai SDK not installed.")
+        except Exception as e:
+            logger.warning(f"Vertex AI initialization failed: {e}")
             return False
+
+    def analyze(self, incident_type: str, logs: List[Dict]) -> Dict:
+        self.tracer.start_span("cloud_rca_gemini")
+        logger.info(f"[CLOUD] Escalating to {self.model_name} for RCA...")
+        
+        if not self._initialize_sdk():
+            return super().analyze(incident_type, logs)
+
+        # 2026 Sovereign SRE Logic: Multimodal Analysis of Dissonance
+        log_payloads = [str(l.get("jsonPayload", l.get("textPayload", ""))) for l in logs]
+        prompt = f"""
+        Role: Principal GCP SRE Agent.
+        Task: Analyze the following {incident_type} logs and identify the Root Cause.
+        
+        LOG CONTEXT:
+        {json.dumps(log_payloads, indent=2)}
+        
+        STRICT OUTPUT FORMAT (JSON):
+        {{
+            "root_cause": "string",
+            "confidence": 0.0-1.0,
+            "remediation": "scale_up_memory | scale_out_replicas | restart_dns_proxy | MONITOR_AND_WAIT",
+            "reasoning": "brief explanation"
+        }}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            # Basic JSON extraction (In production, use Pydantic/Instructor)
+            res_text = response.text.strip()
+            if "```json" in res_text:
+                res_text = res_text.split("```json")[1].split("```")[0].strip()
+            
+            result = json.loads(res_text)
+            result["engine"] = f"{self.model_name} (Sovereign-Cloud)"
+            self.tracer.end_span("cloud_rca_gemini")
+            return result
+        except Exception as e:
+            logger.error(f"[AI] Gemini reasoning failed: {e}. Falling back to heuristics.")
+            result = super().analyze(incident_type, logs)
+            result["engine"] = "Heuristic-Fallback"
+            self.tracer.end_span("cloud_rca_gemini")
+            return result
 
 
 class HybridSovereignAnalyzer:

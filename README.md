@@ -1,57 +1,23 @@
-# GCP Incident Analyzer (PoC)
-A working proof-of-concept for log analysis patterns on Google Cloud Platform.
+# Sovereign-GCP: Byzantine-Fault-Tolerant Incident Analysis (PoC)
 
-## What This Is
-This repository is a **Functional Proof-of-Concept** and **Baseline Reference** for building incident analysis tools on GCP.
+## ⚠️ Project Status: Proof-of-Concept (Research Only)
+This repository is a technical reference implementation of **Byzantine Fault Tolerance (BFT)** in cloud-native incident response. It is **NOT** a production-ready platform.
 
-### 🚀 The 30-Second Win (Zero Credentials Needed)
-Prove the logic works immediately on real GCP log structures:
-```bash
-python run_demo.py oomkill   # Scenario 1: GKE Pod OOM analysis
-python run_demo.py latency   # Scenario 2: Cloud Run Timeout analysis
-```
+### 🏛️ Core Research Goal
+Can we build an autonomous SRE agent that maintains **Epistemic Safety** in a hostile cloud environment? 
 
-**What this demonstrates**:
-- ✓ **Generalizable Logic**: Multi-scenario analysis via a pattern registry.
-- ✓ **Real Data Patterns**: Logic is tested against **actual GCP log JSON payloads**.
-- ✓ **Extensible Architecture**: Easy to add new incident types via the `SovereignAnalyzer`.
+This PoC focuses on the **Sovereign Fleet**: a distributed group of agents that use PBFT (Practical Byzantine Fault Tolerance) to agree on incident root causes before taking remediation actions. This prevents a single compromised telemetry source or agent from triggering catastrophic infrastructure changes.
 
----
+### 🛠️ Current Capabilities (The Reality)
+1.  **BFT Fleet Consensus (v3.0.0)**: A Python-based PBFT implementation for agent agreement.
+2.  **Merkle-Chained WAL**: Cryptographically immutable state logging.
+3.  **GKE Infrastructure (PoC)**: Terraform for a standard GKE cluster with Workload Identity.
+4.  **Log Analysis**: Pattern-based (moving to LLM-based) root cause identification.
 
-## 🛠️ Repository Substance
-
-### 📂 Core Components
-- **[`src/sovereign_core/`](src/sovereign_core/)**: The primary Python engine (Client, Analyzer, LLM Skeleton).
-- **[`terraform/`](terraform/)**: Production-grade IaC for GKE, IAM, and Networking.
-- **[`PROJECTS_CATALOG.md`](PROJECTS_CATALOG.md)**: The strategic roadmap for Sovereign AI (ASCO, Compliance, etc.).
-
-### 🚀 Get Started in 30 Seconds
-```bash
-# Clone and enter
-git clone https://github.com/anandkrshnn-ai/gcp-qe-architecture
-cd gcp-qe-architecture
-
-# Install as a package
-pip install -e .
-
-# Run the Simulator
-python run_demo.py oomkill
-```
-  - *Status: Reference material. Modular, secure, and structured for multi-environment deployment.*
-
-### 📂 Engineering Guides
-- [Secure Agentic Runtime (SAR)](guides/10-secure-agentic-runtime.md)
-- [Hybrid AI Orchestration (Gemma + Gemini)](guides/09-hybrid-ai-orchestration.md)
-- [SLO/SLI Engineering](guides/02-slo-sli-engineering.md)
-- [Production Readiness Checklist](guides/03-production-readiness.md)
-- [Path to Production Deployment](guides/08-deployment-path.md)
+### 🛤️ The Path to "Principal" Depth (Active R&D)
+- [ ] **Hardware Trust**: Moving from standard nodes to GKE Confidential Computing (SEV-SNP).
+- [ ] **Real AI**: Replacing regex-based logic with Vertex AI (Gemini 1.5 Pro) for multimodal log/metric reasoning.
+- [ ] **Policy Enforcement**: Integrating Binary Authorization for all agent images.
 
 ---
-
-## 🔍 Limitations & Intent
-**This is NOT a turnkey production platform.** It is a high-fidelity simulator designed for:
-1. **Architectural Study**: Understanding how to structure autonomous healing loops.
-2. **SDK Reference**: Learning how to interact with real `google-cloud-sdk` patterns.
-3. **Prototype Foundation**: A starting point for building real-world QE agents.
-
-**Author**: Anandakrishnan Damodaran, Architect
+**Disclaimer**: This is a professional development portfolio designed to demonstrate distributed systems thinking and GCP-native engineering. All "Demo Reports" are generated within this PoC's controlled environment.
