@@ -8,28 +8,39 @@ logger = logging.getLogger(__name__)
 
 class SovereignFleet:
     """
-    Wave 9: Byzantine Fault Tolerance (BFT) Fleet Layer.
-    Implements 3-of-4 Quorum and Merkle-Chained Consensus.
+    Wave 10: Byzantine Fleet v2.1.0 - The Upgrade Paradox.
+    Handles mixed-version deployments and "unfixable" hardware detection.
     """
-    def __init__(self, agent_id: str, total_agents: int = 4):
+    def __init__(self, agent_id: str, version: str = "2.1.0", total_agents: int = 4):
         self.agent_id = agent_id
+        self.version = version
         self.total_agents = total_agents
-        self.quorum_threshold = (total_agents // 3 * 2) + 1 # 2f + 1
+        self.quorum_threshold = (total_agents // 3 * 2) + 1
+        self.compat_nodes = {}
+
+    def verify_node_version(self, node_id: str, node_version: str) -> bool:
+        """
+        BFT-11: Upgrade Quarantine.
+        Excludes legacy (v1.x) nodes from the PBFT consensus layer.
+        """
+        if node_version.startswith("1."):
+            logger.warning(f"[UPGRADE] Node {node_id} is v{node_version} (Legacy). QUARANTINING.")
+            return False
+        return True
 
     def propose_remediation(self, action: Dict) -> str:
         """
-        BFT-1: Proposes an action and requests signatures from the fleet.
-        Action is only valid if (2f + 1) agents sign the SAME request hash.
+        Byzantine Consensus with Version Awareness.
         """
         request_hash = self._calculate_request_hash(action)
-        logger.info(f"[FLEET] Proposing action {action['type']} with hash {request_hash}")
         
-        # In production: Broadcast to fleet and collect signatures
+        # BFT-11: Only collect signatures from verified v2+ nodes.
         signatures = self._collect_fleet_signatures(request_hash)
+        valid_sigs = [s for s in signatures if self.verify_node_version(s["id"], s["v"])]
         
-        if len(signatures) < self.quorum_threshold:
-            logger.error(f"[BYZANTINE] BFT-1: Quorum Failed. Only {len(signatures)} signatures.")
-            return "REJECTED_NO_QUORUM"
+        if len(valid_sigs) < self.quorum_threshold:
+            logger.error("[BYZANTINE] BFT-11: Quorum Failed due to Version Mismatch/Quarantine.")
+            return "REJECTED_VERSION_MISMATCH"
             
         return f"APPROVED_{request_hash}"
 
