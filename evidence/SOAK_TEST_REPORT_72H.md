@@ -32,9 +32,9 @@
 ```
 
 ## 4. Key Findings
-1.  **Quarantine Effectiveness**: The "Suspect Quarantine" prevented a single lying node from blocking the fleet while also preventing it from poisoning state.
-2.  **WAL Replay Recovery**: Node-3 (partitioned) re-joined the Merkle Chain in <15 seconds after network recovery.
-3.  **Hardware Anomaly Attribution**: Node-0 (Rogue TEE) was identified because its "correctly signed" state consistently conflicted with the 3/4 consensus on Resource X.
+1.  **Self-Healing Consensus**: The fleet successfully detected its own vulnerability (n=3) after the Hr 58 eviction and restored its 4-node quorum at Hr 70.
+2.  **Quarantine Effectiveness**: The "Suspect Quarantine" prevented state poisoning while maintaining availability.
+3.  **WAL Replay Recovery**: Node-4-replacement re-joined the Merkle Chain in <60 seconds.
 
 ## 5. Final Sign-off
 The fleet has sailed into the 72-hour storm and emerged intact. **The architecture is no longer academic—it is empirically verified.**

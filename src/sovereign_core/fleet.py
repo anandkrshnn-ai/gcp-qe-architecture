@@ -11,7 +11,7 @@ class SovereignFleet:
     Wave 10: Byzantine Fleet v2.1.0 - The Upgrade Paradox.
     Handles mixed-version deployments and "unfixable" hardware detection.
     """
-    def __init__(self, agent_id: str, version: str = "2.2.0", total_agents: int = 4):
+    def __init__(self, agent_id: str, version: str = "3.0.0", total_agents: int = 4):
         self.agent_id = agent_id
         self.version = version
         self.total_agents = total_agents
@@ -20,23 +20,31 @@ class SovereignFleet:
 
     def report_anomaly(self, node_id: str):
         """
-        BFT-12: Byzantine Remediation Policy.
-        Implements Suspect Quarantine and Auto-Eviction.
+        BFT-12/13: Byzantine Remediation & Auto-Heal.
         """
         node = self.nodes.get(node_id, {})
         if not node: return
         
         node["anomalies"] += 1
-        if node["anomalies"] >= 3:
-            # Phase 1: Suspect Quarantine (Read-Only Observer)
-            node["status"] = "SUSPECT"
-            node["weight"] = 0.0
-            logger.warning(f"[BYZANTINE] BFT-12: Node {node_id} QUARANTINED (Suspect). Weight=0.")
-            
         if node["anomalies"] >= 12:
             # Phase 2: Auto-Deprovisioning (Eviction)
             node["status"] = "EVICTED"
-            logger.error(f"[BYZANTINE] BFT-12: Node {node_id} EVICTED from fleet due to persistent anomalies.")
+            logger.error(f"[BYZANTINE] BFT-12: Node {node_id} EVICTED.")
+            
+            # BFT-13: Self-Healing Fleet. Provision replacement.
+            self.auto_heal_fleet()
+
+    def auto_heal_fleet(self):
+        """
+        BFT-13: GKE Node-Pool Call-Back.
+        Restores 4-node quorum by provisioning a new attested agent.
+        """
+        if len([n for n in self.nodes.values() if n["status"] == "HEALTHY"]) < self.total_agents:
+            logger.info("[SOVEREIGN] BFT-13: Quorum below 4. Triggering GKE Node-Pool Resize.")
+            # Simulated: gcloud container clusters resize $CLUSTER_NAME --num-nodes=4
+            new_node_id = f"agent-{len(self.nodes)}-replacement"
+            self.nodes[new_node_id] = {"v": self.version, "status": "HEALTHY", "weight": 1.0, "anomalies": 0}
+            logger.info(f"[SOVEREIGN] BFT-13: Node {new_node_id} provisioned and re-syncing Merkle WAL.")
 
     def propose_remediation(self, action: Dict) -> str:
         """
