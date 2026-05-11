@@ -8,8 +8,17 @@ import logging
 import re
 import time
 from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field
-from .security import RuntimeSecurity
+# 2026 Sovereign SRE Enhancement: Gemini Function Calling for K8s Patches
+def generate_kubernetes_patch(remediation_type: str, resource_name: str, namespace: str = "default") -> Dict:
+    """
+    Generates a JSON Patch for a Kubernetes resource.
+    remediation_type: 'scale_up_memory' | 'scale_out_replicas' | 'restart_dns_proxy'
+    """
+    if remediation_type == "scale_up_memory":
+        return {"op": "replace", "path": "/spec/template/spec/containers/0/resources/limits/memory", "value": "2Gi"}
+    elif remediation_type == "scale_out_replicas":
+        return {"op": "replace", "path": "/spec/replicas", "value": 5}
+    return {"op": "test", "path": "/metadata/name", "value": resource_name}
 
 class IncidentResolution(BaseModel):
     """Structured response from the Epistemic Engine."""
@@ -247,9 +256,15 @@ class VertexAIAnalyzer(SovereignAnalyzer):
             return True
         try:
             import vertexai
-            from vertexai.generative_models import GenerativeModel
+            from vertexai.generative_models import GenerativeModel, Tool
             vertexai.init(project=self.project_id, location="us-central1")
-            self.model = GenerativeModel(self.model_name)
+            
+            # Register Sovereign SRE Tools
+            self.k8s_tool = Tool.from_function(generate_kubernetes_patch)
+            self.model = GenerativeModel(
+                self.model_name,
+                tools=[self.k8s_tool]
+            )
             self._initialized = True
             return True
         except Exception as e:
@@ -269,23 +284,44 @@ class VertexAIAnalyzer(SovereignAnalyzer):
         schema = IncidentResolution.schema_json(indent=2)
         prompt = f"""
         Role: Principal GCP SRE Agent.
-        Task: Analyze the following {incident_type} logs and identify the Root Cause.
+        Task: Analyze the following {incident_type} logs.
+        Identify the root cause and generate a Kubernetes patch if needed using the provided tools.
         
         LOG CONTEXT:
         {json.dumps(log_payloads, indent=2)}
         
-        YOU MUST RESPOND IN VALID JSON MATCHING THIS SCHEMA:
+        STRICT SCHEMA FOR FINAL RESPONSE:
         {schema}
         """
         
         try:
             response = self.model.generate_content(prompt)
+            
+            # 2026 Logic: Handle Tool Calls (Function Calling)
+            if response.candidates[0].content.parts[0].function_call:
+                fc = response.candidates[0].content.parts[0].function_call
+                logger.info(f"[TOOL] Gemini requested tool call: {fc.name}")
+                
+                if fc.name == "generate_kubernetes_patch":
+                    args = dict(fc.args)
+                    patch = generate_kubernetes_patch(**args)
+                    
+                    # Return structured response incorporating the tool's output
+                    result_obj = IncidentResolution(
+                        root_cause=f"AI-Generated {args.get('remediation_type')}",
+                        confidence=0.95,
+                        remediation=args.get('remediation_type'),
+                        kubectl_patch=patch,
+                        reasoning=f"Model called tool with args: {args}",
+                        engine=f"{self.model_name} (Sovereign-Cloud-Tool)"
+                    )
+                    self.tracer.end_span("cloud_rca_gemini")
+                    return result_obj.dict()
+
             res_text = response.text.strip()
-            # Handle Markdown blocks in Gemini output
             if "```json" in res_text:
                 res_text = res_text.split("```json")[1].split("```")[0].strip()
             
-            # Validate with Pydantic
             result_obj = IncidentResolution.parse_raw(res_text)
             result_obj.engine = f"{self.model_name} (Sovereign-Cloud)"
             
