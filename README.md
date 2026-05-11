@@ -9,10 +9,10 @@ Can we build an autonomous SRE agent that maintains **Epistemic Safety** in a ho
 This PoC focuses on the **Sovereign Fleet**: a distributed group of agents that use PBFT (Practical Byzantine Fault Tolerance) to agree on incident root causes before taking remediation actions. This prevents a single compromised telemetry source or agent from triggering catastrophic infrastructure changes.
 
 ### 🛠️ Current Capabilities (The Reality)
-1.  **BFT Fleet Consensus (v3.0.0)**: A Python-based PBFT implementation for agent agreement.
+1.  **Simplified PBFT Prototype (v3.4.0)**: A research-grade consensus layer for agent agreement (Research Implementation).
 2.  **Merkle-Chained WAL**: Cryptographically immutable state logging.
-3.  **GKE Infrastructure (PoC)**: Terraform for a standard GKE cluster with Workload Identity.
-4.  **Log Analysis**: Pattern-based (moving to LLM-based) root cause identification.
+3.  **Hardened GKE Infrastructure**: Terraform with **Confidential Nodes** and **gVisor** enabled.
+4.  **Agentic SRE Utility**: Gemini 1.5 Pro **Function Calling** with **Kubectl Patch** generation and **Dry-Run Validation**.
 
 ### 🛤️ The Path to "Principal" Depth (Active R&D)
 - [ ] **Hardware Trust**: Moving from standard nodes to GKE Confidential Computing (SEV-SNP).
