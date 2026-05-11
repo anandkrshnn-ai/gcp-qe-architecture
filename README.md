@@ -33,15 +33,15 @@ make chaos         # Resilience test
 ```mermaid
 flowchart TD
     A[Incident Logs / Metrics] --> B[Analyzer Agent]
-    B --> C[Gemini 1.5 Pro Reasoning\n(Function Calling)]
-    C --> D[Multi-Agent Fleet\n(Consensus Voting)]
-    D --> E[Remediator\n(JSON Patch + Dry-Run)]
+    B --> C["Gemini 1.5 Pro Reasoning\n(Function Calling)"]
+    C --> D["Multi-Agent Fleet\n(Consensus Voting)"]
+    D --> E["Remediator\n(JSON Patch + Dry-Run)"]
     E --> F{Safety Gates}
     F -->|Pass| G[Approved Remediation Proposal]
     F -->|Fail| H[Quorum Reject + Alert]
     
     subgraph "GCP Hardened Runtime"
-    I[Confidential GKE Nodes + gVisor]
+    I["Confidential GKE Nodes + gVisor"]
     end
 ```
 
