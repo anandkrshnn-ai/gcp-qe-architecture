@@ -6,6 +6,9 @@ setup:
 demo:
 	python run_demo.py
 
+chaos:
+	python run_demo.py --chaos
+
 test:
 	pytest tests/
 

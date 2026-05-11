@@ -1,4 +1,4 @@
-# Sovereign-GCP: Consensus-Driven Agentic SRE (PoC)
+# Agentic Incident Analyzer with Multi-Agent Consensus (PoC)
 
 ![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
