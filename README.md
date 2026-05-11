@@ -14,6 +14,11 @@ This repository implements a **multi-agent system** that ingests Kubernetes inci
 - Chaos engineering mode (fault injection + resilience testing)
 - Hardened GKE reference Terraform (Confidential Nodes, gVisor, Binary Authorization)
 
+---
+**📂 Part of the [GCP Agentic Research Portfolio](https://github.com/anandkrshnn-ai/portfolio-overview)**
+- **Next Project**: [AlloyDB-Grounded Local-First Agent](https://github.com/anandkrshnn-ai/alloydb-local-first-agent) — Focusing on sub-10ms decisioning.
+---
+
 ## Quick Start
 
 ```bash
