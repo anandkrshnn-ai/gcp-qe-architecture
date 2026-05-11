@@ -30,11 +30,17 @@ AI can be expensive and slow. To solve this, we use a **Hybrid Model**:
 - **The Local Brain**: A small, fast, and private AI that handles 90% of routine tasks locally. Your data never leaves your "Digital House."
 - **The Specialist**: A powerful, global AI (like Google's Gemini) that is only called in for the most complex "Black Swan" events.
 
+## 4. Informed Autonomy: The Epistemic Engine
+The final hurdle of the autonomous cloud isn't just about security—it's about **uncertainty**. In the latest iteration, we transitioned from "Deterministic Automation" to **Epistemic Autonomy**:
+- **Uncertainty Quantification**: The agent now calculates a `ConflictScore`. If evidence is contradictory (e.g., is it a memory leak or just a healthy batch job?), the system chooses the safest path: **Passive Observation**.
+- **Platform Awareness**: By correlating sibling failures, the engine detects platform-level outages (like GCP Zone failures) and freezes local remediations to prevent "noise-on-noise" damage.
+- **Hardware-Rooted Trust**: Every cycle starts with a cryptographic handshake proving the environment is secure (Remote Attestation).
+
 ---
 
-## Why This Matters
-This project isn't a "Magic AI." It’s an **Engineering Blueprint.** 
+## The Path Forward
+This project isn't just a demo; it’s an **Engineering Blueprint** that acknowledges the "Oracle Problem" and the "Control Plane Blindness" of real-world cloud operations. 
 
-We’ve moved beyond the hype to build a system that is honest about its limitations, obsessed with security, and proven by real-world data. It’s a step toward a world where the internet doesn't just "break"—it heals itself.
+We’ve moved beyond the hype to build a system that is honest about its limitations, obsessed with security, and observable through every step of the OODA loop. It’s a step toward a world where the internet doesn't just "break"—it heals itself with informed, verifiable intelligence.
 
 **Explore the Blueprint on GitHub: [anandkrshnn-ai/gcp-qe-architecture](https://github.com/anandkrshnn-ai/gcp-qe-architecture)**
