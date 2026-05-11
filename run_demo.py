@@ -17,13 +17,17 @@ logger = logging.getLogger("Sovereign-Demo")
 
 def run_sovereign_demo():
     """
-    Executes a Staff-level end-to-end happy path for Sovereign-GCP v3.4.0.
-    1. Observe (Ingest logs)
-    2. Orient/Decide (AI Reasoning + Tool Call)
-    3. Act (Dry-Run Patch Validation)
+    Executes a Staff-level end-to-end happy path for Sovereign-GCP v3.5.0.
     """
+    # 0. PRE-FLIGHT CHECK
+    project_id = os.getenv("GCP_PROJECT_ID")
+    if not project_id:
+        print("⚠️  WARNING: GCP_PROJECT_ID not set. Running in 'Isolated Simulation Mode'.")
+        print("   To enable real Vertex AI, set GCP_PROJECT_ID and GOOGLE_APPLICATION_CREDENTIALS.\n")
+        project_id = "demo-project"
+
     print("\n" + "="*60)
-    print("🚀 SOVEREIGN-GCP v3.4.0: ACTIONABLE INTELLIGENCE DEMO")
+    print("🚀 SOVEREIGN-GCP v3.5.0: ACTIONABLE INTELLIGENCE DEMO")
     print("="*60 + "\n")
 
     # 1. SECURITY: Runtime Attestation

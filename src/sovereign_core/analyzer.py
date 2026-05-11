@@ -31,25 +31,34 @@ class IncidentResolution(BaseModel):
 
 logger = logging.getLogger("SovereignCore.Analyzer")
 
+# 2026 Sovereign SRE Enhancement: OpenTelemetry Tracing
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+
+trace.set_tracer_provider(TracerProvider())
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+tracer = trace.get_tracer("sovereign.analyzer")
+
 class SovereignTracer:
     """
-    Simulates OpenTelemetry Tracing for the OODA loop.
-    In production, this exports OTLP spans to Google Cloud Trace.
+    OpenTelemetry Tracing for the OODA loop.
+    Exports spans to Console (Demo) or OTLP (Production).
     """
     def __init__(self):
-        self.trace_id = f"tr-{int(time.time())}"
-        self.spans = []
+        self.tracer = tracer
+        self.active_spans = {}
 
     def start_span(self, name: str):
-        logger.info(f"[TRACE] Start Span: {name} (ID: {self.trace_id})")
-        self.spans.append({"name": name, "start": time.time()})
+        span = self.tracer.start_span(name)
+        self.active_spans[name] = span
+        logger.info(f"[TRACE] Start: {name}")
 
     def end_span(self, name: str):
-        for span in self.spans:
-            if span["name"] == name:
-                span["end"] = time.time()
-                duration = (span["end"] - span["start"]) * 1000
-                logger.info(f"[TRACE] End Span: {name} ({duration:.2f}ms)")
+        span = self.active_spans.pop(name, None)
+        if span:
+            span.end()
+            logger.info(f"[TRACE] End: {name}")
 
 class SovereignAnalyzer:
     """

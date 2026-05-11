@@ -1,12 +1,44 @@
-# Sovereign-GCP: Byzantine-Fault-Tolerant Incident Analysis (PoC)
+# Sovereign-GCP: Consensus-Driven Agentic SRE (PoC)
 
-## ⚠️ Project Status: Proof-of-Concept (Research Only)
-This repository is a technical reference implementation of **Byzantine Fault Tolerance (BFT)** in cloud-native incident response. It is **NOT** a production-ready platform.
+![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Tests](https://img.shields.io/badge/tests-passing-green)
 
-### 🏛️ Core Research Goal
-Can we build an autonomous SRE agent that maintains **Epistemic Safety** in a hostile cloud environment? 
+**Sovereign-GCP (v3.5.0)** is a research framework for **Informed SRE Autonomy**. It demonstrates a self-healing cloud control plane that remains resilient against telemetry corruption and agent-level instability using a **Quorum-Based Consensus** model.
 
-This PoC focuses on the **Sovereign Fleet**: a distributed group of agents that use PBFT (Practical Byzantine Fault Tolerance) to agree on incident root causes before taking remediation actions. This prevents a single compromised telemetry source or agent from triggering catastrophic infrastructure changes.
+## 🏛️ Architecture: The OODA Consensus Loop
+
+```mermaid
+graph TD
+    subgraph "Sovereign Fleet (Byzantine-Aware Quorum)"
+        A1[Agent Node 1]
+        A2[Agent Node 2]
+        A3[Agent Node 3]
+    end
+
+    subgraph "OODA Engine"
+        OBS[Observe: Logs/Metrics] --> ORI[Orient: Gemini 1.5 Pro]
+        ORI --> DEC[Decide: Structured Patch]
+        DEC --> CONS[Consensus: Quorum Vote]
+        CONS --> ACT[Act: Dry-Run Patch]
+    end
+
+    subgraph "Hardened GKE Runtime"
+        G1[Confidential VM]
+        G2[gVisor Sandbox]
+        G3[Binary Authorization]
+    end
+
+    A1 -.-> CONS
+    A2 -.-> CONS
+    A3 -.-> CONS
+    ACT --> G1
+    G1 --- G2
+    G2 --- G3
+```
+
+> [!IMPORTANT]
+> **Research Disclaimer**: This is a **Simplified Quorum Prototype**. While it demonstrates distributed agreement, it is designed for demonstrating **Architectural Patterns** rather than providing financial-grade PBFT consistency.
 
 ### 🛠️ Current Capabilities (The Reality)
 1.  **Simplified PBFT Prototype (v3.4.0)**: A research-grade consensus layer for agent agreement (Research Implementation).
