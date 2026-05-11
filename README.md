@@ -5,13 +5,13 @@
 ![Tests](https://img.shields.io/badge/tests-passing-green)
 ![Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen)
 
-**Sovereign-GCP (v3.5.0)** is a research framework for **Informed SRE Autonomy**. It demonstrates a self-healing cloud control plane that remains resilient against telemetry corruption and agent-level instability using a **Quorum-Based Consensus** model.
+**Agentic Incident Analyzer (v3.7.1)** is a research framework for **Informed SRE Autonomy**. It demonstrates a self-healing cloud control plane that remains resilient against telemetry corruption and agent-level instability using a **Quorum-Based Consensus** model.
 
 ## 🏛️ Architecture: The OODA Consensus Loop
 
 ```mermaid
 graph TD
-    subgraph "Sovereign Fleet (Byzantine-Aware Quorum)"
+    subgraph "Agent Fleet (Quorum-Aware)"
         A1[Agent Node 1]
         A2[Agent Node 2]
         A3[Agent Node 3]
@@ -39,7 +39,7 @@ graph TD
 ```
 
 > [!IMPORTANT]
-> **Research Disclaimer**: This is a **Simplified Quorum Prototype**. While it demonstrates distributed agreement, it is designed for demonstrating **Architectural Patterns** rather than providing financial-grade PBFT consistency.
+> **Research Disclaimer**: This is a **Simplified Quorum Prototype**. While it demonstrates distributed agreement, it is designed for demonstrating **Architectural Patterns** of agentic resilience rather than providing financial-grade consistency.
 
 ## 🚀 Demo: Resilience in Action
 
@@ -51,7 +51,7 @@ graph TD
 
 ```text
 $ make chaos
-🚀 AGENTIC SRE DEMO v3.7.0 [CHAOS MODE]
+🚀 AGENTIC SRE DEMO v3.7.1 [CHAOS MODE]
 🛡️  Step 1: Performing Hardware-Rooted Attestation...
 ✅ SUCCESS: Environment verified (SEV-SNP / GKE Sandbox enabled).
 
@@ -67,18 +67,16 @@ $ make chaos
    [RESULT]: Quorum REJECTED remediation. Fail-safe triggered.
 ```
 
-### 🛠️ Current Capabilities (The Reality)
-1.  **Simplified PBFT Prototype (v3.4.0)**: A research-grade consensus layer for agent agreement (Research Implementation).
-2.  **Merkle-Chained WAL**: Cryptographically immutable state logging.
-3.  **Hardened GKE Infrastructure**: Terraform with **Confidential Nodes** and **gVisor** enabled.
-4.  **Agentic SRE Utility**: Gemini 1.5 Pro **Function Calling** with **Kubectl Patch** generation and **Dry-Run Validation**.
+### 🛠️ Core Engineering Depth
+1.  **Multi-Agent Consensus**: A quorum-based agreement layer to prevent "Single Agent Failure" catastrophic changes.
+2.  **Actionable AI**: Gemini 1.5 Pro generating structured **Kubernetes JSON Patches** via Function Calling.
+3.  **Observability**: **OpenTelemetry (OTEL)** instrumentation for OODA loop tracing.
+4.  **Hardened GKE Infrastructure**: Terraform with **Confidential Nodes** and **gVisor** enabled.
 
-### 🛤️ Engineering Depth (v3.7.0 Features)
-- [x] **Hardware Trust**: GKE Confidential Computing (SEV-SNP) & gVisor isolation.
-- [x] **Actionable AI**: Vertex AI (Gemini 1.5 Pro) with structured JSON Patch generation.
-- [x] **Observability**: **OpenTelemetry (OTEL)** instrumentation for OODA loop tracing.
-- [x] **Policy Enforcement**: Mandatory Binary Authorization & GKE Sandbox configuration.
-- [ ] **Next**: Multi-Cluster Quorum across disparate GCP Regions.
+### 🛤️ Active R&D
+- [ ] **Multi-Cluster Quorum**: Extending agreement across disparate GCP Regions.
+- [ ] **Adaptive Chaos**: AI-driven fault injection based on historical failure patterns.
+- [ ] **TPU Acceleration**: Scaling local analyzer tiers for millisecond-latency reasoning.
 
 ---
-**Disclaimer**: This is a professional development portfolio designed to demonstrate distributed systems thinking and GCP-native engineering. All "Demo Reports" are generated within this PoC's controlled environment.
+**Disclaimer**: This is a professional development portfolio designed to demonstrate distributed systems thinking and GCP-native engineering.

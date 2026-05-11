@@ -1,27 +1,26 @@
-# Sovereign-GCP: Projects Catalog
+# Sovereign-GCP: Projects Catalog (v3.7.1)
 
-This catalog tracks the evolution of the Sovereign Cloud Engineering portfolio. 
+This catalog tracks the evolution of the Sovereign-GCP research portfolio. Every project here is a **Research Proof-of-Concept** designed to demonstrate Staff-level architectural thinking on Google Cloud.
 
-## 1. Sovereign-Core (Active)
-**Role**: The Byzantine-Fault-Tolerant Engine.
-- **Goal**: Proving that autonomous agents can reach consensus on "Truth" using PBFT.
-- **Current State**: Python-based consensus logic + Merkle state store.
-- **Gap**: Missing real Vertex AI integration for log reasoning.
+## 🏛️ Engineering Portfolio
 
-## 2. GKE Hardening (Planned)
-**Role**: The Hardware Root of Trust.
-- **Goal**: Secure the runtime environment for Sovereign-Core.
-- **Expected Features**: GKE Confidential Nodes, Binary Authorization, Network Policies (Cilium).
-- **Current State**: Basic GKE Terraform only.
-
-## 3. Data-Sovereignty (Conceptual)
-**Role**: Secure Telemetry Ingestion.
-- **Goal**: End-to-end encryption of logs from source to agent.
-- **Status**: **Conceptual**. No code exists yet.
+| Repository | Status | Primary Capability | Key Engineering Depth |
+| :--- | :--- | :--- | :--- |
+| **[Agentic Incident Analyzer](https://github.com/anandkrshnn-ai/gcp-qe-architecture)** | **Engineering Reference** | Multi-Agent Consensus | Gemini Tool-Calling, OpenTelemetry, GKE Hardening |
+| **[Compliance-as-Code](https://github.com/anandkrshnn-ai/compliance-guardian)** | **Planned** | Real-time Policy Guardrails | Binary Authorization, OPA Gatekeeper |
+| **[Secure Telemetry Lake](https://github.com/anandkrshnn-ai/data-sovereignty)** | **Conceptual** | Cryptographic Logging | Merkle-Chained WAL, SEV-SNP Isolation |
 
 ---
 
-## 🔬 Research & Development Notes
-The "Masterpiece" metrics mentioned in earlier design drafts (e.g., 78% MTTR) are **Performance Targets** for a hypothetical production system, not measured results from this PoC. 
+## 🔬 Core Repository Spotlight: Agentic Incident Analyzer
+The foundational engine for the Sovereign-GCP portfolio.
 
-This repository is dedicated to the **Engineering Process**—proving individual BFT and security invariants one commit at a time.
+*   **Objective**: Solve the "Single Point of Failure" in autonomous SRE agents.
+*   **Engineering Depth**:
+    *   **Consensus**: Uses a Quorum-based voting model to validate telemetry before remediation.
+    *   **AI Reasoning**: Leverages Vertex AI (Gemini 1.5 Pro) for structured Kubernetes Patch generation.
+    *   **Security**: Terraform-driven GKE hardening (Confidential Nodes + gVisor).
+    *   **Observability**: Full OpenTelemetry (OTEL) tracing of the OODA loop.
+
+## 🏁 Operational Metrics
+The metrics mentioned in early design drafts (e.g., MTTR reductions) are **Architectural Targets**. This portfolio focuses on **Verifiable Implementation** rather than theoretical performance claims.
