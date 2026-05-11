@@ -11,36 +11,50 @@ class SovereignFleet:
     Wave 10: Byzantine Fleet v2.1.0 - The Upgrade Paradox.
     Handles mixed-version deployments and "unfixable" hardware detection.
     """
-    def __init__(self, agent_id: str, version: str = "2.1.0", total_agents: int = 4):
+    def __init__(self, agent_id: str, version: str = "2.2.0", total_agents: int = 4):
         self.agent_id = agent_id
         self.version = version
         self.total_agents = total_agents
         self.quorum_threshold = (total_agents // 3 * 2) + 1
-        self.compat_nodes = {}
+        self.nodes = {agent_id: {"v": version, "status": "HEALTHY", "weight": 1.0, "anomalies": 0}}
 
-    def verify_node_version(self, node_id: str, node_version: str) -> bool:
+    def report_anomaly(self, node_id: str):
         """
-        BFT-11: Upgrade Quarantine.
-        Excludes legacy (v1.x) nodes from the PBFT consensus layer.
+        BFT-12: Byzantine Remediation Policy.
+        Implements Suspect Quarantine and Auto-Eviction.
         """
-        if node_version.startswith("1."):
-            logger.warning(f"[UPGRADE] Node {node_id} is v{node_version} (Legacy). QUARANTINING.")
-            return False
-        return True
+        node = self.nodes.get(node_id, {})
+        if not node: return
+        
+        node["anomalies"] += 1
+        if node["anomalies"] >= 3:
+            # Phase 1: Suspect Quarantine (Read-Only Observer)
+            node["status"] = "SUSPECT"
+            node["weight"] = 0.0
+            logger.warning(f"[BYZANTINE] BFT-12: Node {node_id} QUARANTINED (Suspect). Weight=0.")
+            
+        if node["anomalies"] >= 12:
+            # Phase 2: Auto-Deprovisioning (Eviction)
+            node["status"] = "EVICTED"
+            logger.error(f"[BYZANTINE] BFT-12: Node {node_id} EVICTED from fleet due to persistent anomalies.")
 
     def propose_remediation(self, action: Dict) -> str:
         """
-        Byzantine Consensus with Version Awareness.
+        Byzantine Consensus with Suspect Weighting.
         """
         request_hash = self._calculate_request_hash(action)
-        
-        # BFT-11: Only collect signatures from verified v2+ nodes.
         signatures = self._collect_fleet_signatures(request_hash)
-        valid_sigs = [s for s in signatures if self.verify_node_version(s["id"], s["v"])]
         
-        if len(valid_sigs) < self.quorum_threshold:
-            logger.error("[BYZANTINE] BFT-11: Quorum Failed due to Version Mismatch/Quarantine.")
-            return "REJECTED_VERSION_MISMATCH"
+        # BFT-12: Only count signatures from non-quarantined nodes with weight > 0
+        valid_votes = 0
+        for sig in signatures:
+            node = self.nodes.get(sig["id"], {"v": "1.0", "status": "UNKNOWN", "weight": 0.0})
+            if node["status"] == "HEALTHY" and self.verify_node_version(sig["id"], sig["v"]):
+                valid_votes += 1
+        
+        if valid_votes < self.quorum_threshold:
+            logger.error(f"[BYZANTINE] BFT-12: Quorum Failed. Only {valid_votes} healthy signatures.")
+            return "REJECTED_BYZANTINE_QUARANTINE"
             
         return f"APPROVED_{request_hash}"
 
