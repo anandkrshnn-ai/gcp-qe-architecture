@@ -7,3 +7,19 @@ __pycache__/
 .DS_Store
 .env
 credentials.json
+
+# Build & Docs
+site/
+dist/
+build/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+.cache/
+
+# Terraform
+.terraform.lock.hcl

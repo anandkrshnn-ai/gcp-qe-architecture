@@ -1,36 +1,39 @@
-# Contributing to GCP QE Architecture
+# Contributing to Agent Safety Patterns
 
-Thank you for your interest in contributing! This project aims to be a high-quality, executable reference for Quality Engineering on GCP.
+First, thank you for considering contributing to this reference architecture. This project is maintained as a **Principal Architect Reference Implementation**, meaning we prioritize **deterministic safety**, **cryptographic integrity**, and **empirical verification** over rapid feature iteration.
 
-## How to Contribute
+## Architectural Principles
 
-### 1. Reporting Bugs
-- Open a GitHub Issue.
-- Provide logs, steps to reproduce, and any relevant simulator output.
+1. **Defense-in-Depth**: Every autonomous action must pass through at least three layers of verification (Consensus, Model Armor, and Safety Gate).
+2. **Deterministic Outcomes**: Use Pydantic and strict schema validation to ensure agentic outputs are predictable.
+3. **Verifiable Telemetry**: All high-signal events must be logged as structured JSON compatible with Google Cloud Logging.
+4. **Adversarial Resilience**: New features must include property-based tests (Hypothesis) to prove resilience against edge cases.
 
-### 2. Suggesting Enhancements
-- Open a Feature Request issue.
-- Focus on practical, functional patterns that solve real GCP QE pain points.
+## Development Workflow
 
-### 3. Pull Requests
-All PRs must:
-- Follow the existing folder structure.
-- Include/update relevant documentation in `guides/`.
-- Ensure the demo (`run_demo.py`) still works or is updated to reflect new patterns.
+1. **Fork and Branch**: Create a feature branch for your changes.
+2. **Environment Setup**:
+   ```bash
+   pip install -e ".[dev,gcp]"
+   ```
+3. **Testing**:
+   Every PR must pass the full test suite:
+   ```bash
+   export PYTHONPATH=src
+   pytest -v
+   ```
+4. **Documentation**:
+   If you change the core logic, update the corresponding deep-dive in `docs/`. Preview changes with:
+   ```bash
+   mkdocs serve
+   ```
 
-## Local Setup
-1. Clone the repo: `git clone https://github.com/anandkrshnn-ai/gcp-qe-architecture.git`
-2. Install Python dependencies: `pip install -r requirements.txt`.
-3. Install Terraform (v1.10+).
+## Pull Request Standards
 
-## Code Style
-- **Python**: Standard PEP8.
-- **Terraform**: Follow the [Google Terraform Style Guide](https://googlecloudplatform.github.io/terraform-validator/docs/style_guide).
+- **Atomic Commits**: Use clear, descriptive commit messages.
+- **Coverage**: Maintain or improve the current coverage (~88%+).
+- **Safety**: Ensure no secrets or PII are exposed in logs or code.
 
-## Quality Gates
-Contributions should be validated locally:
-- `python run_demo.py oomkill` (Ensure PoC remains functional)
-- `terraform validate` (For IaC changes)
+## Code of Conduct
 
----
-By contributing, you agree that your contributions will be licensed under the project's LICENSE.
+We follow standard professional engineering ethics. Be respectful, be thorough, and build for safety first.
