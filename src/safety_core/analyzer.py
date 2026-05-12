@@ -19,7 +19,7 @@ try:
 except ImportError:
     HAS_GCP = False
 
-from .logging_utils import get_logger
+from .logging_utils import get_logger, log_event
 
 logger = get_logger("VertexAIAnalyzer")
 
@@ -48,7 +48,11 @@ class ModelArmor:
         
         # 1. Leak Detection (Simple Regex-based scanning)
         if self.SECRET_PATTERN.search(finding_json):
-            logger.warning(f"ModelArmor: Secret pattern detected in finding from {finding.agent_id}. Redacting.")
+            log_event(logger, logging.WARNING, "ModelArmor: Secret pattern detected. Redacting.", extra={
+                "agent_id": finding.agent_id,
+                "incident_id": finding.incident_id,
+                "armor_action": "REDACT"
+            })
             # Redact common fields
             if "description" in finding.proposed_remediation:
                 finding.proposed_remediation["description"] = self.SECRET_PATTERN.sub("[REDACTED_SECRET]", finding.proposed_remediation["description"])
@@ -160,7 +164,11 @@ class VertexAIAnalyzer:
                         nonce=os.urandom(16).hex()
                     )))
             
-            logger.info(f"Vertex AI analysis complete. Found {len(findings)} incidents.")
+            log_event(logger, logging.INFO, "Vertex AI analysis complete.", extra={
+                "agent_id": self.agent_id,
+                "incident_count": len(findings),
+                "mode": "real"
+            })
             return findings
 
         except json.JSONDecodeError:
@@ -183,6 +191,12 @@ class VertexAIAnalyzer:
             ),
             hashes.SHA256()
         )
+        log_event(logger, logging.INFO, "Finding signed successfully.", extra={
+            "agent_id": self.agent_id,
+            "incident_id": finding.incident_id,
+            "nonce": finding.nonce,
+            "timestamp": finding.timestamp
+        })
         return {
             "agent_id": self.agent_id,
             "signature_hex": signature.hex(),

@@ -1,3 +1,4 @@
+import logging
 import hashlib
 import json
 import time
@@ -8,7 +9,7 @@ from cryptography.exceptions import InvalidSignature
 from pydantic import BaseModel
 from cachetools import TTLCache
 
-from .logging_utils import get_logger
+from .logging_utils import get_logger, log_event
 
 logger = get_logger("ConsensusGuardian")
 
@@ -101,15 +102,29 @@ class ConsensusGuardian:
                 self._seen_nonces[sig.nonce] = True
                 
             except InvalidSignature:
-                logger.error(f"Invalid crypto signature from {sig.agent_id}", extra={"hash": decision_hash})
+                log_event(logger, logging.ERROR, "Invalid crypto signature.", extra={
+                    "agent_id": sig.agent_id,
+                    "decision_hash": decision_hash
+                })
             except ConsensusError as e:
-                # Sensitive data (signatures) should NOT be in e.details
-                logger.warning(f"Consensus step failed: {str(e)} ({e.code})", extra=e.details)
+                log_event(logger, logging.WARNING, f"Consensus step failed: {str(e)}", extra={
+                    "code": e.code,
+                    **e.details
+                })
             except Exception as e:
-                logger.error(f"Unexpected error verifying signature from {sig.agent_id}: {e}")
+                log_event(logger, logging.ERROR, f"Unexpected consensus error: {e}", extra={
+                    "agent_id": sig.agent_id
+                })
 
         total_agents = max(len(self._authorized_keys), 1)
         quorum_reached = len(valid_signatures) / total_agents >= self.threshold
+        
+        log_event(logger, logging.INFO, "Consensus check complete.", extra={
+            "quorum_reached": quorum_reached,
+            "ratio": len(valid_signatures) / total_agents,
+            "valid_count": len(valid_signatures),
+            "total_agents": total_agents
+        })
         
         return ConsensusProof(
             decision_hash=decision_hash,

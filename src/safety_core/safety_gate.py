@@ -1,7 +1,9 @@
+import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from .logging_utils import get_logger
+import logging
+from .logging_utils import get_logger, log_event
 
 logger = get_logger("SafetyGate")
 
@@ -60,7 +62,11 @@ class SafetyGate:
         # 1. Enforce Allow-List
         op = proposal.operation.upper()
         if op not in self.config.allowed_operations:
-            logger.warning(f"Operation NOT in allow-list: {op}")
+            log_event(logger, logging.WARNING, "Operation NOT in allow-list.", extra={
+                "operation": op,
+                "allowed": self.config.allowed_operations,
+                "action": "BLOCK"
+            })
             return GateResult(
                 allowed=False, 
                 reason=f"Operation '{op}' is not in the approved safety allow-list.",
@@ -97,7 +103,12 @@ class SafetyGate:
                 estimated_cost_increase=estimated_cost
             )
         
-        logger.info(f"Safety APPROVED for {proposal.target} ({op}) at estimated cost ${estimated_cost:.2f}")
+        log_event(logger, logging.INFO, "Safety Gate: APPROVED.", extra={
+            "target": proposal.target,
+            "operation": op,
+            "estimated_cost": estimated_cost,
+            "risk_score": 0.1
+        })
         return GateResult(
             allowed=True,
             reason="All gates passed.",
