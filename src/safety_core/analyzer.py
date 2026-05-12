@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+import secrets
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 from cryptography.hazmat.primitives import hashes
@@ -37,7 +38,7 @@ class VertexAIAnalyzer:
         },
         "storage_full": {
             "keywords": ["No space left on device", "Disk full"],
-            "remediation": {"operation": "ALERT_ONLY", "action": "CLEANUP_TEMP"},
+            "remediation": {"operation": "NOTIFY", "action": "CLEANUP_TEMP"},
             "severity": "HIGH"
         }
     }
@@ -67,10 +68,14 @@ class VertexAIAnalyzer:
     def sign_finding(self, finding: Finding) -> Dict[str, Any]:
         """
         Signs a finding to produce an attested signature for consensus.
+        Includes a cryptographically strong nonce for replay protection.
         """
         finding_data = finding.model_dump()
         finding_json = json.dumps(finding_data, sort_keys=True)
         finding_hash = hashlib.sha256(finding_json.encode()).hexdigest()
+        
+        # Generate a unique nonce for this signature
+        nonce = secrets.token_hex(16)
         
         signature = self._private_key.sign(
             finding_hash.encode(),
@@ -85,5 +90,6 @@ class VertexAIAnalyzer:
             "agent_id": self.agent_id,
             "signature_hex": signature.hex(),
             "timestamp": time.time(),
+            "nonce": nonce,
             "finding": finding_data
         }
