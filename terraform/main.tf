@@ -20,9 +20,9 @@ module "vpc" {
 module "iam" {
   source        = "./modules/iam"
   project_id    = var.project_id
-  sa_name       = "sovereign-sre-agent"
+  sa_name       = "safety-sre-agent"
   k8s_namespace = "Secure Agentic Runtime"
-  k8s_sa_name   = "sovereign-sre"
+  k8s_sa_name   = "safety-sre"
 }
 
 # 3. Hardened GKE Cluster

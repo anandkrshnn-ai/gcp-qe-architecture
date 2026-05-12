@@ -1,9 +1,9 @@
-# IAM Module for Sovereign SRE Agent
+# IAM Module for Safety SRE Agent
 
 # 1. Create the GCP Service Account
 resource "google_service_account" "agent_sa" {
   account_id   = var.sa_name
-  display_name = "Secure Agentic Runtime Sovereign SRE Agent"
+  display_name = "Secure Agentic Runtime Safety SRE Agent"
 }
 
 # 2. Grant Vertex AI User permissions
