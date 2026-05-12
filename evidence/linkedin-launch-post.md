@@ -1,20 +1,20 @@
-# The "Self-Healing" Cloud is Here. 🚀
+# Exploring Agent Safety on Google Cloud 🚀
 
-Most AI today is **"AI Theater"**—impressive to watch, but you wouldn't trust it with your production infrastructure. 
+Most agentic systems today lack the safety guardrails required for production infrastructure. 
 
-I’m excited to share a project I’ve been hardening: **Sovereign-Core**, a technical blueprint for the "Autonomous Cloud" on Google Cloud.
+I’m sharing a research project I’ve been working on: **Agent Safety Patterns**, a technical blueprint for verifiable autonomous operations on Google Cloud.
 
 ### 🛡️ Beyond the Hype:
-Instead of just "chatting" about logs, I’ve built a system that follows a strict **OODA Loop** (Observe, Orient, Decide, Act). It monitors cloud health, diagnoses outages, and generates secure remediation plans.
+Instead of just "chatting" with logs, this system follows a strict **OODA Loop** (Observe, Orient, Decide, Act). It monitors cloud health, diagnoses common incidents, and generates cryptographically signed remediation plans.
 
-### 🔑 Security-First Architecture:
-- **Digital Quarantine**: Agents run in isolated sandboxes to prevent infrastructure damage.
-- **Hybrid Intelligence**: Leveraging local models for privacy and global models for complex reasoning.
-- **Grounded Honesty**: 100% test coverage and empirical demo reports. No fluff. 
+### 🔑 Core Safety Patterns:
+- **Cryptographic Consensus**: Decisions are validated by a multi-agent RSA quorum.
+- **Deterministic Safety Gates**: Remediation proposals are checked against resource quotas before execution.
+- **Verifiable Audit Trails**: Every step of the OODA loop is logged and attested.
 
-The goal isn't just to "use AI"—it's to build a digital world that **heals itself.**
+The goal is to move beyond "AI wrappers" and build systems that are safe, predictable, and verifiable by design.
 
-Check out the full framework and the Master Demo here:
+Check out the research PoC and the demo here:
 🔗 https://github.com/anandkrshnn-ai/gcp-qe-architecture
 
-#GoogleCloud #AI #SRE #EngineeringIntegrity #SelfHealingCloud #SovereignAI
+#GoogleCloud #AI #SRE #EngineeringSafety #CloudNative #AgenticAI

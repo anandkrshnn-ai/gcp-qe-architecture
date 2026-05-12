@@ -2,10 +2,9 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 import time
 
-class AttestationVerifier:
+class RuntimeSecurity:
     """
-    Genuinely verifiable attestation logic.
-    Replaces the 'dangerous theater' of string-splitting fake JWTs.
+    Verifies cryptographic identity of agents.
     """
     def __init__(self, platform_public_key_pem: bytes):
         self.public_key = serialization.load_pem_public_key(platform_public_key_pem)

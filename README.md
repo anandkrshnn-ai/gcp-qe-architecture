@@ -1,52 +1,54 @@
-# Agent Safety Patterns – Multi-Agent Consensus Research PoC
+# Agent Safety Patterns for Multi-Agent Systems on GCP
 
-**A focused research project exploring defensible safety patterns for AI agents on Google Cloud.**
+**Research Proof-of-Concept (v7.0.0)**
 
-This repository implements an **architecture reference** for adding safety gates to autonomous agentic loops. It demonstrates how to move beyond "single-agent black boxes" by using **cryptographic consensus**, **resource quotas**, and **verifiable attestation**.
+Focused exploration of cryptographic consensus, resource quotas, and runtime attestation as safety mechanisms for autonomous agents.
 
-**Status**: Research Proof-of-Concept (v7.0.0) — Focus on Patterns, not Production.
+## Problem Statement
+Single-agent systems can hallucinate or act destructively. This PoC demonstrates layered, verifiable safeguards for autonomous operations on Google Cloud.
 
-## Core Engineering Patterns
+## Core Patterns
+1. **Cryptographic Consensus**: Decisions are validated by an RSA-signed quorum of independent agents before any action is taken.
+2. **Deterministic Safety Gates**: Agent-generated proposals are validated against strict resource quotas (CPU, Memory, Replicas) before execution.
+3. **Verifiable Attestation**: Every decision creates a signed, non-repudiable audit trail for human triage.
 
-### 1. Verifiable Majority Consensus
-- **Pattern**: Agents sign their proposals using individual RSA keys.
-- **Rigor**: A `ConsensusGuardian` verifies that a 2/3 majority of unique, authorized agents have signed the exact same proposal hash before any action is taken.
-- **Benefit**: Prevents a single compromised or "hallucinating" agent from taking destructive actions.
-
-### 2. Strict Resource Quotas (Safety Gates)
-- **Pattern**: Deterministic validation of agent-generated patches against hard-coded resource limits (CPU, Memory, Replicas).
-- **Rigor**: Any proposal exceeding the `SafetyConfig` or attempting blocked operations (e.g., `DELETE`) is rejected before execution.
-
-### 3. Verifiable Runtime Attestation
-- **Pattern**: Simulated "Hardware-Rooted" trust.
-- **Rigor**: Uses RSA digital signatures to verify that the agent's runtime environment is authorized by the trusted platform.
+## Quick Start
+```bash
+pip install -r requirements.txt
+python run_demo.py
+# or
+python run_demo.py --real
+```
 
 ## Architecture
+The OODA loop (Observe, Orient, Decide, Act) is hardened with cryptographic checkpoints.
 
 ```mermaid
-flowchart TD
-    A[Telemetry / Metrics] --> B[Multi-Agent Fleet]
-    B --> C[RSA Signing of Proposals]
-    C --> D[Consensus Guardian\n(Verifiable Quorum)]
-    D --> E{Safety Gate\n(Resource Quotas)}
-    E -->|Pass| F[Dry-Run Remediation]
-    E -->|Fail| G[Rejection + Audit Log]
-    
-    subgraph "Safety Core"
-    D & E
+graph TD
+    subgraph Observe
+        A[Cloud Logging API] --> B[SafetyAnalyzer]
+    end
+
+    subgraph Orient_Decide
+        B --> D[Finding Generated]
+        D --> E[Multi-Agent RSA Signing]
+    end
+
+    subgraph Act_Safety
+        E --> F[Consensus Guardian]
+        F --> G[Safety Gate]
+        G -->|Pass| H[Remediator Actuator]
     end
 ```
 
-## Tech Stack
+## Limitations & Roadmap
+- Currently simulation-heavy for PoC portability.
+- Next: Real Vertex AI integration + Google Model Armor.
+- Not for production use.
 
-- **Security**: Python `cryptography` (RSA PSS, SHA256)
-- **Validation**: Pydantic v2 (Strict schemas)
-- **AI**: Gemini 1.5 Pro (Function calling for triage)
-- **Orchestration**: Custom Safety-Core framework
+## Related Work
+- [LangGraph](https://github.com/langchain-ai/langgraph)
+- [Google Cloud Model Armor](https://cloud.google.com/model-armor)
+- [NVIDIA OpenShell (Secure Agentic Runtime)](https://github.com/NVIDIA/openshell)
 
----
-**📂 Part of the [GCP Agentic Research Portfolio](https://github.com/anandkrshnn-ai/portfolio-overview)**
-- **Related Project**: [AlloyDB Local-First Agent](https://github.com/anandkrshnn-ai/alloydb-local-first-agent) — Focusing on low-latency grounding.
----
-
-**Disclaimer**: This project is an architectural pattern reference. It is designed to demonstrate **safety mechanisms** in agentic systems and is not a production-grade fault-tolerant system.
+**Status**: Research PoC — Not for production use.

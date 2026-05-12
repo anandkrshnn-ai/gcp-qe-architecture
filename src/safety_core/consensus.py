@@ -19,7 +19,7 @@ class ConsensusProof(BaseModel):
 
 class ConsensusGuardian:
     """
-    Staff-level Consensus Reference.
+    Research Reference for Cryptographic Consensus.
     Genuinely verifies majority quorum using RSA cryptographic signatures.
     """
     def __init__(self, threshold: float = 0.66):

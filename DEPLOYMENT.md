@@ -1,53 +1,34 @@
-# Deploying to Production (GCP)
+# Deploying Safety Patterns (GCP)
 
-This repository provides an **Architectural Simulation**. To move from simulation to a live production deployment on Google Cloud Platform, follow these steps.
+This repository provides an **Architectural Reference** for agent safety. It is a research PoC, not a production-ready product. To adapt these patterns to your own Google Cloud environment, follow these steps.
 
 ## 1. Prerequisites
-- A Google Cloud Project with Billing enabled.
-- Google Cloud SDK (`gcloud`) installed and authenticated.
-- Terraform (v1.10+) installed.
-- Python 3.9+ installed.
+- Python 3.9+
+- `pip install cryptography pydantic pytest`
 
-## 2. Infrastructure Setup (IaC)
-Deploy the baseline infrastructure to host the analyzer and your applications:
+## 2. Adapting the Core
+The safety mechanisms are located in `src/safety_core/`. To use them in a real environment:
 
-```bash
-cd terraform-baseline
-terraform init
-terraform plan
-terraform apply
-```
-*Note: This will deploy the networking, GKE clusters, and Cloud Run services defined in the modules.*
+### A. Implementing the Analyzer
+Replace the deterministic heuristics in `SafetyAnalyzer.analyze_logs` with your own logic (e.g., querying Cloud Logging via the Python SDK).
 
-## 3. Configure Authentication
-For the analyzer to connect to real GCP logs, you must provide a Service Account with `Logging Viewer` permissions.
+### B. Distributing Keys
+In a production setting, agent RSA private keys should be stored in **Secret Manager** or backed by **Cloud HSM**. The `ConsensusGuardian` would be a central service (or distributed cluster) that holds the public keys of authorized agents.
 
-1. Create a Service Account in GCP Console.
-2. Grant the role `roles/logging.viewer`.
-3. Download the JSON key file.
-4. Set the environment variable:
-   ```bash
-   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/key.json"
-   ```
+### C. Integrating with Actuators
+The `SafetyRemediator` currently logs actions. In production, you would connect this to:
+- **Kubernetes Python Client**: To apply patches to GKE.
+- **Cloud Run Admin API**: To scale services.
+- **Pub/Sub**: To trigger external automation.
 
-## 4. Enable Production Mode in Code
-Modify the entry point in `frameworks/sovereign_core/client.py` or your execution script:
-
-```python
-# Change mode from "simulation" to "production"
-client = SovereignClient(mode="production", project_id="your-gcp-project-id")
-```
-
-## 5. Install Production Dependencies
-The simulation mode requires zero dependencies, but production mode requires the Google Cloud SDKs:
+## 3. Running Verification
+Always run the verification suite before deploying any changes to the safety core:
 
 ```bash
-pip install google-cloud-logging google-cloud-monitoring
+$env:PYTHONPATH = "src"
+python -m pytest tests/test_safety_core.py
 ```
 
-## 6. Verification
-Run the demo with real credentials and project ID:
-```bash
-python run_demo.py oomkill
-```
-The system will now fetch real logs from your GKE clusters instead of loading local JSON files.
+## 4. Operational Considerations
+- **Quorum Threshold**: Defaults to 66% (2/3). Adjust this in `ConsensusGuardian` based on your fleet size.
+- **Safety Quotas**: Update `SafetyConfig` in `src/safety_core/safety_gate.py` to match your organization's risk tolerance.

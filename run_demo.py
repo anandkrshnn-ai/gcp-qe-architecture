@@ -1,83 +1,105 @@
+# run_demo.py
 import sys
 import os
-import json
-import logging
 import argparse
+import logging
 from typing import Dict, List
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
 
-# Add src to path if needed
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from sovereign_core.analyzer import VertexAIAnalyzer, IncidentResolution
-from sovereign_core.remediator import DryRunRemediator
-from sovereign_core.security import RuntimeSecurity
-from sovereign_core.chaos import ChaosSimulator
+# FIXED IMPORTS - Use safety_core
+from safety_core.analyzer import VertexAIAnalyzer, IncidentResolution
+from safety_core.remediator import DryRunRemediator
+from safety_core.security import RuntimeSecurity
+from safety_core.chaos import ChaosSimulator
+from safety_core.consensus import ConsensusGuardian
+from safety_core.safety_gate import SafetyGate, SafetyConfig
 
-# Configure Logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-logger = logging.getLogger("Sovereign-Demo")
+# Setup Logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger("SafetyDemo")
 
 def run_sovereign_demo(chaos_mode: bool = False):
     """
-    Executes a Staff-level end-to-end cycle.
-    If chaos_mode is enabled, it demonstrates Resilience against Byzantine faults.
+    Executes end-to-end safety demo cycle for multi-agent consensus.
     """
     print("\n" + "="*60)
-    print(f"🚀 AGENTIC SRE DEMO v3.6.0 {'[CHAOS MODE]' if chaos_mode else ''}")
+    print(f"Agent Safety Demo v7.0.0 {'[CHAOS MODE]' if chaos_mode else ''}")
     print("="*60 + "\n")
 
-    # 0. PRE-FLIGHT CHECK
-    project_id = os.getenv("GCP_PROJECT_ID", "demo-project")
+    # 1. SETUP
+    key_a = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    key_b = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
-    # 1. SECURITY: Runtime Attestation
-    security = RuntimeSecurity(simulate_attestation=True)
-    print("🛡️  Step 1: Performing Hardware-Rooted Attestation...")
-    if security.perform_handshake():
-        print("✅ SUCCESS: Environment verified (SEV-SNP / GKE Sandbox enabled).\n")
-    else:
-        print("❌ FAILURE: Environment compromised. Halting.\n")
-        return
+    guardian = ConsensusGuardian(threshold=1.0)
+    
+    def get_pem(key):
+        return key.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
 
-    # 2. OBSERVE: Simulated Incident
-    print("📡 Step 2: OBSERVE - Ingesting incident logs...")
+    guardian.register_agent("agent_alpha", get_pem(key_a))
+    guardian.register_agent("agent_beta", get_pem(key_b))
+
+    safety_config = SafetyConfig(max_replicas_per_service=5)
+    gate = SafetyGate(safety_config)
+    remediator = DryRunRemediator(guardian, gate)
+
+    # 2. ANALYSIS
+    print("Step 1: Ingesting logs from environment...")
     logs = [
-        {"textPayload": "OOMKiller: pod 'api-gateway' terminated with exit code 137", "timestamp": 1715424000},
+        {"jsonPayload": {"message": "Critical: OOMKilling pod 'api-service-x1'"}},
     ]
     
     if chaos_mode:
-        chaos = ChaosSimulator(corruption_probability=1.0)
-        logs = chaos.inject_log_corruption(logs)
-        print("⚠️  [CHAOS] Byzantine Fault Injected: Logs have been corrupted to 'False Healthy'.")
-    else:
-        print(f"   [LOGS]: logs ingested from 'api-gateway'.")
+        simulator = ChaosSimulator(failure_rate=1.0)
+        logs = simulator.inject_telemetry_corruption(logs)
 
-    # 3. ORIENT & DECIDE: AI Reasoning (Vertex AI)
-    print("\n🧠 Step 3: ORIENT/DECIDE - Escalating to Gemini 1.5 Pro...")
-    analyzer = VertexAIAnalyzer(project_id=project_id)
-    resolution = analyzer.analyze(incident_type="oomkill", logs=logs)
+    analyzer_a = VertexAIAnalyzer("agent_alpha", key_a)
+    findings = analyzer_a.analyze_logs(logs)
+
+    if not findings:
+        print("[-] No findings detected (or blocked by safety/chaos).")
+        return
+
+    proposal = findings[0]
+    print(f"[+] Detection: {proposal.incident_type} (Severity: {proposal.severity})")
+
+    # 3. CONSENSUS
+    print("\nStep 2: Collecting RSA-Signed Findings from Multi-Agent Fleet...")
+    analyzer_b = VertexAIAnalyzer("agent_beta", key_b)
     
-    print(f"   [CAU]: {resolution['root_cause']}")
-    print(f"   [ACT]: {resolution['remediation']}")
+    sig_a = analyzer_a.sign_finding(proposal)
+    sig_b = analyzer_b.sign_finding(proposal)
+    
+    print(f"   [Agent Alpha] Signed Finding: {sig_a['signature_hex'][:16]}...")
+    print(f"   [Agent Beta]  Signed Finding: {sig_b['signature_hex'][:16]}...")
 
-    # 4. CONSENSUS (Quorum Logic Simulation)
-    if chaos_mode and "No action needed" in resolution['root_cause']:
-        print("\n🛡️  Step 4: CONSENSUS - Byzantine Fault Detected!")
-        print("   Dissonance found between Metrics (OOM) and Corrupted Logs (Healthy).")
-        print("   [RESULT]: Quorum REJECTED remediation. Fail-safe triggered.")
+    # 4. REMEDIATION
+    print("\nStep 3: Verifying Consensus and Safety Gate Boundaries...")
+    
+    result = remediator.process_proposal(
+        sig_a["finding"], 
+        [sig_a, sig_b]
+    )
+
+    if result.success:
+        print(f"[+] REMEDIATION APPROVED: {result.message}")
     else:
-        # 5. ACT: Dry-Run Remediation
-        if resolution.get("kubectl_patch"):
-            print("\n🛠️  Step 4: ACT - Initiating Actionable Remediation (Dry-Run)...")
-            remediator = DryRunRemediator(use_mock=True)
-            remediator.dry_run_patch(resource_name="api-gateway", patch=resolution["kubectl_patch"])
-            print("\n🏁 SOVEREIGN CYCLE COMPLETE: Incident resolved via validated patch.")
-        else:
-            print("\n🏁 SOVEREIGN CYCLE COMPLETE: No remediation required (MONITOR_AND_WAIT).")
+        print(f"[-] REMEDIATION BLOCKED: {result.message}")
 
-    print("\n" + "="*60 + "\n")
+    print("\n" + "="*60)
+    print("🏁 Demo cycle completed successfully.")
+    print("="*60 + "\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--chaos", action="store_true", help="Run with Byzantine fault injection")
+    parser.add_argument("--real", action="store_true", help="Use real Vertex AI (planned)")
+    parser.add_argument("--chaos", action="store_true", help="Run with simulated telemetry corruption")
     args = parser.parse_args()
+    
     run_sovereign_demo(chaos_mode=args.chaos)
