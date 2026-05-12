@@ -48,19 +48,6 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-resource "google_project_iam_member" "agent_vertex" {
-  project = var.project_id
-  role    = "roles/aiplatform.user"
-  member  = "serviceAccount:${google_service_account.agent_sa.email}"
-}
-
-# 2026 Enhancement: Managed MCP Server Access
-resource "google_project_iam_member" "agent_alloydb_viewer" {
-  project = var.project_id
-  role    = "roles/alloydb.viewer"
-  member  = "serviceAccount:${google_service_account.agent_sa.email}"
-}
-
 resource "google_container_node_pool" "agent_nodes" {
   name       = "agent-pool"
   location   = var.region

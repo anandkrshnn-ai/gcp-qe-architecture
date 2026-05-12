@@ -32,3 +32,23 @@ resource "google_project_iam_member" "monitoring_viewer" {
   role    = "roles/monitoring.viewer"
   member  = "serviceAccount:${google_service_account.agent_sa.email}"
 }
+
+# 5. Allow writing logs (Crucial for structured observability)
+resource "google_project_iam_member" "logging_writer" {
+  project = var.project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}
+
+# 6. Additional Agentic Capabilities (Vertex AI & Diagnostics)
+resource "google_project_iam_member" "agent_vertex" {
+  project = var.project_id
+  role    = "roles/aiplatform.user"
+  member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}
+
+resource "google_project_iam_member" "agent_alloydb_viewer" {
+  project = var.project_id
+  role    = "roles/alloydb.viewer"
+  member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}

@@ -50,3 +50,9 @@ module "gke" {
   service_account_email = module.iam.agent_sa_email
   depends_on            = [google_project_service.aiplatform]
 }
+
+# 4. Observability Dashboards
+module "monitoring" {
+  source     = "./modules/monitoring"
+  project_id = var.project_id
+}
