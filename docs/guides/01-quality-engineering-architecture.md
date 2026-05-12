@@ -1,0 +1,1 @@
+﻿--8<-- "guides/01-quality-engineering-architecture.md"

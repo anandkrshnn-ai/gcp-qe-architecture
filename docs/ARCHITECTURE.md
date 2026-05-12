@@ -1,53 +1,52 @@
-# Safety Core: Architectural Blueprint
+# Architectural Design: Agent Safety Patterns
 
-This document defines the structural patterns of the Agent Safety Core framework. It prioritizes **verifiable engineering** over opaque agentic decision-making.
+This document details the high-level architecture of the **Agent Safety Patterns** framework, a reference implementation for secure autonomous operations on Google Cloud.
 
-## 1. The Verified OODA Loop
-The core engine follows the Observe-Orient-Decide-Act (OODA) loop, with a heavy emphasis on the **Decide** and **Act** safety boundaries.
+## Design Philosophy
+
+The architecture is built on the principle of **Defense-in-Depth for AI**. We assume that any single agent can fail, hallucinate, or be compromised. Safety is achieved through collective agreement and deterministic boundaries.
+
+## Core Components
+
+### 1. The Hardened OODA Loop
+The system follows the standard Observe-Orient-Decide-Act (OODA) loop, with safety "gates" at each transition:
+
+- **Observe**: Ingests telemetry and logs via Cloud Logging.
+- **Orient (Analyzer)**: Vertex AI (Gemini 1.5 Pro) performs root-cause analysis. Output is sanitized by **Model Armor**.
+- **Decide (Consensus)**: Independent agents sign the finding. A **Consensus Guardian** verifies the quorum and replay nonces.
+- **Act (Remediator)**: A **Safety Gate** validates the action against resource quotas before the final actuator triggers remediation.
+
+### 2. Multi-Agent Consensus Model
+We use a **BFT-inspired (Byzantine Fault Tolerance)** quorum model. In this implementation, a 2/3 majority of registered RSA public keys must sign an identical proposal hash. This prevents "Single Point of Hallucination" failures.
+
+### 3. Verification & Attestation
+Every decision cycle generates a **Signed Audit Package**. This package contains the original finding, the multi-agent signatures, and the safety gate results. It is written to Cloud Logging, providing a non-repudiable trail for human oversight.
+
+## Infrastructure Blueprint
+
+The architecture is designed to run on a **Hardened GKE Cluster**:
+- **VPC Isolation**: Private nodes with no external IP addresses.
+- **Workload Identity**: Agents use least-privilege GCP Service Accounts.
+- **Vertex AI Private Endpoint**: (Optional) Secure, private communication with AI services.
+
+## Sequence Flow
 
 ```mermaid
-graph TD
-    subgraph Observe
-        A[Cloud Logging API] --> B[SafetyAnalyzer]
-        C[Local JSON Data] --> B
-    end
+sequenceDiagram
+    participant CloudLogging as GCP Telemetry
+    participant Analyzer as Agent Analyzer
+    participant Armor as Model Armor
+    participant Guardian as Consensus Guardian
+    participant Gate as Safety Gate
+    participant Actuator as Remediator
 
-    subgraph Orient_Decide
-        B --> D[Finding Generated]
-        D --> E[Multi-Agent RSA Signing]
-    end
-
-    subgraph Act_Safety
-        E --> F[Consensus Guardian\n(Verifies Majority Quorum)]
-        F --> G[Safety Gate\n(Resource/Cost Validation)]
-        G -->|Pass| H[Remediator Actuator]
-        G -->|Fail| I[Rejection + Audit]
-    end
+    CloudLogging->>Analyzer: Ingest Logs
+    Analyzer->>Armor: Propose Finding
+    Armor->>Analyzer: Sanitized Finding
+    Analyzer->>Guardian: Signed Proposal
+    Guardian->>Guardian: Verify Quorum & Nonce
+    Guardian->>Gate: Approved Proposal
+    Gate->>Gate: Validate Resource Quota
+    Gate->>Actuator: Authorized Action
+    Actuator->>CloudLogging: Log Outcome
 ```
-
-## 2. Component Responsibility
-
-### `SafetyAnalyzer` (The Observation Layer)
-Responsible for identifying incidents from telemetry.
-- **Deterministic**: Uses rule-based heuristics to identify known failure modes (OOMKill, latency spikes).
-- **Attested**: Signs every finding using an agent-specific RSA private key to provide non-repudiable evidence for consensus.
-
-### `ConsensusGuardian` (The Integrity Layer)
-The "Truth Engine" of the system.
-- **Quorum Verification**: Genuinely verifies that a specified majority (e.g., 66%) of unique authorized agents have signed the exact same finding hash.
-- **RSA-PSS**: Uses standard cryptographic padding to ensure signature integrity.
-
-### `SafetyGate` (The Policy Layer)
-The "Brakes" of the system.
-- **Resource Quotas**: Validates remediation proposals against strict limits (max replicas, max scale factor).
-- **Operation Blocking**: Blocks dangerous operations (e.g., `DELETE`, `PURGE`) at the schema level.
-
-### `SafetyRemediator` (The Actuation Layer)
-The "Hands" of the system.
-- **Gatekeeping**: Only proceeds if both the `ConsensusGuardian` and `SafetyGate` return a success status.
-- **Idempotency**: Designed to trigger idempotent infrastructure updates via cloud APIs.
-
-## 3. Trust Boundary & Security
-- **Identity Integrity**: Each agent node has a hardware-backed or Secret Manager-stored identity.
-- **Evidence Immutability**: By hashing and signing findings at the source, the system creates a verifiable audit trail that persists even if a central log is tampered with.
-- **Defense in Depth**: Even if an LLM is compromised and proposes a "poisoned" patch, it must still pass the deterministic `SafetyGate` boundaries.

@@ -1,7 +1,7 @@
-site_name: GCP QE Architecture
-site_description: Practical Quality Engineering patterns for GCP (GKE, Cloud Run, Cloud SQL, Observability)
+site_name: Agent Safety Patterns
+site_description: Principal-grade reference architecture for secure, multi-agent autonomous systems on Google Cloud.
 site_author: Anandakrishnan Damodaran
-repo_name: gcp-qe-architecture
+repo_name: anandkrshnn-ai/gcp-qe-architecture
 repo_url: https://github.com/anandkrshnn-ai/gcp-qe-architecture
 
 theme:
@@ -9,37 +9,75 @@ theme:
   palette:
     - scheme: slate
       primary: indigo
-      accent: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.tracking
     - search.suggest
     - search.highlight
     - content.code.copy
+    - content.code.annotate
 
 nav:
-  - Home: README.md
-  - Incident Analyzer (PoC):
-    - Demo Script: run_demo.py
-    - Core Logic: frameworks/Safety_core/client.py
-  - Terraform Baseline: terraform/README.md
+  - Overview: index.md
+  - Architectural Patterns:
+    - High-Level Design: ARCHITECTURE.md
+    - Multi-Agent Consensus: patterns/consensus.md
+    - Deterministic Safety Gates: patterns/safety-gates.md
+    - Model Armor Sanitization: patterns/model-armor.md
+  - Vertex AI Integration:
+    - Gemini 1.5 Pro: ai/vertex-ai.md
+    - Resilience & Retries: ai/resilience.md
+  - Validation & Proofs:
+    - Test Results: validation/results.md
+    - Property-Based Testing: validation/property-testing.md
+  - API Reference:
+    - Safety Core: api/core.md
+  - Infrastructure (IaC):
+    - Terraform GKE: terraform/readme.md
   - Engineering Guides:
-    - GKE Testing: guides/gke-testing-guide.md
-    - Cloud Run: guides/cloud-run-quality-guide.md
-    - Cloud SQL: guides/cloud-sql-resilience-guide.md
-    - Security QA: guides/security-qa-guide.md
+    - Architecture Strategy: guides/01-quality-engineering-architecture.md
     - SLO/SLI Engineering: guides/02-slo-sli-engineering.md
     - Production Readiness: guides/03-production-readiness.md
+    - AI-Powered QE: guides/04-ai-powered-quality-engineering.md
     - Deployment Path: guides/08-deployment-path.md
 
 markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      base_path: ["."]
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - admonition
   - footnotes
   - attr_list
   - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
