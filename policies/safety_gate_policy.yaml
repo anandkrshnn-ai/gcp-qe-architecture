@@ -1,0 +1,35 @@
+# Safety Gate Policy: Automated Remediation Boundaries
+# Owner: SRE Team
+# Version: v1.1.0
+
+policy_id: "SG-GKE-REMEDIATION-001"
+description: "Deterministic guardrails for autonomous GKE scale-up operations."
+
+enforcement_mode: "STRICT" # [STRICT, LOG_ONLY]
+
+boundaries:
+  resource_limits:
+    max_replicas_per_service: 20
+    max_cpu_increase_percent: 50
+    max_memory_increase_percent: 50
+  
+  fiscal_guardrails:
+    max_cost_per_event_usd: 50.00
+    daily_budget_threshold_usd: 500.00
+    billing_export_dataset: "billing_ops.gcp_billing_export_v1"
+
+allowed_operations:
+  - "SCALE_UP"
+  - "RESTART_PODS"
+  - "NOTIFY_SRE"
+
+exception_handling:
+  high_risk_threshold: 0.8
+  requires_human_approval: true
+  approval_mechanism: "GCP_CONSOLE_TOKEN"
+  override_role: "roles/gcpqe.safetyAdmin"
+
+audit:
+  sink: "cloud_logging"
+  retention_days: 365
+  include_payload: true

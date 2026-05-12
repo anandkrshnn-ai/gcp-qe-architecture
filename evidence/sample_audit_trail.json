@@ -1,0 +1,62 @@
+[
+  {
+    "timestamp": "2026-05-12T21:15:00Z",
+    "event_id": "audit-7e36-4901-acda",
+    "event_type": "CONSENSUS_COMPLETE",
+    "severity": "INFO",
+    "resource": {
+      "type": "gke_container",
+      "labels": {
+        "project_id": "gcp-qe-prod-01",
+        "cluster_name": "safety-cluster-us",
+        "namespace": "agent-safety-plane"
+      }
+    },
+    "jsonPayload": {
+      "finding_id": "fnd-9.4- elite",
+      "proposal": {
+        "operation": "SCALE_UP",
+        "target": "payments-api",
+        "current_replicas": 5,
+        "proposed_replicas": 10,
+        "estimated_cost_usd": 12.50
+      },
+      "consensus": {
+        "quorum_reached": true,
+        "threshold": "2/3",
+        "signatures": [
+          {
+            "agent_id": "agent-alpha-001",
+            "key_id": "projects/gcp-qe-prod-01/secrets/rsa-agent-alpha/versions/1",
+            "signature_algorithm": "RSA-PSS-SHA256",
+            "identity_attestation": "workload-identity-token-v1"
+          },
+          {
+            "agent_id": "agent-beta-002",
+            "key_id": "projects/gcp-qe-prod-01/secrets/rsa-agent-beta/versions/1",
+            "signature_algorithm": "RSA-PSS-SHA256",
+            "identity_attestation": "workload-identity-token-v1"
+          }
+        ]
+      },
+      "safety_gate": {
+        "verdict": "AUTHORIZED",
+        "reason": "Proposal within regional CPU quota and budget envelope.",
+        "risk_score": 0.45,
+        "policy_id": "SG-GKE-REMEDIATION-001"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-05-12T21:16:15Z",
+    "event_id": "actuation-dee9-b8e6",
+    "event_type": "ACTUATION_SUCCESS",
+    "jsonPayload": {
+      "operation": "SCALE_UP",
+      "target": "payments-api",
+      "new_replica_count": 10,
+      "status": "COMPLETED",
+      "trace_id": "trace-8.2.2-principal"
+    }
+  }
+]
