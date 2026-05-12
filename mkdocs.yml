@@ -34,10 +34,12 @@ nav:
   - Overview: index.md
   - Architectural Patterns:
     - High-Level Design: ARCHITECTURE.md
+    - The Opinionated Stack: architecture/index.md
+    - Quality Intelligence Layer: architecture/quality-layer.md
+    - Operational Model: architecture/operational-model.md
     - Multi-Agent Consensus: patterns/consensus.md
     - Deterministic Safety Gates: patterns/safety-gates.md
     - Model Armor: patterns/model-armor.md
-    - Operational Model: architecture/operational-model.md
     - Resilience & Retries: ai/resilience.md
   - Validation & Proofs:
     - Test Results: validation/results.md

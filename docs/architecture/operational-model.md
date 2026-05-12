@@ -4,16 +4,52 @@ This document defines the **Operational Specificity** required to run the Agent 
 
 ## 1. The "Golden Path" for Automated Remediation
 
-The following workflow is the **Source of Truth** for how an incident is identified, analyzed, and remediated without introducing regression risk.
+### A. Delivery Flow (Signal to Consensus)
+```mermaid
+sequenceDiagram
+    participant Log as Cloud Logging
+    participant Az as SafetyAnalyzer
+    participant Am as Model Armor
+    participant Ag as Agent Fleet
+    participant Cg as ConsensusGuardian
 
-1.  **Signal Detection (Observe)**: A Tier 1 SLO burn rate alert triggers in Cloud Monitoring.
-2.  **Context Injection (Orient)**: The `SafetyAnalyzer` fetches the last 5 minutes of **Structured JSON Logs** and the current GKE pod state.
-3.  **Sanitization (Model Armor)**: All context is passed through local regex filters to redact potential PII/Secrets before reaching the LLM.
-4.  **Consensus (Decide)**: 
-    - Agent A proposes a `SCALE_UP` operation.
-    - Agents B and C independently verify the logs and "co-sign" the proposal using **Workload Identity-backed keys**.
-5.  **Safety Validation (Gate)**: The `SafetyGate` verifies that `SCALE_UP` won't exceed the regional CPU quota or the $50 cost envelope.
-6.  **Actuation (Act)**: The `Remediator` applies the patch via the GKE API.
+    Log->>Az: Trigger (SLO Burn)
+    Az->>Am: Raw Finding
+    Am->>Am: Redact Secrets/PII
+    Am->>Az: Sanitized Finding
+    Az->>Ag: Broadcast Proposal
+    Ag->>Ag: Verify Finding
+    Ag->>Cg: Signed Signature (RSA-PSS)
+    Cg->>Cg: Verify Quorum (2/3)
+    Cg->>Az: Quorum Reached
+```
+
+### B. Governance & Actuation (Consensus to Verification)
+```mermaid
+sequenceDiagram
+    participant Az as SafetyAnalyzer
+    participant Sg as Safety Gate
+    participant Ac as Remediator (Actuator)
+    participant Log as Cloud Logging
+
+    Az->>Sg: Verified Proposal
+    Sg->>Sg: Check Quotas & Cost
+    alt Pass
+        Sg->>Ac: Authorize Action
+        Ac->>Ac: Patch GKE/Cloud Run
+        Ac->>Log: Log Success (Audit)
+    else Fail (Failure Path)
+        Sg->>Log: Log Blocked Event
+        Sg->>Az: Return 403 Forbidden
+    end
+```
+
+## 2. Failure Path Engineering
+
+A mature architecture is defined by how it handles failure.
+- **Quorum Failure**: If 2/3 consensus is not reached within 30s, the `ConsensusGuardian` returns a `TIMEOUT` error and the incident is automatically escalated to a human SRE.
+- **Safety Gate Block**: If the `SafetyGate` blocks an action (e.g., cost > $50), the system preserves the "Verified Finding" in a **Frozen State** allowing an engineer to "Force-Apply" the action after manual review.
+- **Sanitization Fault**: If `ModelArmor` detects a systemic leak (e.g., > 10% of findings redacted), it triggers a **Model-Quarantine** state.
 
 ## 2. Automated Rollback & Recovery
 
