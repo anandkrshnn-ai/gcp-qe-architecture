@@ -1,6 +1,6 @@
 # The Opinionated Safety Stack
 
-To achieve Principal-grade reliability, we avoid "tool sprawl." This architecture defines a **Winning Default** for each plane, ensuring clear ownership and a single source of truth.
+This architecture defines a **Winning Default** for each plane, ensuring clear ownership and a single source of truth for autonomous governance.
 
 ## 1. The Stack Map
 
@@ -10,7 +10,7 @@ To achieve Principal-grade reliability, we avoid "tool sprawl." This architectur
 | **Identity** | **Workload Identity** | Securely mapping Kubernetes service accounts to GCP IAM. |
 | **Secrets** | **Secret Manager** | Hardened storage and automatic rotation of RSA keys. |
 | **Observability** | **Cloud Logging** | Centralized Source of Truth for all agentic audit trails. |
-| **Inference** | **Vertex AI (Gemini)** | High-fidelity LLM analysis with safety filter enforcement. |
+| **Inference** | **Vertex AI (Gemini)** | LLM analysis with safety filter enforcement. |
 | **Sanitization** | **Model Armor** | Proactive redaction of secrets/PII before consensus. |
 | **Governance** | **Safety Gate** | Deterministic enforcement of resource and cost boundaries. |
 

@@ -44,20 +44,35 @@ sequenceDiagram
     end
 ```
 
-## 2. Failure Path Engineering
+## 2. Failure Path Engineering: Control Semantics
 
-A mature architecture is defined by how it handles failure.
-- **Quorum Failure**: If 2/3 consensus is not reached within 30s, the `ConsensusGuardian` returns a `TIMEOUT` error and the incident is automatically escalated to a human SRE.
-- **Safety Gate Block**: If the `SafetyGate` blocks an action (e.g., cost > $50), the system preserves the "Verified Finding" in a **Frozen State** allowing an engineer to "Force-Apply" the action after manual review.
-- **Sanitization Fault**: If `ModelArmor` detects a systemic leak (e.g., > 10% of findings redacted), it triggers a **Model-Quarantine** state.
+A governable architecture is defined by how it handles the edge cases where autonomy fails. We define four **Exceptional States** with explicit actor-trigger-exit conditions.
 
-## 2. Automated Rollback & Recovery
+| State | Actor | Trigger | Exit Condition | Audit Record |
+| :--- | :--- | :--- | :--- | :--- |
+| **Frozen** | Safety Gate | Cost/Quota violation | Manual SRE Token | `GATE_BLOCK_EVENT` |
+| **Force-Apply** | Human SRE | Critical system block | Success + Post-audit | `HUMAN_OVERRIDE_LOG` |
+| **Quarantine** | Model Armor | > 10% Redaction rate | Regex Policy Update | `MODEL_QUARANTINE_ALERT` |
+| **Fail-Safe** | Consensus | Quorum timeout | Manual Platform Reset | `SYSTEM_FAILSAFE_LOCK` |
 
-Autonomous actions are only "safe" if they are reversible.
-- **State Snapshots**: Before the `Remediator` applies a patch, it stores the **Pre-Action Configuration** (canonical JSON) in a versioned GCS bucket.
-- **Health Verification Window**: After actuation, the system enters a **10-minute "Stabilization Window."** 
-    - If the SLO burn rate does not decrease or if new `CRITICAL` logs appear, the system triggers an **Automated Rollback** to the Pre-Action Snapshot.
-- **Fail-Safe Mode**: If the rollback itself fails, the system automatically triggers a **PagerDuty Escalation** and locks the Safety Gate for that specific service.
+## 3. Recovery Orchestration
+
+We distinguish between automated self-healing and mandatory human intervention to preserve the **Traceability over Certainty** principle.
+
+| Scenario | Automatic Recovery | Human-in-the-Loop |
+| :--- | :--- | :--- |
+| **Minor SLO Burn** | Scale-up via verified consensus. | Observability notification only. |
+| **Rollback Failure** | System Lock (Read-Only mode). | Manual state reconciliation. |
+| **Identity Drift** | Automated Key Rotation (30d). | Emergency rotation on leakage. |
+| **High-Risk Op** | Proposal generation + Verification. | **Mandatory Console Approval.** |
+
+## 4. Automated Rollback Strategy
+
+Autonomous actions are only traceable if they are reversible.
+- **State Snapshots**: Before the `Remediator` applies a patch, it stores the **Pre-Action Configuration** in a versioned GCS bucket.
+- **Verification Window**: After actuation, the system enters a **10-minute Stabilization Window.** 
+    - If the SLO burn rate does not decrease, the system triggers an **Automated Rollback** to the snapshot.
+- **Fail-Safe Mode**: If the rollback itself fails, the system triggers a **PagerDuty Escalation** and locks the Safety Gate.
 
 ## 3. Human-in-the-Loop (HITL) Approval Gates
 
