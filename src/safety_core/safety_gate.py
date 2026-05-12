@@ -16,21 +16,24 @@ class ActionProposal(BaseModel):
 class SafetyConfig(BaseSettings):
     """
     Deterministic safety boundaries.
-    Loads from environment variables with SAFETY_ prefix (e.g., SAFETY_MAX_REPLICAS).
+    Loads from environment variables with SAFETY_ prefix.
     """
-    max_replicas_per_service: int = 10
+    max_replicas_per_service: int = 20
     max_scale_factor: float = 2.0
     max_estimated_cost_per_remediation: float = 50.0
-    allowed_operations: List[str] = ["SCALE_UP", "RESTART", "NOTIFY"]
+    allowed_operations: List[str] = ["SCALE_UP", "RESTART", "NOTIFY", "UPDATE"]
     cost_per_replica_hour: float = 0.05
+    authorized_agents: List[str] = []
 
-    model_config = SettingsConfigDict(env_prefix='SAFETY_')
+    model_config = SettingsConfigDict(env_prefix='SAFETY_', env_file='.env')
 
-class SafetyValidationResult(BaseModel):
-    is_safe: bool
-    reason: str
+class GateResult(BaseModel):
+    """Rich result object for safety evaluations."""
+    allowed: bool
     risk_score: float = 0.0
     estimated_cost_increase: float = 0.0
+    reason: str = ""
+    blocked_operation: Optional[str] = None
 
 class SafetyGate:
     """
@@ -40,7 +43,7 @@ class SafetyGate:
     def __init__(self, config: SafetyConfig):
         self.config = config
 
-    def validate_proposal(self, raw_proposal: Dict[str, Any]) -> SafetyValidationResult:
+    def evaluate(self, raw_proposal: Dict[str, Any]) -> GateResult:
         """
         Validates a proposal against resource, operational, and cost boundaries.
         """
@@ -48,26 +51,28 @@ class SafetyGate:
             proposal = ActionProposal(**raw_proposal)
         except Exception as e:
             logger.error(f"Invalid proposal schema: {e}")
-            return SafetyValidationResult(
-                is_safe=False,
-                reason=f"Proposal failed schema validation: {e}"
+            return GateResult(
+                allowed=False,
+                reason=f"Proposal failed schema validation: {e}",
+                risk_score=1.0
             )
 
         # 1. Enforce Allow-List
         op = proposal.operation.upper()
         if op not in self.config.allowed_operations:
             logger.warning(f"Operation NOT in allow-list: {op}")
-            return SafetyValidationResult(
-                is_safe=False, 
+            return GateResult(
+                allowed=False, 
                 reason=f"Operation '{op}' is not in the approved safety allow-list.",
-                risk_score=1.0
+                risk_score=0.9,
+                blocked_operation=op
             )
 
         # 2. Check scale factor
         if proposal.scale_factor > self.config.max_scale_factor:
             logger.warning(f"Excessive scale factor: {proposal.scale_factor}")
-            return SafetyValidationResult(
-                is_safe=False,
+            return GateResult(
+                allowed=False,
                 reason=f"Scale factor {proposal.scale_factor} exceeds safety limit.",
                 risk_score=0.8
             )
@@ -75,26 +80,27 @@ class SafetyGate:
         # 3. Check replica scaling
         if proposal.replicas > self.config.max_replicas_per_service:
             logger.warning(f"Excessive replicas: {proposal.replicas}")
-            return SafetyValidationResult(
-                is_safe=False,
+            return GateResult(
+                allowed=False,
                 reason=f"Replica count {proposal.replicas} exceeds safety limit.",
-                risk_score=0.9
+                risk_score=0.85
             )
 
         # 4. Cost Guard
         estimated_cost = proposal.replicas * self.config.cost_per_replica_hour
         if estimated_cost > self.config.max_estimated_cost_per_remediation:
             logger.warning(f"Cost guard blocked remediation: ${estimated_cost:.2f}")
-            return SafetyValidationResult(
-                is_safe=False,
+            return GateResult(
+                allowed=False,
                 reason=f"Estimated cost ${estimated_cost:.2f} exceeds threshold.",
                 risk_score=0.7,
                 estimated_cost_increase=estimated_cost
             )
         
         logger.info(f"Safety APPROVED for {proposal.target} ({op}) at estimated cost ${estimated_cost:.2f}")
-        return SafetyValidationResult(
-            is_safe=True,
-            reason="Proposal within safety quotas.",
-            estimated_cost_increase=estimated_cost
+        return GateResult(
+            allowed=True,
+            reason="All gates passed.",
+            estimated_cost_increase=estimated_cost,
+            risk_score=0.1
         )

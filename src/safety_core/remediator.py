@@ -52,18 +52,18 @@ class DryRunRemediator:
 
         # 2. Verify Safety Gate
         remediation = finding.get("proposed_remediation", {})
-        # Enrich remediation with target if missing
         if "target" not in remediation:
             remediation["target"] = finding.get("incident_id", "unknown-target")
             
-        safety_result = self.safety_gate.validate_proposal(remediation)
+        # Use the updated 'evaluate' method and GateResult schema
+        gate_result = self.safety_gate.evaluate(remediation)
         
-        if not safety_result.is_safe:
-            logger.warning(f"Safety gate BLOCKED: {safety_result.reason}")
+        if not gate_result.allowed:
+            logger.warning(f"Safety gate BLOCKED: {gate_result.reason}")
             return RemediationResult(
                 success=False,
                 action_taken="NONE",
-                message=f"Safety gate blocked operation: {safety_result.reason}",
+                message=f"Safety gate blocked operation: {gate_result.reason}",
                 safety_check_passed=False,
                 consensus_check_passed=True
             )

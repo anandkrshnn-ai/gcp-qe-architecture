@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.exceptions import InvalidSignature
@@ -13,10 +13,11 @@ from .logging_utils import get_logger
 logger = get_logger("ConsensusGuardian")
 
 class ConsensusError(Exception):
-    """Base class for consensus-related errors."""
-    def __init__(self, message: str, code: str = "GENERIC_ERROR"):
-        super().__init__(message)
+    """Custom exception with context for better observability."""
+    def __init__(self, message: str, code: str, details: Dict = None):
         self.code = code
+        self.details = details or {}
+        super().__init__(message)
 
 class AgentSignature(BaseModel):
     agent_id: str
@@ -34,13 +35,12 @@ class ConsensusProof(BaseModel):
 class ConsensusGuardian:
     """
     Principal-Grade Reference for Cryptographic Consensus.
-    Enforces majority quorum using RSA-PSS signatures and TTL-based nonce protection.
+    Enforces majority quorum using RSA-PSS signatures and rich error context.
     """
     def __init__(self, threshold: float = 0.66, max_clock_skew: int = 60):
         self.threshold = threshold
         self.max_clock_skew = max_clock_skew
         self._authorized_keys: Dict[str, rsa.RSAPublicKey] = {}
-        # Enforce 5-minute TTL for nonces to prevent memory leaks while blocking replays
         self._seen_nonces = TTLCache(maxsize=10000, ttl=300)
 
     def register_agent(self, agent_id: str, public_key_pem: bytes):
@@ -50,7 +50,7 @@ class ConsensusGuardian:
             logger.info(f"Registered agent: {agent_id}")
         except Exception as e:
             logger.error(f"Failed to register agent {agent_id}: {e}")
-            raise ConsensusError(f"Invalid public key for agent {agent_id}", code="AUTH_CONFIG_ERROR")
+            raise ConsensusError(f"Invalid public key for agent {agent_id}", "AUTH_CONFIG_ERROR")
 
     def verify_quorum(self, proposal: Dict[str, Any], signatures: List[AgentSignature]) -> ConsensusProof:
         """
@@ -64,28 +64,25 @@ class ConsensusGuardian:
         current_time = time.time()
 
         for sig in signatures:
-            # 1. Nonce check (Replay Protection with TTL)
-            if sig.nonce in self._seen_nonces:
-                logger.warning(f"REPLAY ATTACK DETECTED: Nonce {sig.nonce} already seen.")
-                continue
-
-            # 2. Clock skew check
-            if abs(current_time - sig.timestamp) > self.max_clock_skew:
-                logger.warning(f"Rejected stale signature from {sig.agent_id} (skew: {current_time - sig.timestamp:.2f}s)")
-                continue
-
-            # 3. Authorization check
-            if sig.agent_id not in self._authorized_keys:
-                logger.warning(f"Unauthorized agent: {sig.agent_id}")
-                continue
-
-            # 4. Duplicate agent in same proposal check
-            if sig.agent_id in seen_agents:
-                logger.warning(f"Duplicate agent signature in proposal: {sig.agent_id}")
-                continue
-            
-            # 5. Cryptographic Verification
             try:
+                # 1. Nonce check
+                if sig.nonce in self._seen_nonces:
+                    raise ConsensusError("Replay attack detected", "REPLAY_ATTACK", {"nonce": sig.nonce, "agent": sig.agent_id})
+
+                # 2. Clock skew check
+                skew = current_time - sig.timestamp
+                if abs(skew) > self.max_clock_skew:
+                    raise ConsensusError("Proposal timestamp invalid", "STALE_PROPOSAL", {"timestamp": sig.timestamp, "skew": skew})
+
+                # 3. Authorization check
+                if sig.agent_id not in self._authorized_keys:
+                    raise ConsensusError("Unauthorized agent", "UNAUTHORIZED_AGENT", {"agent": sig.agent_id})
+
+                # 4. Duplicate agent check
+                if sig.agent_id in seen_agents:
+                    raise ConsensusError("Duplicate agent signature", "DUPLICATE_SIGNATURE", {"agent": sig.agent_id})
+                
+                # 5. Cryptographic Verification
                 public_key = self._authorized_keys[sig.agent_id]
                 public_key.verify(
                     bytes.fromhex(sig.signature_hex),
@@ -96,13 +93,17 @@ class ConsensusGuardian:
                     ),
                     hashes.SHA256()
                 )
+                
                 valid_signatures.append(sig)
                 seen_agents.add(sig.agent_id)
-                self._seen_nonces[sig.nonce] = True  # Mark nonce as used
+                self._seen_nonces[sig.nonce] = True
+                
             except InvalidSignature:
-                logger.error(f"Invalid cryptographic signature from agent: {sig.agent_id}")
+                logger.error(f"Invalid crypto signature from {sig.agent_id}", extra={"hash": decision_hash})
+            except ConsensusError as e:
+                logger.warning(f"Consensus step failed: {str(e)} ({e.code})", extra=e.details)
             except Exception as e:
-                logger.error(f"Internal error verifying signature from {sig.agent_id}: {e}")
+                logger.error(f"Unexpected error verifying signature from {sig.agent_id}: {e}")
 
         total_agents = max(len(self._authorized_keys), 1)
         quorum_reached = len(valid_signatures) / total_agents >= self.threshold

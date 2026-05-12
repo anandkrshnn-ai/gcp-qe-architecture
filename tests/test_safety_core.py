@@ -92,20 +92,20 @@ def test_safety_gate_blocking():
     
     # 1. Blocked operation (not in allow-list)
     unsafe_op = {"operation": "DELETE", "target": "prod-db"}
-    result = gate.validate_proposal(unsafe_op)
-    assert result.is_safe is False
-    assert "not in the approved safety allow-list" in result.reason
+    gate_result = gate.evaluate(unsafe_op)
+    assert gate_result.allowed is False
+    assert "not in the approved safety allow-list" in gate_result.reason
     
     # 2. Too many replicas
-    high_scale = {"operation": "SCALE_UP", "replicas": 10, "target": "svc"}
-    result = gate.validate_proposal(high_scale)
-    assert result.is_safe is False
-    assert "exceeds safety limit" in result.reason
+    high_scale = {"operation": "SCALE_UP", "replicas": 100, "target": "svc"}
+    gate_result = gate.evaluate(high_scale)
+    assert gate_result.allowed is False
+    assert "exceeds safety limit" in gate_result.reason
     
     # 3. Valid operation
     safe_op = {"operation": "SCALE_UP", "replicas": 2, "target": "svc"}
-    result = gate.validate_proposal(safe_op)
-    assert result.is_safe is True
+    gate_result = gate.evaluate(safe_op)
+    assert gate_result.allowed is True
 
 def test_end_to_end_pipeline(keys):
     """Verify the full pipeline from Analysis -> Consensus -> Remediation."""

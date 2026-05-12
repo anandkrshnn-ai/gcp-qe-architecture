@@ -40,13 +40,13 @@ def test_safety_gate_boundaries(replicas, scale_factor):
         "scale_factor": scale_factor
     }
     
-    result = gate.validate_proposal(proposal)
+    gate_result = gate.evaluate(proposal)
     
     # Assertions based on boundaries
     if replicas > 10 or scale_factor > 2.0 or (replicas * 0.05) > 50.0:
-        assert result.is_safe is False
+        assert gate_result.allowed is False
     else:
-        assert result.is_safe is True
+        assert gate_result.allowed is True
 
 @given(
     nonce=st.text(min_size=1),
