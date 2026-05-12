@@ -14,23 +14,23 @@ We use the `Hypothesis` library to prove that the `ConsensusGuardian` and `Safet
 
 ### 2. Signature Integrity
 **Property**: Any modification to the signed finding JSON (even a single character) must result in a signature verification failure.
-- **Verification**: We generate valid signatures and then programmatically "tamper" with the payload. The system is proven to block 100% of tampered payloads.
+- **Verification**: We generate valid signatures and then programmatically "tamper" with the payload. The system is proven to block all tested tamper scenarios.
 
 ### 3. Nonce Collision Resistance
 **Property**: Reusing a nonce within the TTL window must trigger a mandatory block.
-- **Verification**: Hypothesis simulates concurrent requests with duplicate nonces. The `TTLCache` is proven to prevent command-injection via replay attacks.
+- **Verification**: Hypothesis simulates concurrent requests with duplicate nonces. The `TTLCache` prevents command-injection via replay attacks.
 
 ## Why This Matters
 
 For autonomous agents, "edge cases" are the norm. By using property-based testing, we achieve:
-- **Higher Confidence**: 1,000+ test cases per property.
-- **Adversarial Hardening**: Discovery of bugs that human-written tests would miss.
-- **Principled Engineering**: Moving from "it works for me" to "it is mathematically sound."
+- **Verified Resilience**: 1,000+ test cases per property covering extreme input ranges.
+- **Adversarial Hardening**: Discovery of logic flaws that manual unit tests often miss.
+- **Traceable Assurance**: Moving from "it works in simulation" to "**demonstrably sound under tested properties**."
 
 ```python
-# Example Hypothesis Test
+# Example Hypothesis Test (Simplified)
 @given(st.integers(min_value=1, max_value=1000))
 def test_quorum_thresholds(n):
-    # Proves quorum logic for 'n' agents
+    # Proves quorum logic consistency for 'n' agent signatures
     ...
 ```
