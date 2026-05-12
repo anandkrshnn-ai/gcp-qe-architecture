@@ -1,15 +1,15 @@
 import logging
 import sys
 import os
-from src.sovereign_core.analyzer import VertexAIAnalyzer
+from src.Safety_core.analyzer import VertexAIAnalyzer
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Sovereign-AI-Test")
+logger = logging.getLogger("Safety-AI-Test")
 
 def verify_gemini_integration():
     """
-    Verifies that the Sovereign Analyzer can call Vertex AI.
+    Verifies that the Safety Analyzer can call Vertex AI.
     Requires: GOOGLE_APPLICATION_CREDENTIALS and a valid GCP Project.
     """
     project_id = os.getenv("GCP_PROJECT_ID", "your-project-id")

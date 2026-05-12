@@ -226,15 +226,15 @@ Low retrieval recall means the LLM is generating answers without relevant contex
 
 ---
 
-## 6. Sovereign AI in Regulated Industries
+## 6. Safety AI in Regulated Industries
 
 **6.1 The Data Residency Problem**
 
 Many regulated industries—financial services, healthcare, defense, government—cannot send production logs to third-party LLM APIs due to data residency regulations or security policies. Log data often contains customer identifiers, transaction records, and operational security information.
 
-For these environments, Sovereign AI—LLMs deployed within a private, controlled infrastructure boundary—is the only viable path to AI-powered QE.
+For these environments, Safety AI—LLMs deployed within a private, controlled infrastructure boundary—is the only viable path to AI-powered QE.
 
-**6.2 Sovereign AI Architecture for QE**
+**6.2 Safety AI Architecture for QE**
 
 ```
 Private VPC Boundary
@@ -242,7 +242,7 @@ Private VPC Boundary
 │                                                          │
 │  Production Services → Structured Logs → Log Store      │
 │                                              ↓           │
-│  Sovereign LLM Inference Server          RCA Agent       │
+│  Safety LLM Inference Server          RCA Agent       │
 │  (Llama-3 / Mistral on GKE GPU nodes) ←──────────────── │
 │                                              ↓           │
 │  PTV Attestation Sidecar → Audit Trail   RCA Output     │
@@ -260,16 +260,16 @@ The Private Trust Verification (PTV) protocol provides cryptographic attestation
   "ptv_manifest": {
     "analysis_id": "rca-2026-05-01-payment-incident",
     "input_log_hashes": ["sha256:8f92...", "sha256:4a31..."],
-    "model_id": "sovereign-llama3-8b-v1.2",
+    "model_id": "Safety-llama3-8b-v1.2",
     "inference_timestamp": "2026-05-01T14:23:11Z",
-    "sovereign_boundary": "gcp-asia-south1-private-vpc",
+    "Safety_boundary": "gcp-asia-south1-private-vpc",
     "result_hash": "sha256:7c84...",
     "attestation_status": "VERIFIED"
   }
 }
 ```
 
-For compliance audits, this manifest proves: which logs were analyzed, by which model version, at what time, and that the analysis occurred within the sovereign boundary.
+For compliance audits, this manifest proves: which logs were analyzed, by which model version, at what time, and that the analysis occurred within the Safety boundary.
 
 ---
 

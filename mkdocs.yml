@@ -23,7 +23,7 @@ nav:
   - Home: README.md
   - Incident Analyzer (PoC):
     - Demo Script: run_demo.py
-    - Core Logic: frameworks/sovereign_core/client.py
+    - Core Logic: frameworks/Safety_core/client.py
   - Terraform Baseline: terraform/README.md
   - Engineering Guides:
     - GKE Testing: guides/gke-testing-guide.md

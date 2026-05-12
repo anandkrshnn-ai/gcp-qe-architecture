@@ -22,7 +22,7 @@ from safety_core.safety_gate import SafetyGate, SafetyConfig
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger("SafetyDemo")
 
-def run_sovereign_demo(chaos_mode: bool = False):
+def run_Safety_demo(chaos_mode: bool = False):
     """
     Executes end-to-end safety demo cycle for multi-agent consensus.
     """
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     parser.add_argument("--chaos", action="store_true", help="Run with simulated telemetry corruption")
     args = parser.parse_args()
     
-    run_sovereign_demo(chaos_mode=args.chaos)
+    run_Safety_demo(chaos_mode=args.chaos)

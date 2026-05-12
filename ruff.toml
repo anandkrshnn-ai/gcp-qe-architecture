@@ -1,4 +1,4 @@
-# Ruff configuration for Sovereign-Core
+# Ruff configuration for Safety-Core
 # Enforcing Staff-Engineer level code quality standards.
 
 line-length = 120

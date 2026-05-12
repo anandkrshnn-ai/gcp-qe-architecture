@@ -1,10 +1,10 @@
 # Lessons from Three Adversarial Waves: Building Epistemic Safety
 
-**Project**: Sovereign-GCP (v0.1.0)  
+**Project**: Safety-GCP (v0.1.0)  
 **Author**: Anand Krishnan  
 **Role**: Principal QE Architect  
 
-This document captures the architectural evolution of Sovereign-GCP through three waves of rigorous, simulated adversarial review. It serves as a blueprint for building "Informed Autonomy" in cloud-native environments.
+This document captures the architectural evolution of Safety-GCP through three waves of rigorous, simulated adversarial review. It serves as a blueprint for building "Informed Autonomy" in cloud-native environments.
 
 ---
 
@@ -80,12 +80,12 @@ This document captures the architectural evolution of Sovereign-GCP through thre
 **The Lesson**: In production, **Trust is a Vulnerability**. Systems must be **Byzantine Fault Tolerant (BFT).**  
 **The Fix**:
 - **Signed WAL Integrity**: Every state change is signed by the agent's hardware key. State Poisoning is architecturally impossible.
-- **Self-Preservation Invariants**: The agent is hardcoded to never remediate its own infrastructure (app: sovereign).
+- **Self-Preservation Invariants**: The agent is hardcoded to never remediate its own infrastructure (app: Safety).
 - **Quorum of Truth**: Multi-source confirmation (Logs + Metrics + Audit) required for critical actions. Falsifying one source is no longer sufficient.
 - **Force-Sync Reconciliation**: After any blind period, the agent bypasses telemetry and syncs directly with the GCP Resource APIs.
 - **Outcome**: A system that **survives even when its own telemetry and state are compromised.**
 
-## Wave 9: The Sovereign Fleet (Byzantine Consensus)
+## Wave 9: The Safety Fleet (Byzantine Consensus)
 **The Attack**: "Byzantine fault injection. Compromised agents, equivocating state stores, lazy followers, and supply-chain TEE attacks. Single-agent hardening is 0/10 survivable against a distributed liar."  
 **The Lesson**: Resilience in a distributed system requires **Consensus, not just Hardening.** Truth must be derived from a **Quorum**, not a single source.  
 **The Fix**:
@@ -97,8 +97,8 @@ This document captures the architectural evolution of Sovereign-GCP through thre
 
 ---
 
-## Epilogue: The Sovereign Architect's Final Decree
-Sovereign-GCP is now a **Byzantine-Fault-Tolerant Fleet (v2.0.0)**. We have moved from "Trusted Computing" to **"Consensus-Driven Governance."** This is the blueprint for the next generation of autonomous cloud infrastructure.
+## Epilogue: The Safety Architect's Final Decree
+Safety-GCP is now a **Byzantine-Fault-Tolerant Fleet (v2.0.0)**. We have moved from "Trusted Computing" to **"Consensus-Driven Governance."** This is the blueprint for the next generation of autonomous cloud infrastructure.
 The next frontier is distinguishing between **Unexpected Failure** and **Cloud Intent** (e.g., Spot Preemption). By moving from "Reliability" to "Economic Adaptation," we build systems that don't just heal—they optimize.
 
 **Status**: v0.1.0 "The Epistemic Engine" is officially **Production-Reference Ready.**

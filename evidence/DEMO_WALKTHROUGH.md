@@ -1,6 +1,6 @@
-# Sovereign SRE: Actionable Intelligence Walkthrough
+# Safety SRE: Actionable Intelligence Walkthrough
 
-This document provides empirical evidence of the **Sovereign-GCP (v3.3.0)** reasoning engine, tool-calling capabilities, and hardened infrastructure.
+This document provides empirical evidence of the **Safety-GCP (v3.3.0)** reasoning engine, tool-calling capabilities, and hardened infrastructure.
 
 ---
 
@@ -37,7 +37,7 @@ The model identifies the memory limit as the bottleneck and calls the `generate_
     "value": "2Gi"
   },
   "reasoning": "Model identified OOMKill cycle in api-gateway logs and requested resource limit increase.",
-  "engine": "gemini-1.5-pro (Sovereign-Cloud-Tool)"
+  "engine": "gemini-1.5-pro (Safety-Cloud-Tool)"
 }
 ```
 
@@ -62,13 +62,13 @@ node_config {
 
 ### Remediation Dry-Run (Logs)
 ```text
-INFO:SovereignCore.Remediator:[DRY-RUN] Simulating patch on api-gateway in prod...
-INFO:SovereignCore.Remediator:[DRY-RUN] Patch Body: {
+INFO:SafetyCore.Remediator:[DRY-RUN] Simulating patch on api-gateway in prod...
+INFO:SafetyCore.Remediator:[DRY-RUN] Patch Body: {
   "op": "replace",
   "path": "/spec/template/spec/containers/0/resources/limits/memory",
   "value": "2Gi"
 }
-INFO:SovereignCore.Remediator:[K8S] Patch validation SUCCESS. Resource would be updated.
+INFO:SafetyCore.Remediator:[K8S] Patch validation SUCCESS. Resource would be updated.
 ```
 
 ---

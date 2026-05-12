@@ -130,7 +130,7 @@ The [Gemini RCA Agent](../frameworks/gemini-agent-qe/) can be extended for secur
 
 - Feed Cloud Audit Logs to the agent to detect anomalous access patterns.
 - Combine with Cloud Armor logs to identify DDoS or credential stuffing attack signatures.
-- For sovereign/regulated environments, use the [Sovereign AI RCA](../frameworks/sovereign-ai-qe/) to ensure security logs never leave the VPC boundary.
+- For Safety/regulated environments, use the [Safety AI RCA](../frameworks/Safety-ai-qe/) to ensure security logs never leave the VPC boundary.
 
 ---
 
