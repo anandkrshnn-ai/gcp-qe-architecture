@@ -22,7 +22,7 @@ class ConsensusError(Exception):
 class AgentSignature(BaseModel):
     agent_id: str
     signature_hex: str
-    timestamp: float
+    timestamp: int  # Integer timestamp for cryptographic stability
     nonce: str
 
 class ConsensusProof(BaseModel):
@@ -56,8 +56,10 @@ class ConsensusGuardian:
         """
         Genuinely verifies that a unique majority of authorized agents signed the proposal.
         """
-        proposal_json = json.dumps(proposal, sort_keys=True)
+        # Use canonical JSON (sorted keys, no whitespace) for stable hashing
+        proposal_json = json.dumps(proposal, sort_keys=True, separators=(',', ':'))
         decision_hash = hashlib.sha256(proposal_json.encode()).hexdigest()
+        logger.debug(f"Hashed proposal: {decision_hash} | Content: {proposal_json[:50]}...")
         
         valid_signatures = []
         seen_agents = set()
@@ -86,7 +88,7 @@ class ConsensusGuardian:
                 public_key = self._authorized_keys[sig.agent_id]
                 public_key.verify(
                     bytes.fromhex(sig.signature_hex),
-                    decision_hash.encode(),
+                    proposal_json.encode(),
                     padding.PSS(
                         mgf=padding.MGF1(hashes.SHA256()),
                         salt_length=padding.PSS.MAX_LENGTH
@@ -101,6 +103,7 @@ class ConsensusGuardian:
             except InvalidSignature:
                 logger.error(f"Invalid crypto signature from {sig.agent_id}", extra={"hash": decision_hash})
             except ConsensusError as e:
+                # Sensitive data (signatures) should NOT be in e.details
                 logger.warning(f"Consensus step failed: {str(e)} ({e.code})", extra=e.details)
             except Exception as e:
                 logger.error(f"Unexpected error verifying signature from {sig.agent_id}: {e}")

@@ -48,10 +48,13 @@ def test_consensus_quorum(keys):
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding_data = {
+        "agent_id": "agent_1",
         "incident_id": "test_123",
         "incident_type": "oomkill",
         "severity": "HIGH",
-        "proposed_remediation": {"operation": "SCALE_UP", "replicas": 1}
+        "proposed_remediation": {"operation": "SCALE_UP", "replicas": 1},
+        "timestamp": int(time.time()),
+        "nonce": "test-nonce-1"
     }
     
     sig1_dict = analyzer.sign_finding(Finding(**finding_data))
@@ -69,15 +72,18 @@ def test_consensus_replay_protection(keys):
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding = Finding(
+        agent_id="agent_1",
         incident_id="test", 
         incident_type="oom", 
         severity="H", 
-        proposed_remediation={"operation": "X", "target": "Y"}
+        proposed_remediation={"operation": "X", "target": "Y"},
+        timestamp=int(time.time()),
+        nonce="test-nonce-replay"
     )
     
     # Create a stale signature (older than 10s)
     sig_data = analyzer.sign_finding(finding)
-    sig_data["timestamp"] = time.time() - 60 
+    sig_data["timestamp"] = int(time.time()) - 60 
     
     sig = AgentSignature(**sig_data)
     proof = guardian.verify_quorum(sig_data["finding"], [sig])
@@ -137,3 +143,34 @@ def test_end_to_end_pipeline(keys):
     assert result.action_taken == "SCALE_UP"
     assert result.consensus_check_passed is True
     assert result.safety_check_passed is True
+
+def test_full_decision_loop(keys):
+    "Integration test: Verify the Analysis -> Consensus -> Safety -> Remediation flow."
+    agent_id = "agent_gamma"
+    private_key, public_pem = keys
+    
+    # 1. Consensus setup
+    guardian = ConsensusGuardian(threshold=1.0)
+    guardian.register_agent(agent_id, public_pem)
+    
+    # 2. Safety setup
+    config = SafetyConfig(max_replicas_per_service=5, allowed_operations=["SCALE_UP"])
+    gate = SafetyGate(config)
+    
+    # 3. Actuator setup
+    remediator = DryRunRemediator(guardian, gate)
+    
+    # 4. Generate finding (Analysis)
+    analyzer = VertexAIAnalyzer(agent_id, private_key)
+    finding = analyzer.analyze_logs([{"jsonPayload": {"message": "OOM"}},])[0]
+    
+    # 5. Sign finding
+    sig = analyzer.sign_finding(finding)
+    
+    # 6. Process through Actuator
+    result = remediator.process_proposal(finding.model_dump(), [sig])
+    
+    assert result.success is True
+    assert result.action_taken == "SCALE_UP"
+    assert result.safety_check_passed is True
+    assert result.consensus_check_passed is True

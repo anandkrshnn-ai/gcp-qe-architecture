@@ -60,17 +60,20 @@ def test_consensus_replay_variants(agent_keys, nonce, timestamp_skew):
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding = Finding(
+        agent_id="agent_1",
         incident_id="prop_test",
         incident_type="oomkill",
         severity="HIGH",
-        proposed_remediation={"operation": "SCALE_UP", "replicas": 1}
+        proposed_remediation={"operation": "SCALE_UP", "replicas": 1},
+        timestamp=int(time.time()),
+        nonce="prop-nonce-1"
     )
     
     sig_data = analyzer.sign_finding(finding)
     
     # Inject property-generated values
     sig_data["nonce"] = nonce
-    sig_data["timestamp"] = time.time() + timestamp_skew
+    sig_data["timestamp"] = int(time.time() + timestamp_skew)
     
     sig = AgentSignature(**sig_data)
     proof = guardian.verify_quorum(sig_data["finding"], [sig])
@@ -89,10 +92,13 @@ def test_nonce_reuse_prevention(agent_keys):
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding = Finding(
+        agent_id="agent_1",
         incident_id="nonce_test",
         incident_type="oomkill",
         severity="H",
-        proposed_remediation={"operation": "SCALE_UP", "replicas": 1}
+        proposed_remediation={"operation": "SCALE_UP", "replicas": 1},
+        timestamp=int(time.time()),
+        nonce="nonce-test-1"
     )
     
     sig_data = analyzer.sign_finding(finding)

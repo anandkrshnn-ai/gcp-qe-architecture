@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives import serialization
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 # FIXED IMPORTS - Use safety_core
-from safety_core.analyzer import VertexAIAnalyzer, IncidentResolution
+from safety_core.analyzer import VertexAIAnalyzer, Finding
 from safety_core.remediator import DryRunRemediator
 from safety_core.security import RuntimeSecurity
 from safety_core.chaos import ChaosSimulator
@@ -22,13 +22,13 @@ from safety_core.safety_gate import SafetyGate, SafetyConfig
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger("SafetyDemo")
 
-def run_Safety_demo(chaos_mode: bool = False):
+def run_Safety_demo(chaos_mode: bool = False, real_mode: bool = False):
     """
     Executes end-to-end safety demo cycle for multi-agent consensus.
     """
     print("\n" + "="*60)
-    print(f"Agent Safety Demo v7.0.0 {'[CHAOS MODE]' if chaos_mode else ''}")
-    print("Research Proof of Concept")
+    print(f"Agent Safety Patterns v8.0.0 {'[CHAOS MODE]' if chaos_mode else ''} {'[REAL MODE]' if real_mode else ''}")
+    print("Principal Architect Reference Implementation")
     print("="*60 + "\n")
 
     # 1. SETUP
@@ -46,12 +46,12 @@ def run_Safety_demo(chaos_mode: bool = False):
     guardian.register_agent("agent_alpha", get_pem(key_a))
     guardian.register_agent("agent_beta", get_pem(key_b))
 
-    safety_config = SafetyConfig(max_replicas_per_service=5)
+    safety_config = SafetyConfig(max_replicas_per_service=20)
     gate = SafetyGate(safety_config)
     remediator = DryRunRemediator(guardian, gate)
 
     # 2. ANALYSIS
-    print("Step 1: Ingesting logs from environment...")
+    print(f"Step 1: Ingesting logs from environment ({'REAL' if real_mode else 'SIMULATED'} mode)...")
     logs = [
         {"jsonPayload": {"message": "Critical: OOMKilling pod 'api-service-x1'"}},
     ]
@@ -61,7 +61,7 @@ def run_Safety_demo(chaos_mode: bool = False):
         logs = simulator.inject_telemetry_corruption(logs)
 
     analyzer_a = VertexAIAnalyzer("agent_alpha", key_a)
-    findings = analyzer_a.analyze_logs(logs)
+    findings = analyzer_a.analyze_logs(logs, mode="real" if real_mode else "simulate")
 
     if not findings:
         print("[-] No findings detected (or blocked by safety/chaos).")
@@ -99,8 +99,8 @@ def run_Safety_demo(chaos_mode: bool = False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--real", action="store_true", help="Use real Vertex AI (planned)")
+    parser.add_argument("--real", action="store_true", help="Use real Vertex AI (requires GCP auth)")
     parser.add_argument("--chaos", action="store_true", help="Run with simulated telemetry corruption")
     args = parser.parse_args()
     
-    run_Safety_demo(chaos_mode=args.chaos)
+    run_Safety_demo(chaos_mode=args.chaos, real_mode=args.real)

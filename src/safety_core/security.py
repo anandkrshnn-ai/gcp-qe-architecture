@@ -13,6 +13,8 @@ class RuntimeSecurity:
         """
         Verifies that the runtime attestation report was signed by the 
         trusted platform (e.g. simulated TPM or Cloud HSM).
+        NOTE: In production, the public key should be fetched from GCP Secret Manager 
+        or a KMS-backed Identity Provider with automated rotation enabled.
         """
         try:
             self.public_key.verify(
