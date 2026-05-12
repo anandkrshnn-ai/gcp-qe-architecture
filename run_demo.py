@@ -28,6 +28,7 @@ def run_sovereign_demo(chaos_mode: bool = False):
     """
     print("\n" + "="*60)
     print(f"Agent Safety Demo v7.0.0 {'[CHAOS MODE]' if chaos_mode else ''}")
+    print("Research Proof of Concept")
     print("="*60 + "\n")
 
     # 1. SETUP
@@ -93,7 +94,7 @@ def run_sovereign_demo(chaos_mode: bool = False):
         print(f"[-] REMEDIATION BLOCKED: {result.message}")
 
     print("\n" + "="*60)
-    print("🏁 Demo cycle completed successfully.")
+    print("FINISHED: Demo cycle completed successfully.")
     print("="*60 + "\n")
 
 if __name__ == "__main__":
