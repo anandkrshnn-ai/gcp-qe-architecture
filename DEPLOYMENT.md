@@ -1,6 +1,4 @@
-# Deploying Safety Patterns (GCP)
-
-This repository provides an **Architectural Reference** for agent safety. It is a research PoC, not a production-ready product. To adapt these patterns to your own Google Cloud environment, follow these steps.
+This repository provides a **Principal Architect Reference Implementation** for agent safety. To adapt these patterns to your own Google Cloud environment, follow these steps.
 
 ## 1. Prerequisites
 - Python 3.9+

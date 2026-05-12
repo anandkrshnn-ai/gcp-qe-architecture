@@ -2,7 +2,6 @@ import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import logging
 from .logging_utils import get_logger, log_event
 
 logger = get_logger("SafetyGate")

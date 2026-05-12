@@ -119,7 +119,7 @@ class VertexAIAnalyzer:
         reraise=True
     )
     def _analyze_real_with_retry(self, logs: List[Dict[str, Any]]) -> List[Finding]:
-        """Wrapper for real mode with production-grade retries."""
+        """Wrapper for real mode with production-reference retries."""
         return self._analyze_real(logs)
 
     def _analyze_real(self, logs: List[Dict[str, Any]]) -> List[Finding]:

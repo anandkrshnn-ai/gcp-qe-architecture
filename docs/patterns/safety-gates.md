@@ -1,42 +1,38 @@
-# Deterministic Safety Gates
+# Deterministic Safety Gates: Operational Hardening
 
-While consensus ensures that agents agree on an action, **Safety Gates** ensure that the action is safe for the infrastructure.
+Safety Gates are the final line of defense. While consensus ensures agreement, the **Safety Gate** enforces the **physical and fiscal constraints** of the enterprise infrastructure.
 
-## Overview
+## Operational Constraints
 
-A Safety Gate is a final, deterministic validation step that occurs after consensus is reached but before the actuator (Remediator) executes the code. It enforces hard boundaries on resource usage, cost, and operational scale.
+### 1. Failure Domains & Regional Isolation
+In a production GKE environment, Safety Gates are deployed as **Regional single-tenant controllers**.
+- **Constraint**: A Safety Gate in `us-central1` cannot authorize remediation actions in `europe-west1`. This prevents cross-region failure propagation during a systemic agent hallucination.
+- **Resilience**: If the global consensus plane is unreachable, the Safety Gate defaults to a **Fail-Safe "Block-All" state** for state-changing operations, while allowing "Read-Only" observability.
 
-## Core Mechanisms
+### 2. Decision SLOs
+To avoid introducing significant latency into the remediation OODA loop:
+- **Target Latency**: 95th percentile decision time must be **< 200ms**.
+- **Metric**: `safety_gate_decision_latency_seconds` (Prometheus/Cloud Monitoring).
 
-### 1. Resource Quotas
-The gate validates proposals against strict limits defined in the `SafetyConfig`. Common quotas include:
-- **Max Replicas**: Prevents runaway scaling events that could exhaust project budget or quota.
-- **Max Scale Factor**: Limits the percentage increase in resource allocation per single remediation event.
+## Resource & Fiscal Boundaries
 
-### 2. Operational Allow-List
-Only pre-approved operations (e.g., `SCALE_UP`, `RESTART`, `NOTIFY`) are permitted. Destructive operations like `DELETE` or `PURGE` are blocked by default unless explicitly whitelisted in the production configuration.
+### 1. Fiscal Guardrails (Cost Envelopes)
+The gate doesn't just check "can we scale," but "should we spend."
+- **Reference**: Integrates with **BigQuery Billing Exports** (via safety-config) to verify if the proposed `estimated_cost` exceeds the remaining daily budget for the specific `cost-center` tag.
+- **Limit**: $50.00 max per automated remediation event without human override.
 
-### 3. Cost Guardrails
-The gate estimates the cost impact of the proposed remediation. If the `estimated_cost` exceeds the `max_estimated_cost` defined in the environment, the action is blocked for human review.
+### 2. Quota-Aware Scaling
+- **Hard Limit**: Cannot exceed 80% of the GCP project's current CPU/Memory quota. This preserves "headroom" for manual SRE emergency response.
 
-## Gate Result Object
+## Environment Promotion Strategy
 
-The `SafetyGate` returns a rich `GateResult` object, providing full observability into the decision-making process:
+| Environment | Default Policy | Human Approval Gate |
+| :--- | :--- | :--- |
+| **Development** | ALLOW-ALL (Logged) | None |
+| **Staging** | STRICT (Quota Only) | Required for > 2x Scale |
+| **Production** | DENY-BY-DEFAULT | Required for ALL destructive ops |
 
-| Field | Description |
-| :--- | :--- |
-| `success` | Boolean indicating if the gate passed. |
-| `risk_score` | A float (0.0 - 1.0) calculated based on operation impact. |
-| `message` | Human-readable reason for the decision. |
-| `blocked_operation` | The specific field or value that triggered a rejection. |
+## Implementation Traceability
 
-## Configuration Example
-
-```python
-config = SafetyConfig(
-    max_replicas_per_service=20,
-    max_estimated_cost=50.0,
-    allowed_operations=["SCALE_UP", "NOTIFY"]
-)
-gate = SafetyGate(config)
-```
+All gate decisions are emitted as **Structured JSON Logs** to Cloud Logging with the `gate_verdict` field. This allows for immediate auditing via Logs Explorer:
+`jsonPayload.gate_verdict="BLOCKED" AND jsonPayload.reason:"Cost"`

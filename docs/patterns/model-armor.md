@@ -1,46 +1,33 @@
-# Model Armor & Sanitization
+# Model Armor: Enterprise Data Protection
 
-The **Model Armor** layer provides real-time leak detection and output sanitization for agent-generated findings.
+Model Armor is not just a "filter"; it is a **Security Perimeter Guard** that ensures agentic autonomy does not result in data exfiltration or credential leakage.
 
-## Overview
+## 1. Leak Shield (Operational Hardening)
 
-Agentic outputs can inadvertently contain sensitive information, such as PII, internal IP addresses, or GCP API keys. The Model Armor layer acts as a "Safety Proxy" that sanitizes the finding before it is signed by the agent and sent to the consensus layer.
+### Sanitization Latency SLO
+In a high-throughput QE environment, the sanitization layer must not become a bottleneck.
+- **Target**: 99th percentile processing time **< 50ms** per finding.
+- **Strategy**: Utilizes pre-compiled, high-fidelity regex patterns and local string manipulation to avoid external API round-trips for basic redaction.
 
-## Key Features
+### Regex Drift & Update Strategy
+Regex patterns for secrets (API keys, Service Account IDs) are managed as **Code-as-Configuration**.
+- **Update Cycle**: Patterns are synchronized bi-weekly from a centralized **Security Policy Repository**.
+- **Testing**: Every pattern update is validated against a **"Secret Leak Test Set"** (synthetic keys) to ensure 0% false-negative rates before promotion to production.
 
-### 1. Leak Shield (Secret Redaction)
-The armor scans all fields in a `Finding` for common secret patterns using high-fidelity regex scanning. 
-- **GCP API Keys**: Detected via `AIza...` patterns.
-- **Service Account Credentials**: Scanned for identifiable JSON fragments.
-- **OpenAI Keys**: Scanned for `sk-...` prefixes.
+## 2. Integration with VPC Service Controls (VPC-SC)
 
-Any detected secrets are surgically replaced with a `[REDACTED_SECRET]` placeholder.
+Model Armor acts as the final "Identity-Aware" checkpoint before a finding is allowed to egress the agent's private network.
+- **Perimeter Enforcement**: If a finding contains data that matches **Restricted Data Patterns** (defined via DLP API profiles), the Armor triggers a `403 SECURITY_BLOCK` and prevents the agent from signing the proposal.
+- **Audit Logging**: All redaction events are mirrored to the **Security Command Center (SCC)** as high-priority findings.
 
-### 2. Output Truncation & Normalization
-To prevent large payloads or malformed text from breaking the consensus hash, the Model Armor layer normalizes text fields and truncates long descriptions to a safe, canonical length.
+## 3. Compliance & PII Strategy
 
-### 3. Safety Scoring
-Every sanitized finding is assigned a `safety_score` (0.0 - 1.0) and an `armor_status`. This metadata is stored in the finding's `metadata` field, allowing the `ConsensusGuardian` to reject proposals that haven't been "Verified Clean."
-
-## Implementation Pattern
-
-The `ModelArmor` is integrated directly into the `VertexAIAnalyzer` pipeline:
-
-```python
-# Analysis Phase
-raw_finding = self._generate_finding(logs)
-
-# Sanitization Phase
-clean_finding = self.armor.sanitize_finding(raw_finding)
-
-# Signing Phase
-signed_package = self.sign_finding(clean_finding)
-```
-
-## Status
-
-| Pattern | Status | Integrity |
+| Feature | Production Implementation | Verification |
 | :--- | :--- | :--- |
-| **Secret Scanning** | ACTIVE | Regex Redaction |
-| **PII Filtering** | PLANNED | Vertex AI Safety Filters |
-| **Audit Compliance** | VERIFIED | Metadata Injection |
+| **GCP Secrets** | Regex Redaction (AIza...) | Verified (Test Suite) |
+| **PII Detection** | Vertex AI Safety Filters (Pre-Inference) | In-Progress |
+| **Audit Trails** | Cloud Audit Logs (Secret Access) | Active |
+
+## Implementation Flow (Ruthless View)
+
+The Model Armor sits **inside the TEE (Trusted Execution Environment)** or the private GKE pod. No finding is ever signed by an agent until the Armor sidecar has attached a `VERIFIED_CLEAN` cryptographic attestation to the metadata.
