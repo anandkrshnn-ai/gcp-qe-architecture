@@ -19,9 +19,9 @@ sequenceDiagram
     Am->>Az: Sanitized Finding
     Az->>Ag: Broadcast Proposal
     Ag->>Ag: Verify Finding
-    Ag->>Cg: Signed Signature (RSA-PSS)
+    Ag->>Cg: RSA-PSS Signed Payload
     Cg->>Cg: Verify Quorum (2/3)
-    Cg->>Az: Quorum Reached
+    Cg->>Az: Verified Quorum Payload
 ```
 
 ### B. Governance & Actuation (Consensus to Verification)
@@ -46,25 +46,25 @@ sequenceDiagram
 
 ## 2. Failure Path Engineering: Control Semantics
 
-A governable architecture is defined by how it handles the edge cases where autonomy fails. We define four **Exceptional States** with explicit actor-trigger-exit conditions.
+A governable architecture is defined by how it handles the edge cases where autonomy fails. We define four **Exceptional States** with explicit actor-trigger-exit conditions and IAM-bound permission boundaries.
 
-| State | Actor | Trigger | Exit Condition | Audit Record |
+| State | Actor | Trigger | Exit Mechanism | Audit Artifact |
 | :--- | :--- | :--- | :--- | :--- |
-| **Frozen** | Safety Gate | Cost/Quota violation | Manual SRE Token | `GATE_BLOCK_EVENT` |
-| **Force-Apply** | Human SRE | Critical system block | Success + Post-audit | `HUMAN_OVERRIDE_LOG` |
-| **Quarantine** | Model Armor | > 10% Redaction rate | Regex Policy Update | `MODEL_QUARANTINE_ALERT` |
-| **Fail-Safe** | Consensus | Quorum timeout | Manual Platform Reset | `SYSTEM_FAILSAFE_LOCK` |
+| **Frozen** | Safety Gate | Cost/Quota violation | `SRE_APPROVAL_TOKEN` (via Secret Manager) | `GATE_BLOCK_EVENT` |
+| **Force-Apply** | Human SRE | Critical system block | `BREAK_GLASS_IAM_ROLE` (Signed Override) | `SEC_ADMIN_OVERRIDE_LOG` |
+| **Quarantine** | Model Armor | > 10% Redaction rate | `GitOps POLICY_COMMIT` (2-Person Review) | `MODEL_QUARANTINE_ALERT` |
+| **Fail-Safe** | Consensus | Quorum timeout | `CLOUD_CONSOLE_RESET` (Org Admin only) | `SYSTEM_FAILSAFE_LOCK` |
 
-## 3. Recovery Orchestration
+## 3. Recovery Orchestration & Audit Chains
 
-We distinguish between automated self-healing and mandatory human intervention to preserve the **Traceability over Certainty** principle.
+We distinguish between automated self-healing and mandatory human intervention, ensuring every transition is backed by a non-repudiable audit record.
 
-| Scenario | Automatic Recovery | Human-in-the-Loop |
-| :--- | :--- | :--- |
-| **Minor SLO Burn** | Scale-up via verified consensus. | Observability notification only. |
-| **Rollback Failure** | System Lock (Read-Only mode). | Manual state reconciliation. |
-| **Identity Drift** | Automated Key Rotation (30d). | Emergency rotation on leakage. |
-| **High-Risk Op** | Proposal generation + Verification. | **Mandatory Console Approval.** |
+| Scenario | Automatic Recovery | Human-in-the-Loop | Audit Artifact Chain |
+| :--- | :--- | :--- | :--- |
+| **Minor SLO Burn** | Scale-up via **RSA-PSS Quorum Payload**. | Observability notification only. | `CONSENSUS_COMPLETE` -> `ACTUATION_SUCCESS` |
+| **Rollback Failure** | System Lock (Read-Only mode). | Manual state reconciliation. | `ROLLBACK_FAILURE_ALERT` -> `SRE_INCIDENT_LOG` |
+| **Identity Drift** | Automated Key Rotation (30d). | Emergency rotation on leakage. | `SECRET_MANAGER_ROTATION_EVENT` |
+| **High-Risk Op** | Proposal generation + Verification. | **Mandatory Console Approval.** | `APPROVAL_REQUEST` -> `IAM_IDENTITY_TOKEN` |
 
 ## 4. Automated Rollback Strategy
 
