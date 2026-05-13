@@ -65,6 +65,7 @@ We distinguish between automated self-healing and mandatory human intervention, 
 | **Rollback Failure** | System Lock (Read-Only mode). | Manual state reconciliation. | `ROLLBACK_FAILURE_ALERT` -> `SRE_INCIDENT_LOG` |
 | **Identity Drift** | Automated Key Rotation (30d). | Emergency rotation on leakage. | `SECRET_MANAGER_ROTATION_EVENT` |
 | **High-Risk Op** | Proposal generation + Verification. | **Mandatory Console Approval.** | `APPROVAL_REQUEST` -> `IAM_IDENTITY_TOKEN` |
+| **Authenticity Risk** | Advisory signaling (Low/Med). | **Mandatory SRE Approval (High).** | `AUTH_RISK_AUDIT` -> `SRE_VERIFICATION_LOG` |
 
 ## 4. Automated Rollback Strategy
 

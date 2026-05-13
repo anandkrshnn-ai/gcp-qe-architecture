@@ -9,6 +9,7 @@ We categorize quality engineering into five distinct levels of verification, ens
 | Level | Scope | Verification Mechanism |
 | :--- | :--- | :--- |
 | **Contract** | API Schema Alignment | Pydantic validation of `Finding` and `ActionProposal` objects. |
+| **Authenticity** | Machine-Revised Traces | **Style-CPC** curvature analysis (AAAI 2025). |
 | **Synthetic** | RCA Accuracy | Replaying historical incident logs into the `SafetyAnalyzer`. |
 | **Property** | Logic Resilience | **Hypothesis** property-based tests for quorum and nonce logic. |
 | **Adversarial** | Security Hardening | Red-team suites for signature forgery and replay attacks. |

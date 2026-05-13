@@ -21,6 +21,13 @@ except ImportError:
 
 from .logging_utils import get_logger, log_event
 
+# Quality Intelligence Imports (Optional)
+try:
+    from .quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
+    HAS_INTELLIGENCE = True
+except ImportError:
+    HAS_INTELLIGENCE = False
+
 logger = get_logger("VertexAIAnalyzer")
 
 class Finding(BaseModel):
@@ -83,6 +90,10 @@ class VertexAIAnalyzer:
             vertexai.init(project=self.project_id, location=self.location)
             self._initialized_gcp = True
             logger.info(f"Vertex AI initialized for project {self.project_id}")
+        
+        if HAS_INTELLIGENCE:
+            self.authenticity_scorer = AuthenticityScorer()
+            logger.debug("AuthenticityScorer initialized for advisory signaling.")
 
     def analyze_logs(self, logs: List[Dict[str, Any]], mode: str = "simulate") -> List[Finding]:
         """
@@ -110,6 +121,13 @@ class VertexAIAnalyzer:
                     timestamp=int(time.time()),
                     nonce=os.urandom(16).hex()
                 )
+                
+                # Advisory Authenticity Scoring (Phase 2)
+                if HAS_INTELLIGENCE:
+                    # For simulation, we score based on the description text
+                    auth_result = self.authenticity_scorer.score_proposal(finding.proposed_remediation.get("description", ""), None)
+                    finding.metadata.update(auth_result)
+                
                 findings.append(self.armor.sanitize_finding(finding))
         return findings
 
@@ -162,9 +180,14 @@ class VertexAIAnalyzer:
                         proposed_remediation=item.get("remediation", {"operation": "NOTIFY", "target": "sre-oncall"}),
                         timestamp=int(time.time()),
                         nonce=os.urandom(16).hex()
-                    )))
-            
-            log_event(logger, logging.INFO, "Vertex AI analysis complete.", extra={
+                    ))
+                    
+                    # Advisory Authenticity Scoring (Phase 2)
+                    if HAS_INTELLIGENCE:
+                        auth_result = self.authenticity_scorer.score_proposal(finding.proposed_remediation.get("description", ""), None)
+                        finding.metadata.update(auth_result)
+                    
+                    findings.append(finding)
                 "agent_id": self.agent_id,
                 "incident_count": len(findings),
                 "mode": "real"

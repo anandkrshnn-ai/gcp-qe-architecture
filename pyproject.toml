@@ -27,6 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 gcp = ["google-cloud-logging", "google-cloud-monitoring", "vertexai"]
+intelligence = ["torch", "transformers"]
 dev = ["pytest", "pytest-cov", "hypothesis", "ruff"]
 
 [project.urls]
