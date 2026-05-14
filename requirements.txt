@@ -5,3 +5,4 @@ google-cloud-logging>=3.8.0
 google-cloud-monitoring>=2.14.0
 google-cloud-aiplatform>=1.40.0
 ruff>=0.1.0
+hypothesis>=6.0.0

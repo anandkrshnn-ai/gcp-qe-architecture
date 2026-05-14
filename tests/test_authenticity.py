@@ -1,6 +1,6 @@
 import pytest
 import unittest.mock as mock
-from src.safety_core.quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
+from safety_core.quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
 
 try:
     import torch
