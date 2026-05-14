@@ -2,7 +2,7 @@ import logging
 import hashlib
 import json
 import time
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.exceptions import InvalidSignature

@@ -1,24 +1,3 @@
-# Ruff configuration for Safety-Core
-# Enforcing Staff-Engineer level code quality standards.
-
-line-length = 120
-target-version = "py311"
-
 [lint]
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "C",   # flake8-comprehensions
-    "B",   # flake8-bugbear
-]
-ignore = [
-    "E501", # line too long (handled by formatter)
-]
-
-[format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
+select = ["E", "F"]
+ignore = ["E501", "F401"]

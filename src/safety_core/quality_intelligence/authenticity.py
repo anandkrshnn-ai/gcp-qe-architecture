@@ -5,7 +5,7 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from enum import Enum
 import logging
 

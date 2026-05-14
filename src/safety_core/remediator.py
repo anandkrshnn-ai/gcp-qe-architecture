@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from pydantic import BaseModel
 from .consensus import ConsensusGuardian, AgentSignature
 from .safety_gate import SafetyGate
