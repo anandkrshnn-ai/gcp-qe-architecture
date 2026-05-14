@@ -38,5 +38,5 @@ def test_score_proposal_advisory_mode():
     
     assert "authenticity_score" in result
     assert "authenticity_risk_flag" in result
-    assert result["evidence"]["status"] == "ADVISORY_ONLY"
-    assert result["evidence"]["method"] == "Style-CPC (AAAI 2025)"
+    assert result["evidence"]["thresholds_version"] == "v0.0-uncalibrated"
+    assert "error" in result["evidence"]

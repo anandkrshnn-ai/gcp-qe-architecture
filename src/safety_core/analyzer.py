@@ -81,6 +81,8 @@ class VertexAIAnalyzer:
         self.location = location
         self._initialized_gcp = False
         self.armor = ModelArmor()
+        if HAS_INTELLIGENCE:
+            self.authenticity_scorer = AuthenticityScorer()
 
     def _init_gcp(self):
         if not HAS_GCP:
@@ -92,7 +94,6 @@ class VertexAIAnalyzer:
             logger.info(f"Vertex AI initialized for project {self.project_id}")
         
         if HAS_INTELLIGENCE:
-            self.authenticity_scorer = AuthenticityScorer()
             logger.debug("AuthenticityScorer initialized for advisory signaling.")
 
     def analyze_logs(self, logs: List[Dict[str, Any]], mode: str = "simulate") -> List[Finding]:
@@ -172,7 +173,7 @@ class VertexAIAnalyzer:
             findings = []
             if isinstance(remediation_data, list):
                 for item in remediation_data:
-                    findings.append(self.armor.sanitize_finding(Finding(
+                    finding = Finding(
                         agent_id=self.agent_id,
                         incident_id=item.get("id", f"gemini-{os.urandom(4).hex()}"),
                         incident_type=item.get("type", "automated-detection"),
@@ -180,18 +181,20 @@ class VertexAIAnalyzer:
                         proposed_remediation=item.get("remediation", {"operation": "NOTIFY", "target": "sre-oncall"}),
                         timestamp=int(time.time()),
                         nonce=os.urandom(16).hex()
-                    ))
+                    )
                     
                     # Advisory Authenticity Scoring (Phase 2)
                     if HAS_INTELLIGENCE:
                         auth_result = self.authenticity_scorer.score_proposal(finding.proposed_remediation.get("description", ""), None)
                         finding.metadata.update(auth_result)
                     
-                    findings.append(finding)
-                "agent_id": self.agent_id,
-                "incident_count": len(findings),
-                "mode": "real"
-            })
+                    findings.append(self.armor.sanitize_finding(finding))
+
+                log_event(logger, logging.INFO, "Vertex AI generated findings.", extra={
+                    "agent_id": self.agent_id,
+                    "incident_count": len(findings),
+                    "mode": "real"
+                })
             return findings
 
         except json.JSONDecodeError:
