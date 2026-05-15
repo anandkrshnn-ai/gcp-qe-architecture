@@ -4,6 +4,7 @@ from .remediator import DryRunRemediator
 from .safety_gate import SafetyGate, SafetyConfig
 from .security import RuntimeSecurity
 from .chaos import ChaosSimulator
+from .quality_intelligence import AuthenticityScorer
 
 __all__ = [
     "ConsensusGuardian",
@@ -13,5 +14,6 @@ __all__ = [
     "SafetyGate",
     "SafetyConfig",
     "RuntimeSecurity",
-    "ChaosSimulator"
+    "ChaosSimulator",
+    "AuthenticityScorer"
 ]

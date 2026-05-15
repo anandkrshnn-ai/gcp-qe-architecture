@@ -13,50 +13,21 @@
       }
     },
     "jsonPayload": {
-      "finding_id": "fnd-9.4- elite",
+      "finding_id": "f52a01fa",
       "proposal": {
         "operation": "SCALE_UP",
-        "target": "payments-api",
-        "current_replicas": 5,
-        "proposed_replicas": 10,
-        "estimated_cost_usd": 12.50
+        "replicas": 2,
+        "target": "api-service",
+        "description": "Detected critical OOM signal in logs."
       },
-      "consensus": {
-        "quorum_reached": true,
-        "threshold": "2/3",
-        "signatures": [
-          {
-            "agent_id": "agent-alpha-001",
-            "key_id": "projects/gcp-qe-prod-01/secrets/rsa-agent-alpha/versions/1",
-            "signature_algorithm": "RSA-PSS-SHA256",
-            "identity_attestation": "workload-identity-token-v1"
-          },
-          {
-            "agent_id": "agent-beta-002",
-            "key_id": "projects/gcp-qe-prod-01/secrets/rsa-agent-beta/versions/1",
-            "signature_algorithm": "RSA-PSS-SHA256",
-            "identity_attestation": "workload-identity-token-v1"
-          }
-        ]
-      },
-      "safety_gate": {
-        "verdict": "AUTHORIZED",
-        "reason": "Proposal within regional CPU quota and budget envelope.",
-        "risk_score": 0.45,
-        "policy_id": "SG-GKE-REMEDIATION-001"
+      "metadata": {
+        "authenticity_score": 0.0,
+        "authenticity_risk_flag": "UNKNOWN",
+        "evidence": {
+          "error": "Model interface for style CPC scoring is not yet implemented. # Phase 2",
+          "thresholds_version": "v0.0-uncalibrated"
+        }
       }
-    }
-  },
-  {
-    "timestamp": "2026-05-12T21:16:15Z",
-    "event_id": "actuation-dee9-b8e6",
-    "event_type": "ACTUATION_SUCCESS",
-    "jsonPayload": {
-      "operation": "SCALE_UP",
-      "target": "payments-api",
-      "new_replica_count": 10,
-      "status": "COMPLETED",
-      "trace_id": "trace-8.2.2-principal"
     }
   }
 ]

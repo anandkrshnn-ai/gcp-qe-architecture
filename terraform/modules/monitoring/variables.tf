@@ -1,8 +1,4 @@
 variable "project_id" {
-  type = string
-}
-
-variable "dashboard_name" {
-  type    = string
-  default = "Agent-Safety-OODA-Loop"
+  type        = string
+  description = "The GCP project ID"
 }

@@ -1,6 +1,11 @@
-import torch
-import torch.nn.functional as F
-from typing import Dict, Any, List, Optional
+try:
+    import torch
+    import torch.nn.functional as F
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+
+from typing import Dict, Any
 from enum import Enum
 import logging
 
@@ -21,16 +26,20 @@ class AuthenticityScorer:
     """
     
     def __init__(self, low_threshold: float = 0.2, high_threshold: float = 0.8):
+        # Thresholds are uncalibrated defaults pending Phase 1 offline evaluation.
         self.low_threshold = low_threshold
         self.high_threshold = high_threshold
 
-    def calculate_style_cpc(self, logits_score: torch.Tensor, logits_ref: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    def calculate_style_cpc(self, logits_score: 'torch.Tensor', logits_ref: 'torch.Tensor', labels: 'torch.Tensor') -> 'torch.Tensor':
         """
         Calculates the Sampling Discrepancy (Style-CPC) curvature.
         
         Ref: Jiaqi Chen et al., 'Imitate Before Detect: A Stylistic Preference Optimization 
         Framework for Machine-Revised Text Detection' (AAAI 2025).
         """
+        if not TORCH_AVAILABLE:
+            raise RuntimeError("torch is required for style CPC calculations")
+
         # Ensure vocab sizes match
         if logits_ref.size(-1) != logits_score.size(-1):
             vocab_size = min(logits_ref.size(-1), logits_score.size(-1))
@@ -71,27 +80,18 @@ class AuthenticityScorer:
         Note: Requires a model interface capable of providing logprobs/logits.
         """
         try:
-            # Placeholder for actual model inference
-            # In Phase 1, we establish the interface and math logic.
-            # Real-world use requires Vertex AI logprob access or a local aligned model.
+            if not TORCH_AVAILABLE:
+                raise RuntimeError("torch is required for style CPC calculations")
             
-            # Simulated score for demonstration until model integration is finalized
-            raw_score = 0.45 # Placeholder
-            risk = self.get_risk_flag(raw_score)
+            raise NotImplementedError("Model interface for style CPC scoring is not yet implemented. # Phase 2")
             
-            return {
-                "authenticity_score": raw_score,
-                "authenticity_risk_flag": risk,
-                "evidence": {
-                    "method": "Style-CPC (AAAI 2025)",
-                    "threshold_set": "v1.0-default",
-                    "status": "ADVISORY_ONLY"
-                }
-            }
         except Exception as e:
             logger.error(f"Authenticity scoring failed: {e}")
             return {
                 "authenticity_score": 0.0,
                 "authenticity_risk_flag": AuthenticityRisk.UNKNOWN,
-                "evidence": {"error": str(e)}
+                "evidence": {
+                    "error": str(e),
+                    "thresholds_version": "v0.0-uncalibrated"
+                }
             }
