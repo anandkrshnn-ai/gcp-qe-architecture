@@ -14,7 +14,9 @@ resource "google_container_cluster" "primary" {
   networking_mode = "VPC_NATIVE"
   datapath_provider = "ADVANCED_DATAPATH" # Enable Cilium (Dataplane V2)
 
-  enable_binary_authorization = true # Safety-Cloud: Only run signed images
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
 
   ip_allocation_policy {
     cluster_secondary_range_name  = "pod-range"
@@ -57,7 +59,7 @@ resource "google_container_node_pool" "agent_nodes" {
   node_config {
     # 2026 Safety SRE Enhancement: GKE Sandbox (gVisor) for Agent Isolation
     sandbox_config {
-      sandbox_type = "gvisor"
+      type = "gvisor"
     }
 
     # Confidential GKE Nodes (SEV-SNP) for Hardware-Rooted Memory Encryption
