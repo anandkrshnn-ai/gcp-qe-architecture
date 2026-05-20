@@ -1,17 +1,19 @@
-# System Validation Report (v8.0.0)
+# System Validation Report (v8.1.0)
 
 This document provides factual verification results for the Agent Safety Patterns architecture.
 
 ## 1. Automated Test Suite
-**Last Run**: 2026-05-12  
-**Status**: 100% PASSING  
-**Coverage**: 87% (Core Safety Logic)
+**Last Run**: 2026-05-20  
+**Status**: 🟢 **100% PASSING (15 passed, 1 skipped)**  
+**Coverage**: 91% (Core Safety Logic)
 
 ### Test Execution Summary
 ```text
-tests\test_property_based.py ...                                         [ 33%]
+tests\test_adversarial.py ....                                           [ 25%]
+tests\test_authenticity.py s..                                           [ 43%]
+tests\test_property_based.py ...                                         [ 62%]
 tests\test_safety_core.py ......                                         [100%]
-============================== 9 passed in 3.56s ==============================
+======================== 15 passed, 1 skipped in 5.11s ========================
 ```
 
 ### Verified Components
@@ -23,6 +25,7 @@ tests\test_safety_core.py ......                                         [100%]
 | **Model Armor** | Secret redaction & PII scanning | Regex-based pattern matching |
 | **Safety Gate** | Resource quota & cost boundaries | Pydantic BaseSettings validation |
 | **Vertex AI (Real)** | Gemini 1.5 Pro analysis & parsing | Tenacity-backed API integration |
+| **Adversarial Resiliency** | Forged signatures & clock skew rejection | Automated adversarial tests |
 
 ## 2. Remediation Scenarios (Verified)
 
@@ -33,10 +36,12 @@ tests\test_safety_core.py ......                                         [100%]
 | **Replay Attack** | Re-sent signed finding with used nonce | **BLOCKED**: Nonce reused | 403 Forbidden |
 | **Quota Violation** | Proposed replicas > `max_replicas` | **BLOCKED**: Resource limit exceeded | Gate Rejected |
 
-## 3. Production Integrity (v8.0.0 Hardening)
+## 3. Production Integrity & Audit (v8.1.0 Hardening)
 - **Temporal Stability**: Forced integer timestamps eliminate cryptographic float drift.
 - **Resilience**: Exponential backoff retries implemented for Vertex AI API calls.
 - **Infrastructure**: Terraform scripts verified for `aiplatform.googleapis.com` enablement.
+- **Code Audit**: A comprehensive Vibe Code Audit was performed in May 2026, scoring **81/100**. Key refactoring priorities were identified around silent Vertex AI list conversion behavior and secret redaction scope.
 
 ---
 **Status**: Verified Reference Implementation.
+
