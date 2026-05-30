@@ -9,6 +9,7 @@ This architecture defines a **Winning Default** for each plane, ensuring clear o
 | **Compute** | **GKE (Autopilot)** | Isolated execution of agent pods using gVisor (Sandbox). |
 | **Identity** | **Workload Identity** | Securely mapping Kubernetes service accounts to GCP IAM. |
 | **Secrets** | **Secret Manager** | Hardened storage and automatic rotation of RSA keys. |
+| **Signing** | **Cloud KMS** | Hardware-backed asymmetric signing (RSASSA-PSS-2048-SHA256). |
 | **Observability** | **Cloud Logging** | Centralized Source of Truth for all agentic audit trails. |
 | **Inference** | **Vertex AI (Gemini)** | LLM analysis with safety filter enforcement. |
 | **Sanitization** | **Model Armor** | Proactive redaction of secrets/PII before consensus. |
