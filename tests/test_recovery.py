@@ -1,6 +1,4 @@
 import pytest
-
-pytestmark = pytest.mark.post_incident
 from safety.safety_gate import SafetyGate, SafetyConfig
 from safety.remediator import DryRunRemediator
 from safety.voting import VotingValidator

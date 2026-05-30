@@ -2,8 +2,6 @@ import pytest
 import unittest.mock as mock
 from signing.kms_signer import KMSSigner
 
-pytestmark = pytest.mark.pre_deploy
-
 def test_kms_signer_local_fallback():
     """Verify that if KMS key path is None, local fallback private key is used."""
     signer = KMSSigner(key_path=None)
