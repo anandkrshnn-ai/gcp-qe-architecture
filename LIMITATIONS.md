@@ -30,6 +30,6 @@ This document provides a realistic assessment of the boundaries, constraints, an
 15. **Static Resource Quotas**: Safety gate replica limits and cost thresholds are loaded from static, local configurations rather than fetching live GCP quotas or service billing limits.
 16. **No Real Cost Billing Integration**: Estimated remediation pricing uses hardcoded cost approximations instead of query integrations with the Google Cloud Billing Catalog API.
 17. **Simplistic Chaos Injections**: The simulation chaos injector modifies local arrays rather than triggering real system chaos events via tools like GKE Chaos Mesh or container deletion.
-18. **Unimplemented Style CPC Scoring**: The authenticity scorer relies on local mock scores because style CPC model inference is unimplemented in the base project.
+18. **No Authenticity Scoring**: Authenticity / LLM style classification features have been completely removed from the demo codebase to reduce unnecessary complexity and bloat.
 19. **Fixed Schema Formats**: Remediation payloads must conform to simple, pre-defined Pydantic models. They cannot handle dynamic, unstructured cluster configurations.
 20. **No IAM Authorization Checks**: The safety gate checks the operation type but does not verify whether the invoking agent's GSA possesses the required IAM permissions (e.g., `container.deployments.update`) on the target GCP resources.

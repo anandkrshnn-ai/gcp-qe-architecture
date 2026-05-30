@@ -34,10 +34,7 @@ Running `run_golden_path.py` outputs the step-by-step simulation run and generat
 
 * **`src/safety/`**: Core validation components, including the threshold signature validator (`voting.py`), the quota evaluation engine (`safety_gate.py`), and the dry-run execution adapter (`remediator.py`).
 * **`src/signing/`**: Cryptographic signing utilities, including the Cloud KMS adapter (`kms_signer.py`).
-* **`tests/`**: Simplified test taxonomy split into:
-  - `pre_deploy/`: Basic logic and unit tests.
-  - `pre_actuation/`: Boundary condition and property-based test suites.
-  - `post_incident/`: Rollback validation tests.
+* **`tests/`**: Flat test suite directly in the root `tests/` directory (e.g. `test_safety.py`, `test_kms_signer.py`, `test_property_based.py`, etc.), eliminating unnecessary test taxonomy structures.
 
 ## ⚠️ Limitations & Real-world Gaps
 For a detailed list of all simulator assumptions, transient caches, and production deployment requirements, please read the [LIMITATIONS.md](LIMITATIONS.md) file.
