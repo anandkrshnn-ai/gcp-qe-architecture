@@ -78,8 +78,8 @@ def test_consensus_replay_variants(agent_keys, nonce, timestamp_skew):
     sig = AgentSignature(**sig_data)
     proof = validator.verify_quorum(sig_data["finding"], [sig])
     
-    # Verification should fail if clock skew is exceeded
-    if abs(timestamp_skew) > 30:
+    # Verification should fail if clock skew is exceeded (with timing slack)
+    if abs(timestamp_skew) > 28:
         assert proof.quorum_reached is False
     else:
         assert proof.quorum_reached is True

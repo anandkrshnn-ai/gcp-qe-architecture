@@ -3,7 +3,6 @@ from .analyzer import VertexAIAnalyzer, Finding
 from .remediator import DryRunRemediator
 from .safety_gate import SafetyGate, SafetyConfig
 from .security import RuntimeSecurity
-from .quality_intelligence import AuthenticityScorer
 
 __all__ = [
     "VotingValidator",
@@ -14,6 +13,5 @@ __all__ = [
     "DryRunRemediator",
     "SafetyGate",
     "SafetyConfig",
-    "RuntimeSecurity",
-    "AuthenticityScorer"
+    "RuntimeSecurity"
 ]

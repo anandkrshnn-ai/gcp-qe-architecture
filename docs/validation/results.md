@@ -14,13 +14,12 @@ The following core modules are verified:
 - `analyzer.py`: Sanitization and AI integration.
 
 ```text
-tests\test_adversarial.py ....                                           [ 20%]
-tests\test_authenticity.py ...                                           [ 35%]
-tests\test_kms_signer.py ..                                              [ 45%]
-tests\test_property_based.py ...                                         [ 60%]
-tests\test_recovery.py ..                                                [ 70%]
+tests\test_adversarial.py ....                                           [ 23%]
+tests\test_kms_signer.py ..                                              [ 35%]
+tests\test_property_based.py ...                                         [ 52%]
+tests\test_recovery.py ..                                                [ 64%]
 tests\test_safety.py ......                                              [100%]
-============================= 20 passed in 6.80s ==============================
+============================= 17 passed in 4.03s ==============================
 ```
 
 ## Verified Scenarios

@@ -22,12 +22,7 @@ except ImportError:
 from .logging_utils import get_logger, log_event
 from .ports import LogSourcePort
 
-# Quality Intelligence Imports (Optional)
-try:
-    from .quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
-    HAS_INTELLIGENCE = True
-except ImportError:
-    HAS_INTELLIGENCE = False
+# logger setup
 
 logger = get_logger("VertexAIAnalyzer")
 
@@ -82,8 +77,6 @@ class VertexAIAnalyzer:
         self.location = location
         self._initialized_gcp = False
         self.armor = ModelArmor()
-        if HAS_INTELLIGENCE:
-            self.authenticity_scorer = AuthenticityScorer()
 
     def _init_gcp(self):
         if not HAS_GCP:
@@ -94,8 +87,6 @@ class VertexAIAnalyzer:
             self._initialized_gcp = True
             logger.info(f"Vertex AI initialized for project {self.project_id}")
         
-        if HAS_INTELLIGENCE:
-            logger.debug("AuthenticityScorer initialized for advisory signaling.")
 
     def analyze_logs(self, logs: List[Dict[str, Any]], mode: str = "simulate") -> List[Finding]:
         """
@@ -123,12 +114,6 @@ class VertexAIAnalyzer:
                     timestamp=int(time.time()),
                     nonce=os.urandom(16).hex()
                 )
-                
-                # Advisory Authenticity Scoring (Phase 2)
-                if HAS_INTELLIGENCE:
-                    # For simulation, we score based on the description text
-                    auth_result = self.authenticity_scorer.score_proposal(finding.proposed_remediation.get("description", ""), None)
-                    finding.metadata.update(auth_result)
                 
                 findings.append(self.armor.sanitize_finding(finding))
         return findings
