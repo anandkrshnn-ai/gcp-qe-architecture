@@ -3,7 +3,11 @@
 [![CI/CD Pipeline](https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo/actions/workflows/main.yml/badge.svg)](https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo/actions/workflows/main.yml)
 [![Version](https://img.shields.io/badge/version-3.0.0--verified--soak-blue)](VERSION)
 
-This is an **educational demonstration project** and proof-of-concept for multi-agent incident analysis using Gemini on Google Cloud. It is a **simulation only** and **not production ready**. It should not be used in real environments without significant additional hardening.
+This repository provides a reference implementation showcasing secure, self-healing agentic architectures on Google Cloud. It demonstrates how autonomous remediation operations can be constrained under strict, deterministic safety gate boundaries, multi-agent voting quorums, and regex-based input sanitization.
+
+> [!NOTE]
+> **Educational Simulation Disclaimer**  
+> This is an educational demonstration project and proof-of-concept. It is a simulation only and not production ready. It should not be used in real environments without significant additional hardening.
 
 ---
 
@@ -37,6 +41,7 @@ To run the simulation, we provide two entry point scripts:
 ## 🔍 Codebase Directory Tour
 
 * **`src/safety/`**: Core validation components, including the threshold signature validator (`voting.py`), the quota evaluation engine (`safety_gate.py`), and the dry-run execution adapter (`remediator.py`).
+  - **Ports & Adapters (`ports.py`)**: Declares decouple ports (`LogSourcePort`, `ActuationPort`) to isolate core safety logic from underlying cloud resources or logging frameworks.
 * **`src/signing/`**: Cryptographic signing utilities, including the Cloud KMS adapter (`kms_signer.py`).
 * **`tests/`**: Flat test suite directly in the root `tests/` directory (e.g. `test_safety.py`, `test_kms_signer.py`, `test_property_based.py`, etc.), eliminating unnecessary test taxonomy structures.
 
