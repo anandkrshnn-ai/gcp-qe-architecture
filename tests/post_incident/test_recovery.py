@@ -1,9 +1,9 @@
 import pytest
 
 pytestmark = pytest.mark.post_incident
-from safety_core.safety_gate import SafetyGate, SafetyConfig
-from safety_core.remediator import DryRunRemediator
-from safety_core.consensus import ConsensusGuardian
+from safety.safety_gate import SafetyGate, SafetyConfig
+from safety.remediator import DryRunRemediator
+from safety.voting import VotingValidator
 
 def test_rollback_gate_on_post_actuation_failure():
     """

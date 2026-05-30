@@ -10,32 +10,30 @@ from cryptography.hazmat.primitives import serialization
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-# FIXED IMPORTS - Use safety_core
-from safety_core.analyzer import VertexAIAnalyzer, Finding
-from safety_core.remediator import DryRunRemediator
-from safety_core.security import RuntimeSecurity
-from safety_core.chaos import ChaosSimulator
-from safety_core.consensus import ConsensusGuardian
-from safety_core.safety_gate import SafetyGate, SafetyConfig
+from safety.analyzer import VertexAIAnalyzer, Finding
+from safety.remediator import DryRunRemediator
+from safety.security import RuntimeSecurity
+from safety.voting import VotingValidator
+from safety.safety_gate import SafetyGate, SafetyConfig
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger("SafetyDemo")
 
-def run_Safety_demo(chaos_mode: bool = False, real_mode: bool = False):
+def run_Safety_demo(real_mode: bool = False):
     """
-    Executes end-to-end safety demo cycle for multi-agent consensus.
+    Executes end-to-end safety demo cycle for multi-agent voting.
     """
     print("\n" + "="*60)
-    print(f"Agent Safety Patterns v8.0.0 {'[CHAOS MODE]' if chaos_mode else ''} {'[REAL MODE]' if real_mode else ''}")
-    print("Principal Architect Reference Implementation")
+    print(f"Agent Safety Patterns Demo {'[REAL MODE]' if real_mode else ''}")
+    print("Architect Reference Implementation")
     print("="*60 + "\n")
 
     # 1. SETUP
     key_a = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     key_b = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
-    guardian = ConsensusGuardian(threshold=1.0)
+    voting = VotingValidator(threshold=1.0)
     
     def get_pem(key):
         return key.public_key().public_bytes(
@@ -43,34 +41,30 @@ def run_Safety_demo(chaos_mode: bool = False, real_mode: bool = False):
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-    guardian.register_agent("agent_alpha", get_pem(key_a))
-    guardian.register_agent("agent_beta", get_pem(key_b))
+    voting.register_agent("agent_alpha", get_pem(key_a))
+    voting.register_agent("agent_beta", get_pem(key_b))
 
     safety_config = SafetyConfig(max_replicas_per_service=20)
     gate = SafetyGate(safety_config)
-    remediator = DryRunRemediator(guardian, gate)
+    remediator = DryRunRemediator(voting, gate)
 
     # 2. ANALYSIS
     print(f"Step 1: Ingesting logs from environment ({'REAL' if real_mode else 'SIMULATED'} mode)...")
     logs = [
         {"jsonPayload": {"message": "Critical: OOMKilling pod 'api-service-x1'"}},
     ]
-    
-    if chaos_mode:
-        simulator = ChaosSimulator(failure_rate=1.0)
-        logs = simulator.inject_telemetry_corruption(logs)
 
     analyzer_a = VertexAIAnalyzer("agent_alpha", key_a)
     findings = analyzer_a.analyze_logs(logs, mode="real" if real_mode else "simulate")
 
     if not findings:
-        print("[-] No findings detected (or blocked by safety/chaos).")
+        print("[-] No findings detected.")
         return
 
     proposal = findings[0]
     print(f"[+] Detection: {proposal.incident_type} (Severity: {proposal.severity})")
 
-    # 3. CONSENSUS
+    # 3. VOTING
     print("\nStep 2: Collecting RSA-Signed Findings from Multi-Agent Fleet...")
     analyzer_b = VertexAIAnalyzer("agent_beta", key_b)
     
@@ -81,7 +75,7 @@ def run_Safety_demo(chaos_mode: bool = False, real_mode: bool = False):
     print(f"   [Agent Beta]  Signed Finding: {sig_b['signature_hex'][:16]}...")
 
     # 4. REMEDIATION
-    print("\nStep 3: Verifying Consensus and Safety Gate Boundaries...")
+    print("\nStep 3: Verifying Quorum and Safety Gate Boundaries...")
     
     result = remediator.process_proposal(
         sig_a["finding"], 
@@ -100,7 +94,6 @@ def run_Safety_demo(chaos_mode: bool = False, real_mode: bool = False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--real", action="store_true", help="Use real Vertex AI (requires GCP auth)")
-    parser.add_argument("--chaos", action="store_true", help="Run with simulated telemetry corruption")
     args = parser.parse_args()
     
-    run_Safety_demo(chaos_mode=args.chaos, real_mode=args.real)
+    run_Safety_demo(real_mode=args.real)

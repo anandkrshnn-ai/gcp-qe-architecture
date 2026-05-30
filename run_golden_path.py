@@ -11,10 +11,10 @@ from cryptography.hazmat.primitives import serialization, hashes
 # Ensure src/ is on the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from safety_core.analyzer import VertexAIAnalyzer, Finding, ModelArmor
-from safety_core.remediator import DryRunRemediator
-from safety_core.consensus import ConsensusGuardian, AgentSignature
-from safety_core.safety_gate import SafetyGate, SafetyConfig
+from safety.analyzer import VertexAIAnalyzer, Finding, ModelArmor
+from safety.remediator import DryRunRemediator
+from safety.voting import VotingValidator, AgentSignature
+from safety.safety_gate import SafetyGate, SafetyConfig
 
 def print_header(title: str):
     print("\n" + "=" * 80)
@@ -22,13 +22,13 @@ def print_header(title: str):
     print("=" * 80)
 
 def main():
-    print_header("GCP Verifiable AI Safety Gate - Golden Path Demo")
-    print("This scenario demonstrates the end-to-end OODA safety cycle:")
-    print("Anomaly Ingestion -> Model Armor Sanitization -> RSA-PSS Multi-Agent Consensus")
-    print("-> Safety Gate Evaluation -> Actuation -> Post-Actuation Telemetry Regression -> Rollback")
+    print_header("GCP Incident Analysis Demo - Golden Path Run")
+    print("This scenario demonstrates the safety validation check cycle:")
+    print("Log Ingestion -> Regex Secret Scrubbing -> RSA-PSS Multi-Agent Voting Quorum")
+    print("-> Safety Gate Quota Check -> Dry-Run Actuation -> Post-Incident Telemetry Regression -> Rollback")
     
     # 0. Setup Keys & Identities
-    print("\n[Stage 0] Initializing Trust Anchors and Registering Agent Keys...")
+    print("\n[Stage 0] Initializing Validator Pool and Registering Agent Keys...")
     key_alpha = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     key_beta = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
@@ -38,19 +38,19 @@ def main():
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-    guardian = ConsensusGuardian(threshold=1.0) # Require unanimous consensus
-    guardian.register_agent("agent_alpha", get_public_pem(key_alpha))
-    guardian.register_agent("agent_beta", get_public_pem(key_beta))
+    voting = VotingValidator(threshold=1.0) # Require unanimous quorum
+    voting.register_agent("agent_alpha", get_public_pem(key_alpha))
+    voting.register_agent("agent_beta", get_public_pem(key_beta))
 
     safety_config = SafetyConfig(
         max_replicas_per_service=10,
         allowed_operations=["SCALE_UP", "RESTART", "ROLLBACK"]
     )
     gate = SafetyGate(safety_config)
-    remediator = DryRunRemediator(guardian, gate)
+    remediator = DryRunRemediator(voting, gate)
 
     # 1. Ingestion
-    print("\n[Stage 1] Observe: Ingesting raw telemetry signal containing sensitive API key...")
+    print("\n[Stage 1] Observe: Ingesting simulated raw log telemetry containing sensitive credential...")
     sensitive_key = "AIzaSyB-R-9_V0L-1-2-3-4-5-6-7-8-9-0-1-2"
     raw_logs = [
         {
@@ -63,7 +63,7 @@ def main():
     print(f"  Raw Signal: {raw_logs[0]['jsonPayload']['message']}")
 
     # 2. Sanitization
-    print("\n[Stage 2] Orient: Applying Model Armor Sanitization & Schema Compliance...")
+    print("\n[Stage 2] Orient: Applying Regex Secret Scrubbing...")
     armor = ModelArmor()
     analyzer_alpha = VertexAIAnalyzer("agent_alpha", key_alpha)
     findings = analyzer_alpha.analyze_logs(raw_logs, mode="simulate")
@@ -80,8 +80,8 @@ def main():
     payload_digest = hashlib.sha256(payload_bytes).hexdigest()
     print(f"  Payload SHA256 Digest: {payload_digest}")
 
-    # 3. Consensus Signing
-    print("\n[Stage 3] Decide: Gathering RSA-PSS Quorum Attestations...")
+    # 3. Quorum Voting
+    print("\n[Stage 3] Decide: Gathering RSA-PSS Quorum Votes...")
     analyzer_beta = VertexAIAnalyzer("agent_beta", key_beta)
     
     sig_alpha = analyzer_alpha.sign_finding(sanitized_finding)
@@ -91,7 +91,7 @@ def main():
     print(f"  [Agent Beta]  Signature (RSA-PSS): {sig_beta['signature_hex'][:32]}...")
 
     # 4. Actuation Evaluation
-    print("\n[Stage 4] Act: Verifying Cryptographic Attestation and Safety Gate Rules...")
+    print("\n[Stage 4] Act: Verifying Cryptographic Quorum and Safety Gate Rules...")
     remediation_proposal = sanitized_finding.model_dump()
     
     # Execute the evaluation and actuation path
@@ -140,8 +140,8 @@ def main():
         "scenario": "GCP Multi-Agent Autonomous Safety Gate & Remediation Attestation Flow",
         "input_signal": raw_logs[0],
         "sanitized_signal": sanitized_finding.model_dump(),
-        "consensus": {
-            "threshold": guardian.threshold,
+        "voting_quorum": {
+            "threshold": voting.threshold,
             "quorum_reached": remediator_result.consensus_check_passed,
             "agent_signatures": [sig_alpha, sig_beta]
         },

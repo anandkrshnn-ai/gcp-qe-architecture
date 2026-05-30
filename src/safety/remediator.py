@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from pydantic import BaseModel
-from .consensus import ConsensusGuardian, AgentSignature
+from .voting import VotingValidator, AgentSignature
 from .safety_gate import SafetyGate
 from .logging_utils import get_logger
 from .ports import ActuationPort
@@ -16,22 +16,22 @@ class RemediationResult(BaseModel):
 
 class DryRunRemediator(ActuationPort):
     """
-    Verified actuator that checks consensus and safety gates before 'execution'.
+    Verified actuator that checks voting quorum and safety gates before 'execution'.
     """
-    def __init__(self, consensus: ConsensusGuardian, safety_gate: SafetyGate):
-        self.consensus = consensus
+    def __init__(self, voting: VotingValidator, safety_gate: SafetyGate):
+        self.voting = voting
         self.safety_gate = safety_gate
 
     def verify_remediation_signatures(self, finding: Dict[str, Any], agent_sigs: List[AgentSignature]) -> bool:
         """
-        Enforces cryptographic attestation validation.
+        Enforces cryptographic signature validation.
         Fails closed if the payload has not achieved quorum verification.
         """
         try:
-            consensus_proof = self.consensus.verify_quorum(finding, agent_sigs)
-            return consensus_proof.quorum_reached
+            voting_proof = self.voting.verify_quorum(finding, agent_sigs)
+            return voting_proof.quorum_reached
         except Exception as e:
-            logger.error(f"Attestation signature verification threw exception: {e}")
+            logger.error(f"Signature verification threw exception: {e}")
             return False
 
     def apply_patch(self, target: str, operation: str, params: Dict[str, Any]) -> bool:
@@ -42,7 +42,7 @@ class DryRunRemediator(ActuationPort):
 
     def process_proposal(self, finding: Dict[str, Any], signatures: List[Dict[str, Any]]) -> RemediationResult:
         """
-        Verifies and processes a remediation proposal based on multi-agent consensus.
+        Verifies and processes a remediation proposal based on agent quorum.
         """
         # 1. Verify signatures format
         try:
@@ -60,11 +60,11 @@ class DryRunRemediator(ActuationPort):
         # 2. Cryptographic signature check (Fail closed)
         consensus_passed = self.verify_remediation_signatures(finding, agent_sigs)
         if not consensus_passed:
-            logger.warning("Consensus validation FAILED. Rejecting state-changing action.")
+            logger.warning("Voting quorum validation FAILED. Rejecting state-changing action.")
             return RemediationResult(
                 success=False,
                 action_taken="NONE",
-                message="Consensus quorum verification failed.",
+                message="Quorum verification failed.",
                 safety_check_passed=False,
                 consensus_check_passed=False
             )

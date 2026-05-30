@@ -7,9 +7,9 @@ from hypothesis import given, strategies as st
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
-from safety_core.consensus import ConsensusGuardian, AgentSignature
-from safety_core.safety_gate import SafetyGate, SafetyConfig
-from safety_core.analyzer import VertexAIAnalyzer, Finding
+from safety.voting import VotingValidator, AgentSignature
+from safety.safety_gate import SafetyGate, SafetyConfig
+from safety.analyzer import VertexAIAnalyzer, Finding
 
 @pytest.fixture(scope="module")
 def agent_keys():
@@ -57,8 +57,8 @@ def test_safety_gate_boundaries(replicas, scale_factor):
 def test_consensus_replay_variants(agent_keys, nonce, timestamp_skew):
     """Property test for consensus replay protection."""
     private_key, public_pem = agent_keys
-    guardian = ConsensusGuardian(threshold=0.5, max_clock_skew=30)
-    guardian.register_agent("agent_1", public_pem)
+    validator = VotingValidator(threshold=0.5, max_clock_skew=30)
+    validator.register_agent("agent_1", public_pem)
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding = Finding(
@@ -78,7 +78,7 @@ def test_consensus_replay_variants(agent_keys, nonce, timestamp_skew):
     sig_data["timestamp"] = int(time.time() + timestamp_skew)
     
     sig = AgentSignature(**sig_data)
-    proof = guardian.verify_quorum(sig_data["finding"], [sig])
+    proof = validator.verify_quorum(sig_data["finding"], [sig])
     
     # Verification should fail if clock skew is exceeded
     if abs(timestamp_skew) > 30:
@@ -89,8 +89,8 @@ def test_consensus_replay_variants(agent_keys, nonce, timestamp_skew):
 def test_nonce_reuse_prevention(agent_keys):
     """Explicitly verify that reusing a nonce fails."""
     private_key, public_pem = agent_keys
-    guardian = ConsensusGuardian(threshold=1.0)
-    guardian.register_agent("agent_1", public_pem)
+    validator = VotingValidator(threshold=1.0)
+    validator.register_agent("agent_1", public_pem)
     
     analyzer = VertexAIAnalyzer("agent_1", private_key)
     finding = Finding(
@@ -107,10 +107,10 @@ def test_nonce_reuse_prevention(agent_keys):
     sig = AgentSignature(**sig_data)
     
     # 1. First use should pass
-    proof1 = guardian.verify_quorum(sig_data["finding"], [sig])
+    proof1 = validator.verify_quorum(sig_data["finding"], [sig])
     assert proof1.quorum_reached is True
     
     # 2. Reusing the SAME signature object (same nonce) should fail
-    proof2 = guardian.verify_quorum(sig_data["finding"], [sig])
+    proof2 = validator.verify_quorum(sig_data["finding"], [sig])
     assert proof2.quorum_reached is False
     assert len(proof2.signatures) == 0

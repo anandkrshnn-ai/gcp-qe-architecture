@@ -6,8 +6,8 @@ import os
 import hashlib
 import json
 from cryptography.hazmat.primitives.asymmetric import rsa
-from safety_core.consensus import ConsensusGuardian, AgentSignature, ConsensusError
-from safety_core.analyzer import VertexAIAnalyzer, Finding, ModelArmor
+from safety.voting import VotingValidator, AgentSignature, ValidationError
+from safety.analyzer import VertexAIAnalyzer, Finding, ModelArmor
 
 @pytest.fixture
 def keys():
@@ -16,18 +16,18 @@ def keys():
     return private_key, public_key
 
 @pytest.fixture
-def guardian(keys):
+def validator(keys):
     _, pub = keys
     import cryptography.hazmat.primitives.serialization as serialization
     pub_pem = pub.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    g = ConsensusGuardian(threshold=1.0) # Require absolute consensus for audit
-    g.register_agent("agent_alpha", pub_pem)
-    return g
+    v = VotingValidator(threshold=1.0) # Require absolute quorum for audit
+    v.register_agent("agent_alpha", pub_pem)
+    return v
 
-def test_adversarial_replay_attack(guardian, keys):
+def test_adversarial_replay_attack(validator, keys):
     """FAIL CASE: Reusing a nonce should be blocked."""
     priv, _ = keys
     analyzer = VertexAIAnalyzer("agent_alpha", priv)
@@ -46,16 +46,16 @@ def test_adversarial_replay_attack(guardian, keys):
     sig_obj = AgentSignature(**signed)
     
     # First submission - should pass
-    guardian.verify_quorum({"id": "attack-001"}, [sig_obj])
+    validator.verify_quorum({"id": "attack-001"}, [sig_obj])
     
     # Second submission with same nonce - should fail
     # Note: verify_quorum doesn't raise, it returns proof.
     # But in our implementation, if any signature fails verification (like replay), it's excluded.
-    proof = guardian.verify_quorum({"id": "attack-001"}, [sig_obj])
+    proof = validator.verify_quorum({"id": "attack-001"}, [sig_obj])
     assert proof.quorum_reached is False
     assert len(proof.signatures) == 0
-
-def test_adversarial_clock_skew(guardian, keys):
+ 
+def test_adversarial_clock_skew(validator, keys):
     """FAIL CASE: Proposal from the distant past should be blocked."""
     priv, _ = keys
     analyzer = VertexAIAnalyzer("agent_alpha", priv)
@@ -76,10 +76,10 @@ def test_adversarial_clock_skew(guardian, keys):
     signed = analyzer.sign_finding(finding)
     sig_obj = AgentSignature(**signed)
     
-    proof = guardian.verify_quorum({"id": "stale-001"}, [sig_obj])
+    proof = validator.verify_quorum({"id": "stale-001"}, [sig_obj])
     assert proof.quorum_reached is False
-
-def test_adversarial_unauthorized_key(guardian):
+ 
+def test_adversarial_unauthorized_key(validator):
     """FAIL CASE: Signature from a non-registered key should be rejected."""
     attacker_priv = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     analyzer = VertexAIAnalyzer("agent_alpha", attacker_priv) # Using legitimate ID but wrong key
@@ -97,7 +97,7 @@ def test_adversarial_unauthorized_key(guardian):
     signed = analyzer.sign_finding(finding)
     sig_obj = AgentSignature(**signed)
     
-    proof = guardian.verify_quorum({"id": "forgery-001"}, [sig_obj])
+    proof = validator.verify_quorum({"id": "forgery-001"}, [sig_obj])
     assert proof.quorum_reached is False
 
 def test_model_armor_nested_leak_prevention():

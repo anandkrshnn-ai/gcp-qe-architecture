@@ -7,7 +7,7 @@ demo:
 	python run_demo.py
 
 test:
-	$env:PYTHONPATH = "src"; python -m pytest tests/test_safety_core.py
+	python -m pytest
 
 verify: test demo
 

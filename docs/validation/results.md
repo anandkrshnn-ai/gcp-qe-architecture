@@ -1,48 +1,44 @@
-# Validation Results (v8.2.2)
+# Validation Results
 
-Every release of the Agent Safety Patterns architecture undergoes rigorous automated validation.
+Every release of the incident analysis demo is verified using automated test suites.
 
 ## Automated Test Suite
 
-**Last Run**: 2026-05-12  
+**Last Run**: 2026-05-30  
 **Status**: 100% PASSING  
-**Coverage**: 87%+ (Core Safety Modules)
 
 ### Execution Summary
-The following core modules are verified on every commit:
-- `consensus.py`: Quorum and signature verification.
+The following core modules are verified:
+- `voting.py`: Quorum and signature verification.
 - `safety_gate.py`: Quota and boundary enforcement.
 - `analyzer.py`: Sanitization and AI integration.
 
 ```text
-tests\test_property_based.py ...                                         [ 33%]
-tests\test_safety_core.py ......                                         [100%]
-============================== 9 passed in 3.56s ==============================
+tests\post_incident\test_recovery.py ..                                  [ 10%]
+tests\pre_actuation\test_adversarial.py ....                             [ 30%]
+tests\pre_actuation\test_property_based.py ...                           [ 45%]
+tests\pre_deploy\test_authenticity.py ...                                [ 60%]
+tests\pre_deploy\test_kms_signer.py ..                                   [ 70%]
+tests\pre_deploy\test_safety.py ......                                   [100%]
+============================= 20 passed in 7.38s ==============================
 ```
 
 ## Verified Scenarios
 
-We use a combination of unit, integration, and property-based tests to verify the following high-stakes scenarios:
+We use unit, integration, and property-based tests to verify the following scenarios:
 
 | Scenario | Trigger | Safety Outcome | Status |
 | :--- | :--- | :--- | :--- |
 | **OOMKill Remediation** | Log: `Critical: OOMKilling pod` | **APPROVED**: Scale-up within quota | ✅ VERIFIED |
-| **Credential Leak** | Finding containing `AIza...` | **SANITIZED**: Model Armor redacted key | ✅ VERIFIED |
+| **Credential Leak** | Finding containing `AIza...` | **SANITIZED**: Redacted key | ✅ VERIFIED |
 | **Replay Attack** | Used nonce detected in cache | **BLOCKED**: Nonce reused | ✅ VERIFIED |
 | **Quota Violation** | Proposed replicas > `max_replicas` | **BLOCKED**: Resource limit exceeded | ✅ VERIFIED |
 | **Signature Forgery** | Tampered JSON payload | **BLOCKED**: Invalid signature | ✅ VERIFIED |
-
-## Proof of Executability
-
-Beyond documentation, this architecture provides **demonstrable proof artifacts** that show the control model is executable in a production context.
-
-- **[Safety Gate Policy Bundle](https://github.com/anandkrshnn-ai/gcp-qe-architecture/blob/main/policies/safety_gate_policy.yaml)**: A GitOps-ready YAML definition for resource and cost boundaries.
-- **[Sample Traceable Audit Record](https://github.com/anandkrshnn-ai/gcp-qe-architecture/blob/main/evidence/sample_audit_trail.json)**: A high-fidelity JSON audit trail showing a "Golden Path" remediation with multi-agent signatures and gate verdicts.
 
 ## Performance Benchmarks
 
 | Operation | Latency (Simulated) | Latency (Real Gemini) |
 | :--- | :--- | :--- |
 | **Analysis** | < 10ms | 4s - 8s |
-| **Consensus Check** | < 5ms | N/A (Local Cryptography) |
+| **Quorum Check** | < 5ms | N/A (Local Cryptography) |
 | **Safety Gate** | < 1ms | N/A (Deterministic) |

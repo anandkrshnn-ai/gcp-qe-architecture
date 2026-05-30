@@ -37,7 +37,7 @@ nav:
     - The Opinionated Stack: architecture/index.md
     - Quality Intelligence Layer: architecture/quality-layer.md
     - Operational Model: architecture/operational-model.md
-    - Multi-Agent Consensus: patterns/consensus.md
+    - Multi-Agent Voting: patterns/voting.md
     - Deterministic Safety Gates: patterns/safety-gates.md
     - Model Armor: patterns/model-armor.md
     - Resilience & Retries: ai/resilience.md
@@ -45,7 +45,7 @@ nav:
     - Test Results: validation/results.md
     - Property-Based Testing: validation/property-testing.md
   - API Reference:
-    - Safety Core: api/core.md
+    - Safety: api/core.md
   - Infrastructure (IaC):
     - Terraform GKE: terraform/readme.md
   - Engineering Guides:

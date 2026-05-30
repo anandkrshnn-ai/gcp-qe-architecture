@@ -2,7 +2,7 @@ import pytest
 
 pytestmark = pytest.mark.pre_deploy
 import unittest.mock as mock
-from safety_core.quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
+from safety.quality_intelligence.authenticity import AuthenticityScorer, AuthenticityRisk
 
 try:
     import torch

@@ -1,28 +1,28 @@
-# API Reference: Safety Core
+# API Reference: Safety
 
-This section provides technical documentation for the `safety_core` modules, automatically generated from the source code.
+This section provides technical documentation for the `safety` modules, automatically generated from the source code.
 
 ## Analyzer
-::: safety_core.analyzer
+::: safety.analyzer
     options:
       show_root_heading: true
 
-## Consensus
-::: safety_core.consensus
+## Voting
+::: safety.voting
     options:
       show_root_heading: true
 
 ## Safety Gate
-::: safety_core.safety_gate
+::: safety.safety_gate
     options:
       show_root_heading: true
 
 ## Remediator
-::: safety_core.remediator
+::: safety.remediator
     options:
       show_root_heading: true
 
 ## Runtime Security
-::: safety_core.security
+::: safety.security
     options:
       show_root_heading: true
