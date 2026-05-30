@@ -1,5 +1,8 @@
 # GCP Incident Analysis Demo
 
+[![CI/CD Pipeline](https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo/actions/workflows/main.yml/badge.svg)](https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo/actions/workflows/main.yml)
+[![Version](https://img.shields.io/badge/version-3.0.0--verified--soak-blue)](VERSION)
+
 This is an **educational demonstration project** and proof-of-concept for multi-agent incident analysis using Gemini on Google Cloud. It is a **simulation only** and **not production ready**. It should not be used in real environments without significant additional hardening.
 
 ---
@@ -16,19 +19,20 @@ It serves as a clean architectural blueprint for developers looking to understan
 4. **Cloud KMS Adapter**: Provides a production-ready extension path showing how to sign payloads using Google Cloud Key Management Service (KMS) asymmetric keys.
 
 ## 🛠 Quick Start
+First, install the local packages and dependencies:
 ```bash
-# Install dependencies
 pip install -e .[gcp,dev]
-
-# Run the incident analysis simulation
-python run_golden_path.py
-
-# Run the basic demo
-python run_demo.py
 ```
 
-Running `run_golden_path.py` outputs the step-by-step simulation run and generates a verification package in:
-* `evidence/golden_path_attestation.json`
+To run the simulation, we provide two entry point scripts:
+1. **`run_golden_path.py` (Recommended First Step)**: Runs the complete end-to-end incident analysis loop (OOM logs ingestion, analysis, quorum signature check, safety gate validation, and simulated remediation) and outputs a signed verification package in `evidence/golden_path_attestation.json`.
+   ```bash
+   python run_golden_path.py
+   ```
+2. **`run_demo.py`**: A simpler CLI validation demo highlighting individual step components.
+   ```bash
+   python run_demo.py
+   ```
 
 ## 🔍 Codebase Directory Tour
 
@@ -38,3 +42,6 @@ Running `run_golden_path.py` outputs the step-by-step simulation run and generat
 
 ## ⚠️ Limitations & Real-world Gaps
 For a detailed list of all simulator assumptions, transient caches, and production deployment requirements, please read the [LIMITATIONS.md](LIMITATIONS.md) file.
+
+## 📈 Technical Evolution
+To track the technical pivot, cleanups, and version changes, check the [Technical Evolution & Integrity Log (HISTORY.md)](HISTORY.md).
