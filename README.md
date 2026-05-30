@@ -76,15 +76,21 @@ Autonomous agents can exhibit destructive behaviors if left ungoverned. This rep
 
 ## 🛠 Quick Start
 ```bash
-# Install dependencies (including tenacity, vertexai)
+# Install dependencies
 pip install -e .[gcp,dev]
 
-# Run reference simulation
+# Run the comprehensive Golden Path demo walkthrough
+python run_golden_path.py
+
+# Run reference OODA loop simulation
 python run_demo.py
 
 # Run with Real Vertex AI (requires GCP ADC)
 python run_demo.py --real --project YOUR_PROJECT_ID
 ```
+
+Running the Golden Path walkthrough generates a verifiable, signed evidence package saved as a JSON schema manifest in:
+* `evidence/golden_path_attestation.json`
 
 ## 🧪 Verification
 The system is verified using:

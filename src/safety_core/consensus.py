@@ -65,11 +65,14 @@ class ConsensusGuardian:
         valid_signatures = []
         seen_agents = set()
         current_time = time.time()
+        
+        # Snapshot of seen nonces at start of verification run to allow same-nonce signatures in same batch
+        initially_seen = set(self._seen_nonces.keys())
 
         for sig in signatures:
             try:
                 # 1. Nonce check
-                if sig.nonce in self._seen_nonces:
+                if sig.nonce in initially_seen:
                     raise ConsensusError("Replay attack detected", "REPLAY_ATTACK", {"nonce": sig.nonce, "agent": sig.agent_id})
 
                 # 2. Clock skew check

@@ -1,0 +1,134 @@
+{
+  "schema_version": "https://json-schema.org/draft/2020-12/schema",
+  "scenario": "GCP Multi-Agent Autonomous Safety Gate & Remediation Attestation Flow",
+  "input_signal": {
+    "jsonPayload": {
+      "message": "Critical: OOMKilling pod 'api-service-x1'. Internal auth key used: AIzaSyB-R-9_V0L-1-2-3-4-5-6-7-8-9-0-1-2",
+      "severity": "CRITICAL"
+    }
+  },
+  "sanitized_signal": {
+    "agent_id": "agent_alpha",
+    "incident_id": "52c75a33",
+    "incident_type": "oomkill",
+    "severity": "CRITICAL",
+    "proposed_remediation": {
+      "operation": "SCALE_UP",
+      "replicas": 2,
+      "target": "api-service",
+      "description": "Detected critical OOM signal in logs."
+    },
+    "timestamp": 1780109221,
+    "nonce": "823edc1c9d932d361fbe75322cb84ea1",
+    "metadata": {
+      "authenticity_score": 0.0,
+      "authenticity_risk_flag": "UNKNOWN",
+      "evidence": {
+        "error": "Model interface for style CPC scoring is not yet implemented. # Phase 2",
+        "thresholds_version": "v0.0-uncalibrated"
+      },
+      "safety_score": 0.99,
+      "armor_status": "VERIFIED_CLEAN"
+    }
+  },
+  "consensus": {
+    "threshold": 1.0,
+    "quorum_reached": true,
+    "agent_signatures": [
+      {
+        "agent_id": "agent_alpha",
+        "signature_hex": "72a85e112906f711df667f99e6ca33610dead1e0ee460c186f48cbc33bf842f43fb60d875472ad23c82a346473b8b5a1813f62372da6361601a54e6523ffedda8d0203059744b903b9523dc35f78b525a92f2792ec1ee1d20be20b4c49b86190f7472e736b6d67541218400e209e02c4dac21441c546c0582bebad4fd14b618cabea5eaaf0595d1f30bdb429fce8e90f4a32bbd9c58de108d6fe2f85775db8d1cfb9affa268ce4133b0a119cb3a94a0a5bcb3d04e1a84990cabf6f6238ec8f0ab5afbd865b3a22229531c5f4283a70e452170627ead990a447fd24fa1e8467e26450589f90e5070cb1cc52ea35bea4a78814fc8a1337ce4c744bf4c93d5deb98",
+        "finding": {
+          "agent_id": "agent_alpha",
+          "incident_id": "52c75a33",
+          "incident_type": "oomkill",
+          "severity": "CRITICAL",
+          "proposed_remediation": {
+            "operation": "SCALE_UP",
+            "replicas": 2,
+            "target": "api-service",
+            "description": "Detected critical OOM signal in logs."
+          },
+          "timestamp": 1780109221,
+          "nonce": "823edc1c9d932d361fbe75322cb84ea1",
+          "metadata": {
+            "authenticity_score": 0.0,
+            "authenticity_risk_flag": "UNKNOWN",
+            "evidence": {
+              "error": "Model interface for style CPC scoring is not yet implemented. # Phase 2",
+              "thresholds_version": "v0.0-uncalibrated"
+            },
+            "safety_score": 0.99,
+            "armor_status": "VERIFIED_CLEAN"
+          }
+        },
+        "timestamp": 1780109221,
+        "nonce": "823edc1c9d932d361fbe75322cb84ea1"
+      },
+      {
+        "agent_id": "agent_beta",
+        "signature_hex": "389289a769673b1fb2a1a28cb3db43c6835b386288211d79cf590a1e3c2047708b21aaa3be7004803e6f5172cf9e339f0aa2c841a1f65dac0ecfa7a82a369e74769e2627da1f5c1e02a877a0e4ce2a7e3fada76c78aa306836f4ec3056c143a5c6b2ceba30cd8f0e85142ff3432e434a3b2f10e043884e811796985717bd8d6236551f3832bbb55578ad657abc2afe51882d03e3099a9c510061113957707aadfc65eb1a4b625fb8f94abe27fbc0ba67a8dbd9c5727a9ed533d97ca8d3cd2581491c2675e770baae0dd058b385512e32b373f6b2b530c5520d53a10006aea5bd7867c614602d875cbf12657d4e07db63e189a0be225440e18445caf8b4ec463f",
+        "finding": {
+          "agent_id": "agent_alpha",
+          "incident_id": "52c75a33",
+          "incident_type": "oomkill",
+          "severity": "CRITICAL",
+          "proposed_remediation": {
+            "operation": "SCALE_UP",
+            "replicas": 2,
+            "target": "api-service",
+            "description": "Detected critical OOM signal in logs."
+          },
+          "timestamp": 1780109221,
+          "nonce": "823edc1c9d932d361fbe75322cb84ea1",
+          "metadata": {
+            "authenticity_score": 0.0,
+            "authenticity_risk_flag": "UNKNOWN",
+            "evidence": {
+              "error": "Model interface for style CPC scoring is not yet implemented. # Phase 2",
+              "thresholds_version": "v0.0-uncalibrated"
+            },
+            "safety_score": 0.99,
+            "armor_status": "VERIFIED_CLEAN"
+          }
+        },
+        "timestamp": 1780109221,
+        "nonce": "823edc1c9d932d361fbe75322cb84ea1"
+      }
+    ]
+  },
+  "signature_profile": {
+    "padding_scheme": "RSASSA-PSS",
+    "hash_algorithm": "SHA-256",
+    "mask_generation_function": "MGF1-SHA256",
+    "salt_length": "padding.PSS.MAX_LENGTH"
+  },
+  "safety_gate_decision": {
+    "allowed": true,
+    "config_limits": {
+      "max_replicas_per_service": 10,
+      "allowed_operations": [
+        "SCALE_UP",
+        "RESTART",
+        "ROLLBACK"
+      ]
+    }
+  },
+  "actuation_result": {
+    "success": true,
+    "action_taken": "SCALE_UP",
+    "message": "Executed SCALE_UP on api-service successfully."
+  },
+  "post_incident_assessment": {
+    "anomaly_metric": "error_rate",
+    "metric_value": 0.98,
+    "threshold_exceeded": true
+  },
+  "rollback_decision": {
+    "triggered": true,
+    "gate_decision": "ALLOWED",
+    "execution": "Executed state rollback to baseline image replica configuration."
+  },
+  "issued_at": 1780109221,
+  "payload_digest_sha256": "38b7d21a179b0933457cdc66ee3a96ab7de722f3abe62b6edd2ac1c892505de0"
+}
