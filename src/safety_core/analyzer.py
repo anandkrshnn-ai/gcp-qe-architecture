@@ -20,6 +20,7 @@ except ImportError:
     HAS_GCP = False
 
 from .logging_utils import get_logger, log_event
+from .ports import LogSourcePort
 
 # Quality Intelligence Imports (Optional)
 try:
@@ -131,6 +132,11 @@ class VertexAIAnalyzer:
                 
                 findings.append(self.armor.sanitize_finding(finding))
         return findings
+
+    def fetch_and_analyze(self, query: str, log_source: LogSourcePort, limit: int = 100, mode: str = "simulate") -> List[Finding]:
+        """Fetches logs using the injected LogSourcePort and processes them."""
+        logs = log_source.fetch_recent_logs(query, limit)
+        return self.analyze_logs(logs, mode)
 
     @retry(
         stop=stop_after_attempt(3),

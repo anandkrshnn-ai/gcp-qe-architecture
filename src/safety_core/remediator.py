@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from .consensus import ConsensusGuardian, AgentSignature
 from .safety_gate import SafetyGate
 from .logging_utils import get_logger
+from .ports import ActuationPort
 
 logger = get_logger("SafetyRemediator")
 
@@ -13,7 +14,7 @@ class RemediationResult(BaseModel):
     safety_check_passed: bool
     consensus_check_passed: bool
 
-class DryRunRemediator:
+class DryRunRemediator(ActuationPort):
     """
     Verified actuator that checks consensus and safety gates before 'execution'.
     """
@@ -21,11 +22,29 @@ class DryRunRemediator:
         self.consensus = consensus
         self.safety_gate = safety_gate
 
+    def verify_remediation_signatures(self, finding: Dict[str, Any], agent_sigs: List[AgentSignature]) -> bool:
+        """
+        Enforces cryptographic attestation validation.
+        Fails closed if the payload has not achieved quorum verification.
+        """
+        try:
+            consensus_proof = self.consensus.verify_quorum(finding, agent_sigs)
+            return consensus_proof.quorum_reached
+        except Exception as e:
+            logger.error(f"Attestation signature verification threw exception: {e}")
+            return False
+
+    def apply_patch(self, target: str, operation: str, params: Dict[str, Any]) -> bool:
+        """Implements the ActuationPort interface."""
+        action_msg = f"ActuationPort: Executed {operation} on {target}"
+        logger.info(action_msg)
+        return True
+
     def process_proposal(self, finding: Dict[str, Any], signatures: List[Dict[str, Any]]) -> RemediationResult:
         """
         Verifies and processes a remediation proposal based on multi-agent consensus.
         """
-        # 1. Verify Consensus
+        # 1. Verify signatures format
         try:
             agent_sigs = [AgentSignature(**s) for s in signatures]
         except Exception as e:
@@ -38,24 +57,23 @@ class DryRunRemediator:
                 consensus_check_passed=False
             )
 
-        consensus_proof = self.consensus.verify_quorum(finding, agent_sigs)
-        
-        if not consensus_proof.quorum_reached:
-            logger.warning("Consensus quorum FAILED.")
+        # 2. Cryptographic signature check (Fail closed)
+        consensus_passed = self.verify_remediation_signatures(finding, agent_sigs)
+        if not consensus_passed:
+            logger.warning("Consensus validation FAILED. Rejecting state-changing action.")
             return RemediationResult(
                 success=False,
                 action_taken="NONE",
-                message="Consensus quorum not reached.",
+                message="Consensus quorum verification failed.",
                 safety_check_passed=False,
                 consensus_check_passed=False
             )
 
-        # 2. Verify Safety Gate
+        # 3. Verify Safety Gate boundaries
         remediation = finding.get("proposed_remediation", {})
         if "target" not in remediation:
             remediation["target"] = finding.get("incident_id", "unknown-target")
             
-        # Use the updated 'evaluate' method and GateResult schema
         gate_result = self.safety_gate.evaluate(remediation)
         
         if not gate_result.allowed:
@@ -68,15 +86,15 @@ class DryRunRemediator:
                 consensus_check_passed=True
             )
 
-        # 3. Execute Remediation (Idempotent Simulation)
+        # 4. Execute Actuation using ports abstract boundary
         operation = remediation.get("operation", "UNKNOWN")
-        action_msg = f"Executed {operation} on {finding.get('incident_type')}"
-        logger.info(action_msg)
+        target = remediation.get("target", "unknown-target")
+        actuation_success = self.apply_patch(target, operation, remediation)
         
         return RemediationResult(
-            success=True,
+            success=actuation_success,
             action_taken=operation,
-            message=action_msg,
+            message=f"Executed {operation} on {target} successfully.",
             safety_check_passed=True,
             consensus_check_passed=True
         )

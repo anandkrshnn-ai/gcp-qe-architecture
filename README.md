@@ -8,14 +8,71 @@
 
 Hardened framework for cryptographic consensus, resource-aware safety gates, and Model Armor sanitization for autonomous agents on Google Cloud Platform.
 
+## 📋 Principal Reviewer TL;DR
+
+```
+  ┌────────────────────────────────────────────────────────────┐
+  │                   PORT / ADAPTER BOUNDARY                  │
+  │                                                            │
+  │   [ GCP / Telemetry ] ──────> [ LogSourcePort ]            │
+  │                                     │                      │
+  │                                     ▼                      │
+  │                            [ Safety Core Loop ]            │
+  │                                     │                      │
+  │                                     ▼                      │
+  │   [ GCP / Actuators ] <────── [ ActuationPort ]            │
+  └────────────────────────────────────────────────────────────┘
+```
+
+* **Core Decoupling**: Safety intelligence is separated from cloud environment interactions through explicit interfaces defined in `ports.py` (`LogSourcePort` and `ActuationPort`).
+* **RSA-PSS Attestation Profile**: Cryptographic signature validation is executed inside the Remediator using SHA-256 digests and RSA-PSS padding with `salt_length=padding.PSS.MAX_LENGTH`. Quorum verification fails closed, blocking all actuation unless verified.
+* **CI/CD Validation Gates**: Terraform manifests are validated in CI/CD via syntax/structure verification (`terraform validate`), layout enforcement (`terraform fmt -check`), and provider-specific best practice checks via `TFLint`. Python code is validated with 18 distinct test suites categorized into a 3-tier taxonomy.
+
+## 🔍 Principal Reviewer Tour (7-Minute Guide)
+
+This walkthrough highlights the architectural control points for auditing the repository.
+
+### ⏱️ Minute 1-2: Core Interface Decoupling (Ports & Adapters)
+Open [ports.py](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/src/safety_core/ports.py) to audit the primary interface boundary:
+- **`LogSourcePort`**: Abstracts metric telemetry and logging reads, preventing Vertex AI analyzer classes from coupling directly to GCP APIs.
+- **`ActuationPort`**: Restricts active state modifications, implemented by `DryRunRemediator` (located in [remediator.py](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/src/safety_core/remediator.py)) to decouple external GKE/Cloud Run triggers from the core evaluation loop.
+
+### ⏱️ Minute 3-4: Fail-Closed Cryptographic Verification
+Open [remediator.py](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/src/safety_core/remediator.py) and view `verify_remediation_signatures()`:
+- Remediation proposals are rejected immediately if signature consensus fails.
+- Replay attacks are stopped before entering Safety evaluation by verifying unique nonces and enforcing clock skew validation inside [consensus.py](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/src/safety_core/consensus.py).
+
+### ⏱️ Minute 5-6: Test Taxonomy & Multi-Tier Audit
+Tests are partitioned under `tests/` to align with the deployment and actuation cycle:
+1. **Pre-Deploy Hygiene (`tests/pre_deploy/`)**: Focuses on core functionality like `test_safety_core.py` and authenticity scorer evaluations in `test_authenticity.py`.
+2. **Pre-Actuation Verification (`tests/pre_actuation/`)**: Runs adversarial simulation tests (`test_adversarial.py`) and property-based verification checks (`test_property_based.py`) verifying boundary states.
+3. **Post-Incident Recovery Gates (`tests/post_incident/`)**: Verifies recovery policies and rollback triggers (`test_recovery.py`) when regression metrics exceed thresholds.
+
+### ⏱️ Minute 7: CI/CD Enforcement & Infrastructure Linting
+Audit [.github/workflows/terraform-validate.yml](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/.github/workflows/terraform-validate.yml) and the [terraform/.tflint.hcl](file:///c:/Users/Admin/Documents/Github/gcp-qe-architecture/terraform/.tflint.hcl) files.
+CI guarantees:
+- Syntactically correct configurations (`terraform validate`).
+- Properly formatted code (`terraform fmt -check`).
+- Strict best practices and provider rules checking via `tflint`.
+
+---
+
+## 🔑 RSA-PSS Cryptographic Verification Profile
+
+To guarantee consistent interoperability and security across reference implementations, the safety core enforces the following signature validation parameters:
+
+| Parameter | Configuration / Setting |
+|---|---|
+| **Padding Scheme** | RSA Probabilistic Signature Scheme (RSA-PSS) |
+| **Mask Generation Function** | MGF1 configured with SHA-256 |
+| **Hash Algorithm** | SHA-256 |
+| **Salt Length** | Set dynamically to maximum size (`padding.PSS.MAX_LENGTH`) |
+| **Fail-Closed Behavior** | Actuator fails closed immediately. Any consensus verification exception, quorum shortage, or signature mismatch blocks state modifications. |
+
+---
+
 ## 🛡️ Problem Statement
 Autonomous agents can exhibit destructive behaviors if left ungoverned. This repository demonstrates a layered, verifiable safety architecture that enforces multi-agent consensus and deterministic resource boundaries before any state-changing operation occurs.
-
-## 🚀 Core Safety Patterns
-1. **Cryptographic Consensus**: Every remediation proposal must be signed by an RSA-PSS majority quorum using unique nonces for replay protection.
-2. **Deterministic Safety Gates**: Agent proposals are validated against strict resource quotas (GCP-scale limits) and cost boundaries.
-3. **Model Armor Sanitization**: Integrated leak-detection scanning to prevent PII or credential leakage in agent-to-agent communication.
-4. **Vertex AI Integration**: Gemini 1.5 Pro integration with exponential backoff retries and safety filter enforcement.
 
 ## 🛠 Quick Start
 ```bash
@@ -27,27 +84,6 @@ python run_demo.py
 
 # Run with Real Vertex AI (requires GCP ADC)
 python run_demo.py --real --project YOUR_PROJECT_ID
-```
-
-## 🏗 Architecture
-The OODA loop (Observe, Orient, Decide, Act) is hardened with cryptographic checkpoints and safety-first actuation.
-
-```mermaid
-graph TD
-    subgraph Observe
-        A[Cloud Logging API] --> B[SafetyAnalyzer]
-    end
-
-    subgraph Orient_Decide
-        B --> D[Finding / Model Armor Sanitization]
-        D --> E[Multi-Agent RSA Signing]
-    end
-
-    subgraph Act_Safety
-        E --> F[Consensus Guardian / Replay Protection]
-        F --> G[Safety Gate / Resource Quotas]
-        G -->|Pass| H[Remediator Actuator]
-    end
 ```
 
 ## 🧪 Verification

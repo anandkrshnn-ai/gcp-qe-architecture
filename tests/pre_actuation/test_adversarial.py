@@ -1,4 +1,6 @@
 import pytest
+
+pytestmark = pytest.mark.pre_actuation
 import time
 import os
 import hashlib

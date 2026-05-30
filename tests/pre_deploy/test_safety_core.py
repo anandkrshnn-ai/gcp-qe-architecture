@@ -1,4 +1,6 @@
 import pytest
+
+pytestmark = pytest.mark.pre_deploy
 import time
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
