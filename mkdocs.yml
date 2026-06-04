@@ -1,8 +1,8 @@
 site_name: Agent Safety Patterns
 site_description: Principal-grade reference architecture for secure, multi-agent autonomous systems on Google Cloud.
 site_author: Anandakrishnan Damodaran
-repo_name: anandkrshnn-ai/gcp-qe-architecture
-repo_url: https://github.com/anandkrshnn-ai/gcp-qe-architecture
+repo_name: anandkrshnn-ai/gcp-incident-analysis-demo
+repo_url: https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo
 
 theme:
   name: material
@@ -35,7 +35,7 @@ nav:
   - Architectural Patterns:
     - High-Level Design: ARCHITECTURE.md
     - The Opinionated Stack: architecture/index.md
-    - Quality Intelligence Layer: architecture/quality-layer.md
+    - Incident Intelligence Layer: architecture/incident-intelligence-layer.md
     - Operational Model: architecture/operational-model.md
     - Multi-Agent Voting: patterns/voting.md
     - Deterministic Safety Gates: patterns/safety-gates.md
@@ -49,10 +49,10 @@ nav:
   - Infrastructure (IaC):
     - Terraform GKE: terraform/readme.md
   - Engineering Guides:
-    - Architecture Strategy: guides/01-quality-engineering-architecture.md
+    - Architecture Strategy: guides/01-incident-analysis-architecture.md
     - SLO/SLI Engineering: guides/02-slo-sli-engineering.md
     - Production Readiness: guides/03-production-readiness.md
-    - AI-Powered QE: guides/04-ai-powered-quality-engineering.md
+    - AI-Powered Incident Intelligence: guides/04-ai-powered-incident-intelligence.md
     - Deployment Path: guides/08-deployment-path.md
 
 markdown_extensions:

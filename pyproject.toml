@@ -31,7 +31,7 @@ intelligence = ["torch", "transformers"]
 dev = ["pytest", "pytest-cov", "hypothesis", "ruff"]
 
 [project.urls]
-"Homepage" = "https://github.com/anandkrshnn-ai/gcp-qe-architecture"
+"Homepage" = "https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo"
 
 [tool.setuptools.packages.find]
 where = ["src"]

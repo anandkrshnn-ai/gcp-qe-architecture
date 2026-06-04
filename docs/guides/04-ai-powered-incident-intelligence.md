@@ -1,0 +1,1 @@
+--8<-- "guides/04-ai-powered-incident-intelligence.md"

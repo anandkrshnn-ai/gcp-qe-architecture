@@ -32,11 +32,11 @@ A governable platform is defined by clear ownership of its safety boundaries.
 | **Sanitization** | Model Armor | Privacy Team | Proactive enforcement of data-residency and PII policies. |
 | **Boundary** | Safety Gate | SRE Team | Fiscal and resource quota enforcement. |
 
-## 4. Platform vs. Quality Layer
+## 4. Platform vs. Agentic Layer
 
-This architecture makes a sharp distinction between the **Platform Plane** (GCP/GKE) and the **Quality Intelligence Layer** (The Agent Framework). 
+This architecture makes a sharp distinction between the **Platform Plane** (GCP/GKE) and the **Incident Intelligence Layer** (The Agent Framework). 
 
 - The **Platform** provides the *capabilities* (compute, logs, identity).
-- The **Quality Layer** provides the *governance* (consensus, sanitization, safety gates).
+- The **Agentic Layer** provides the *governance* (consensus, sanitization, safety gates).
 
 Separating these layers ensures that the platform remains stable even as the AI models and safety policies evolve.

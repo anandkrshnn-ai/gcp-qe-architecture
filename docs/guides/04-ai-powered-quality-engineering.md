@@ -1,1 +1,0 @@
-﻿--8<-- "guides/04-ai-powered-quality-engineering.md"
