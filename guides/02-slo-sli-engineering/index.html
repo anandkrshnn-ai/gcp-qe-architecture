@@ -1,0 +1,1813 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Principal-grade reference architecture for secure, multi-agent autonomous systems on Google Cloud.">
+      
+      
+        <meta name="author" content="Anandakrishnan Damodaran">
+      
+      
+      
+        <link rel="prev" href="../01-incident-analysis-architecture/">
+      
+      
+        <link rel="next" href="../03-production-readiness/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>SLO/SLI Engineering - Agent Safety Patterns</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#slosli-engineering-from-definition-to-enforcement" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Agent Safety Patterns" class="md-header__button md-logo" aria-label="Agent Safety Patterns" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Agent Safety Patterns
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SLO/SLI Engineering
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    anandkrshnn-ai/gcp-incident-analysis-demo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ARCHITECTURE/" class="md-tabs__link">
+          
+  
+  
+  Architectural Patterns
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../validation/results/" class="md-tabs__link">
+          
+  
+  
+  Validation & Proofs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/core/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../terraform/readme/" class="md-tabs__link">
+          
+  
+  
+  Infrastructure (IaC)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01-incident-analysis-architecture/" class="md-tabs__link">
+          
+  
+  
+  Engineering Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Agent Safety Patterns" class="md-nav__button md-logo" aria-label="Agent Safety Patterns" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Agent Safety Patterns
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/anandkrshnn-ai/gcp-incident-analysis-demo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    anandkrshnn-ai/gcp-incident-analysis-demo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectural Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architectural Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High-Level Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Opinionated Stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/incident-intelligence-layer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Incident Intelligence Layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/operational-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operational Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patterns/voting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Voting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patterns/safety-gates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deterministic Safety Gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patterns/model-armor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Armor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai/resilience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience & Retries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation & Proofs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validation & Proofs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/property-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Property-Based Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure (IaC)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure (IaC)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform GKE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-incident-analysis-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SLO/SLI Engineering
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SLO/SLI Engineering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-foundational-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Foundational Concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-defining-meaningful-slis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Defining Meaningful SLIs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-setting-slo-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Setting SLO Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-implementing-slos-in-cloud-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Implementing SLOs in Cloud Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-slo-review-cadence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SLO Review Cadence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-advanced-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Advanced Patterns
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-common-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Common Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-conclusion-slos-as-a-communication-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Conclusion: SLOs as a Communication Protocol
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-production-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Production Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ai-powered-incident-intelligence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI-Powered Incident Intelligence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-deployment-path/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-foundational-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Foundational Concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-defining-meaningful-slis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Defining Meaningful SLIs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-setting-slo-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Setting SLO Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-implementing-slos-in-cloud-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Implementing SLOs in Cloud Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-slo-review-cadence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SLO Review Cadence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-advanced-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Advanced Patterns
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-common-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Common Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-conclusion-slos-as-a-communication-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Conclusion: SLOs as a Communication Protocol
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="slosli-engineering-from-definition-to-enforcement">SLO/SLI Engineering: From Definition to Enforcement<a class="headerlink" href="#slosli-engineering-from-definition-to-enforcement" title="Permanent link">&para;</a></h1>
+<p><strong>A Practitioner's Guide to Service Level Objectives</strong></p>
+<hr />
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>Service Level Objectives (SLOs) are the most operationally powerful quality tool available to cloud engineering organizations. When implemented correctly, they create a quantitative, shared language between engineering, product, and business stakeholders about what "reliable enough" means—and provide the data-driven mechanism for deployment and prioritization decisions.</p>
+<p>Yet most SLO implementations fail. They become static targets no one monitors, or they are set so conservatively they never fire, or so aggressively that every alert becomes a crisis. This guide provides a rigorous, practitioner-tested framework from initial definition through automated enforcement.</p>
+<hr />
+<h2 id="1-foundational-concepts">1. Foundational Concepts<a class="headerlink" href="#1-foundational-concepts" title="Permanent link">&para;</a></h2>
+<p><strong>The SLO Hierarchy</strong></p>
+<ul>
+<li><strong>SLI (Service Level Indicator)</strong>: A quantitative measurement of a specific aspect of service behavior. Examples: request success rate, API P99 latency, processing throughput. The <em>signal</em>.</li>
+<li><strong>SLO (Service Level Objective)</strong>: A target value for an SLI over a defined time window. Example: "99.9% of requests to the Payments API succeed over any rolling 28-day window." The <em>goal</em>.</li>
+<li><strong>SLA (Service Level Agreement)</strong>: A contractual commitment with financial penalties, derived from SLOs. The <em>contract</em>.</li>
+</ul>
+<p>Most engineering teams should focus primarily on SLOs. SLAs should only be derived from SLOs that have been operational for at least 3-6 months.</p>
+<p><strong>Error Budgets</strong></p>
+<p>The error budget is the most important concept in SLO engineering. It transforms an SLO from a static target into an operational resource.</p>
+<p>At 99.9% availability over 30 days, the allowed downtime is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>30 days × 24 hours × 60 minutes × (1 - 0.999) = 43.2 minutes
+</code></pre></div>
+<p>This 43.2 minutes is your error budget. Every deployment, dependency failure, and chaos experiment consumes it. The budget creates alignment: product teams want to ship features (spending budget), engineering wants stability (preserving budget). The SLO framework makes this trade-off quantifiable and transparent.</p>
+<hr />
+<h2 id="2-defining-meaningful-slis">2. Defining Meaningful SLIs<a class="headerlink" href="#2-defining-meaningful-slis" title="Permanent link">&para;</a></h2>
+<p><strong>The Four SLI Categories</strong></p>
+<p>Google's SRE practices define four primary categories:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>What It Measures</th>
+<th>Typical Metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Availability</td>
+<td>Is the service responding?</td>
+<td>Success rate of non-5xx HTTP responses</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Is the service fast enough?</td>
+<td>% of requests under a latency threshold</td>
+</tr>
+<tr>
+<td>Throughput</td>
+<td>Is the service processing enough?</td>
+<td>Requests/sec or messages/sec</td>
+</tr>
+<tr>
+<td>Quality</td>
+<td>Are results correct?</td>
+<td>% of responses passing correctness checks</td>
+</tr>
+</tbody>
+</table>
+<p>For most user-facing services, availability and latency are the minimum baseline.</p>
+<p><strong>The SLI Specification Format</strong></p>
+<p>Every SLI should be documented before implementation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">sli_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payments_api_availability</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">what_we_measure</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Fraction</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">HTTP</span><span class="nv"> </span><span class="s">requests</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">return</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">non-5xx</span><span class="nv"> </span><span class="s">response&quot;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">good_event</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HTTP</span><span class="nv"> </span><span class="s">2xx</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">4xx</span><span class="nv"> </span><span class="s">(client</span><span class="nv"> </span><span class="s">errors</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">service</span><span class="nv"> </span><span class="s">failures)&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">bad_event</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HTTP</span><span class="nv"> </span><span class="s">5xx</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">request</span><span class="nv"> </span><span class="s">timeout</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10s&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">measurement_window</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Rolling</span><span class="nv"> </span><span class="s">28</span><span class="nv"> </span><span class="s">days&quot;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nt">data_source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cloud</span><span class="nv"> </span><span class="s">Monitoring</span><span class="nv"> </span><span class="s">request</span><span class="nv"> </span><span class="s">logs&quot;</span>
+</code></pre></div>
+<p>The 4xx vs 5xx distinction is critical. A 404 is a client error—not a service failure. Including 4xx responses in "bad events" creates an SLI driven by client behavior rather than service health.</p>
+<p><strong>Latency Threshold Starting Points</strong></p>
+<ul>
+<li>Interactive user-facing APIs: P95 &lt; 200ms, P99 &lt; 1000ms</li>
+<li>Background processing APIs: P95 &lt; 500ms, P99 &lt; 2000ms</li>
+<li>Cold-start scenarios (Cloud Run with 0 min-instances): P95 &lt; 3000ms</li>
+</ul>
+<p>Always use <strong>percentile thresholds</strong>, never averages. A service where 99% of requests complete in 100ms but 1% take 60 seconds has excellent average latency and catastrophic P99 latency.</p>
+<hr />
+<h2 id="3-setting-slo-targets">3. Setting SLO Targets<a class="headerlink" href="#3-setting-slo-targets" title="Permanent link">&para;</a></h2>
+<p><strong>Measure First, Set Second</strong></p>
+<p>The most common SLO mistake is setting targets before measuring current performance. An SLO of "99.9% availability" is meaningless if your service currently runs at 97%.</p>
+<p>The correct process:
+1. Instrument the SLI and measure for 4 weeks.
+2. Calculate current performance.
+3. Set the initial SLO <em>below</em> current performance.
+4. Tighten incrementally as the system improves.</p>
+<p><strong>SLO Tiers Based on User Impact</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Description</th>
+<th>Example</th>
+<th>Suggested SLO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 1</td>
+<td>Revenue-critical, user-facing</td>
+<td>Payment processing</td>
+<td>99.95%</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>Important, non-transactional</td>
+<td>Product catalog, search</td>
+<td>99.9%</td>
+</tr>
+<tr>
+<td>Tier 3</td>
+<td>Background or batch processing</td>
+<td>Report generation</td>
+<td>99.0%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The Error Budget Policy</strong></p>
+<p>An SLO without an error budget policy is just a target. The policy defines consequences:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gu">## Error Budget Policy: Payments Service</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Budget 0-50% consumed:    Full deployment velocity.
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Budget 50-75% consumed:   Deployments require Service Owner sign-off.
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Budget 75-100% consumed:  New feature deployments frozen; reliability work prioritized.
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Budget exhausted (&gt;100%): Incident declared; all hands on reliability.
+</code></pre></div>
+<p>This must be agreed upon <em>before</em> the SLO goes live. Without it, the SLO has no teeth.</p>
+<hr />
+<h2 id="4-implementing-slos-in-cloud-monitoring">4. Implementing SLOs in Cloud Monitoring<a class="headerlink" href="#4-implementing-slos-in-cloud-monitoring" title="Permanent link">&para;</a></h2>
+<p><strong>Measurement Architecture Options</strong></p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Source</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client-side</td>
+<td>Real User Monitoring (RUM)</td>
+<td>Actual user experience</td>
+<td>Requires client instrumentation</td>
+</tr>
+<tr>
+<td>Load Balancer</td>
+<td>Access logs / proxy metrics</td>
+<td>No code changes needed</td>
+<td>Misses some backend failures</td>
+</tr>
+<tr>
+<td>Service-side</td>
+<td>Application metrics/logs</td>
+<td>Full context</td>
+<td>Potential self-reporting bias</td>
+</tr>
+</tbody>
+</table>
+<p>For most production services, <strong>load balancer or proxy measurement</strong> provides the best balance. It captures user experience without requiring application code changes.</p>
+<p><strong>Terraform SLO Reference Pattern</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;google_monitoring_slo&quot;</span><span class="w"> </span><span class="nv">&quot;payments_availability&quot;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="na">service</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">google_monitoring_service.payments_api.service_id</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="na">display_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Payments API Availability (99.9%)&quot;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="na">goal</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="nv">0.999</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="na">rolling_period_days</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">28</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nb">request_based_sli</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nb">good_total_ratio</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="na">good_service_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="s2">&quot; AND &quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">        </span><span class="s2">&quot;metric.type=\&quot;loadbalancing.googleapis.com/https/request_count\&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="s2">&quot;metric.labels.response_code_class!=\&quot;500\&quot;&quot;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">      </span><span class="p">])</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">      </span><span class="na">total_service_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;metric.type=\&quot;loadbalancing.googleapis.com/https/request_count\&quot;&quot;</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Burn Rate Alert Thresholds</strong></p>
+<table>
+<thead>
+<tr>
+<th>Alert Severity</th>
+<th>Burn Rate</th>
+<th>Short Window</th>
+<th>Long Window</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Critical (Page)</td>
+<td>14x</td>
+<td>5 min</td>
+<td>1 hour</td>
+<td>Immediate incident</td>
+</tr>
+<tr>
+<td>High (Ticket)</td>
+<td>6x</td>
+<td>30 min</td>
+<td>6 hours</td>
+<td>Priority ticket</td>
+</tr>
+<tr>
+<td>Warning</td>
+<td>3x</td>
+<td>6 hours</td>
+<td>3 days</td>
+<td>Scheduled work</td>
+</tr>
+</tbody>
+</table>
+<p>At 14x burn rate, the entire monthly budget is exhausted in ~2 hours. That warrants an immediate page.</p>
+<hr />
+<h2 id="5-slo-review-cadence">5. SLO Review Cadence<a class="headerlink" href="#5-slo-review-cadence" title="Permanent link">&para;</a></h2>
+<p><strong>Weekly: Error Budget Status (15 minutes)</strong>
+- Current burn rate vs. target.
+- Events that consumed the most budget this week.
+- Upcoming deployments that carry reliability risk.</p>
+<p><strong>Monthly: SLO Calibration</strong>
+- Is the SLO target still appropriate? (Too easy = no incentive, too hard = constant breach)
+- New user journeys requiring new SLIs?
+- Systematic reliability patterns suggesting process improvements?</p>
+<p><strong>Quarterly: SLO Strategy</strong>
+- DORA metrics trend across the organization.
+- Services consistently breaching SLOs (systemic problems).
+- Services never close to breach (candidates for tightening).</p>
+<hr />
+<h2 id="6-advanced-patterns">6. Advanced Patterns<a class="headerlink" href="#6-advanced-patterns" title="Permanent link">&para;</a></h2>
+<p><strong>Windowed vs. Calendar SLOs</strong></p>
+<ul>
+<li><strong>Rolling window</strong> (last 28 days): Budget continuously replenishes. Recommended for operations.</li>
+<li><strong>Calendar window</strong> (current month): Resets on a fixed date. Easier for business reporting but creates perverse incentives near month-end.</li>
+</ul>
+<p><strong>Composite SLOs for User Journeys</strong></p>
+<p>Individual service SLOs measure service health, not user experience. A journey SLO aggregates across the critical path:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Checkout Journey SLO = 
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  Product Detail (avail.) × Add to Cart (avail. × latency) × Payment (avail. × latency)
+</code></pre></div>
+<p>If each component has 99.9% availability, the composite journey SLO is ~99.7%. Users always experience lower reliability than any individual service SLO. This is a critical insight for setting customer-facing commitments.</p>
+<p><strong>SLOs for Async and Batch Systems</strong></p>
+<ul>
+<li><strong>Queue freshness SLO</strong>: "95% of messages processed within 30 minutes of arrival."</li>
+<li><strong>Batch completion SLO</strong>: "95% of nightly jobs complete by 06:00."</li>
+<li><strong>Data quality SLO</strong>: "99% of processed records pass schema validation."</li>
+</ul>
+<hr />
+<h2 id="7-common-failure-modes">7. Common Failure Modes<a class="headerlink" href="#7-common-failure-modes" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SLOs set by committee, not measurement</strong>: Negotiated targets reflect political compromise, not engineering reality. Measure first.</li>
+<li><strong>Measuring the monitoring system, not the service</strong>: Self-reported health checks detect failure only if the application knows it is failing. Use external measurement.</li>
+<li><strong>Ignoring the long tail</strong>: Average/P50 latency monitoring misses the users with the worst experience. Always track P95 and P99.</li>
+<li><strong>No post-mortem integration</strong>: Every SLO breach should trigger a blameless review. Without this feedback loop, the same failure modes repeat.</li>
+</ul>
+<hr />
+<h2 id="8-conclusion-slos-as-a-communication-protocol">8. Conclusion: SLOs as a Communication Protocol<a class="headerlink" href="#8-conclusion-slos-as-a-communication-protocol" title="Permanent link">&para;</a></h2>
+<p>The deepest value of SLO engineering is not the monitoring—it is the shared language it creates. "Our service is unreliable" is an argument. "Our service consumed 85% of its error budget this month due to two Tuesday deployments" is a data-driven escalation that leads to action.</p>
+<p>For QA Architects, SLO engineering transforms the quality function from a subjective, approval-based process into an empirical, data-driven discipline.</p>
+<hr />
+<p><em>Related guides: <a href="01-quality-engineering-architecture.md">QE Architecture</a> | <a href="../03-production-readiness/">Production Readiness</a> | <a href="04-ai-powered-quality-engineering.md">AI-Powered QE</a></em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
