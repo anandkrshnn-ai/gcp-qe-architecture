@@ -4,5 +4,5 @@ pytest>=8.4.2
 google-cloud-logging>=3.8.0
 google-cloud-monitoring>=2.14.0
 google-cloud-aiplatform>=1.40.0
-ruff>=0.1.0
+ruff>=0.15.17
 hypothesis>=6.0.0
